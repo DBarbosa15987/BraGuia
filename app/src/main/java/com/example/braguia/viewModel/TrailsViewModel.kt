@@ -60,6 +60,7 @@ class TrailsViewModel(private val trailRepository: TrailRepository) : ViewModel(
                 val application =
                     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as BraGuiaApplication)
                 val trailRepository = application.container.trailRepository
+                //application.database.trailDAO()
                 TrailsViewModel(trailRepository = trailRepository)
             }
         }

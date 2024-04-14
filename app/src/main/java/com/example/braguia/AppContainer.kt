@@ -1,7 +1,8 @@
 package com.example.braguia
 
+import android.content.Context
+import com.example.braguia.model.GuideDatabase
 import com.example.braguia.network.TrailAPI
-import com.example.braguia.repositories.NetworkTrailRepository
 import com.example.braguia.repositories.TrailRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -12,7 +13,7 @@ interface AppContainer {
 }
 
 
-class BraGuiaAppContainer(/*private val context: Context*/) : AppContainer {
+class BraGuiaAppContainer(val context: Context) : AppContainer {
     private val baseUrl = "https://c14d-193-137-92-5.ngrok-free.app/"
 
     /**
@@ -28,7 +29,9 @@ class BraGuiaAppContainer(/*private val context: Context*/) : AppContainer {
         retrofit.create(TrailAPI::class.java)
     }
 
+    private val database: GuideDatabase by lazy { GuideDatabase.getInstance(context)}
+
     override val trailRepository: TrailRepository by lazy {
-        NetworkTrailRepository(retrofitService)
+        TrailRepository(retrofitService,database.trailDAO())
     }
 }

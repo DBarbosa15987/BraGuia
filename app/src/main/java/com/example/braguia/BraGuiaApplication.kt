@@ -1,6 +1,7 @@
 package com.example.braguia
 
 import android.app.Application
+import com.example.braguia.model.GuideDatabase
 
 class BraGuiaApplication : Application(){
 
@@ -8,7 +9,7 @@ class BraGuiaApplication : Application(){
 
     override fun onCreate() {
         super.onCreate()
-        container = BraGuiaAppContainer()
+        container = BraGuiaAppContainer(this)
     }
 
 }

@@ -10,7 +10,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.synchronized
 
 
-@Database(entities = [Trail::class, User::class,Pin::class,RelPin::class], version = 0)
+@Database(entities = [Trail::class, User::class,Pin::class,RelPin::class], version = 1)
 abstract class GuideDatabase : RoomDatabase() {
 
     abstract fun trailDAO(): TrailDAO

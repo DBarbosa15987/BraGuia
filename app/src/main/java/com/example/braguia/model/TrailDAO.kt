@@ -10,13 +10,14 @@ import androidx.room.Query
 interface TrailDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(cats: List<Trail>)
+    suspend fun insert(cats: List<Trail>)
 
+    //TODO talvez não seja preciso o suspend quando usar o Flow/LiveData
     @Query("SELECT DISTINCT * FROM trail")
-    fun getTrails(): List<Trail>
+    suspend fun getTrails(): List<Trail>
 
     @Query("DELETE FROM trail")
-    fun deleteAll()
+    suspend fun deleteAll()
 
 
 }
