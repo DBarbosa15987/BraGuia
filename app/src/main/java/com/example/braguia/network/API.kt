@@ -1,16 +1,23 @@
 package com.example.braguia.network
 
 import com.example.braguia.model.AppInfo
-import com.example.braguia.model.Media
 import com.example.braguia.model.Trail
+import okhttp3.Response
+import okhttp3.ResponseBody
+import retrofit2.Retrofit
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 
-interface TrailAPI {
+interface API {
 
     @GET("trails")
     suspend fun getTrails(): List<Trail>
 
     @GET("app")
     suspend fun getAppInfo(): List<AppInfo>
+
+/*    @POST("login")
+    suspend fun login(@Body loginRequest:LoginRequest): Response*/
 
 }
