@@ -1,7 +1,19 @@
 package com.example.braguia.repositories
 
-interface UserRepository {
+import com.example.braguia.network.API
+import com.example.braguia.network.LoginRequest
+import okhttp3.Response
+import okhttp3.ResponseBody
+import retrofit2.Call
 
-    //TODO
+class UserRepository (
+    val API: API
+){
+
+/*    suspend fun login(loginRequest:LoginRequest): ResponseBody {
+
+        return API.login(loginRequest)
+
+    }*/
 
 }
