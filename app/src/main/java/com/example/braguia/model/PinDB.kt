@@ -2,16 +2,17 @@ package com.example.braguia.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = "Pin")
+@Entity(tableName = "Pin",indices = [Index(value = ["id"],unique = true)])
 data class Pin(
 
     @PrimaryKey
     @SerializedName("id")
     @ColumnInfo(name = "id")
-    val id:Int,
+    val id:Long,
 
     @SerializedName("pin_name")
     @ColumnInfo(name = "pin_name")

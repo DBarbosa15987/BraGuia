@@ -1,12 +1,18 @@
 package com.example.braguia.model
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity(tableName = "appInfo",indices = [Index(value = ["id"],unique = true)])
 data class AppInfo(
 
-    //val id:Int,
-    @SerializedName("appName")
+    @ColumnInfo("id")
+    @PrimaryKey(autoGenerate = true)
+    val id:Int,
+    @SerializedName("app_name")
     val appName:String,
     @SerializedName("socials")
     val socials: List<Social>,
