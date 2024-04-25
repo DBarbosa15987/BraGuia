@@ -6,23 +6,12 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = "appInfo",indices = [Index(value = ["id"],unique = true)])
-data class AppInfo(
+@Entity(tableName = "appInfo",indices = [Index(value = ["appName"],unique = true)])
+data class AppInfoDB(
 
-    @ColumnInfo("id")
-    @PrimaryKey(autoGenerate = true)
-    val id:Int,
-    @SerializedName("app_name")
+    @PrimaryKey
     val appName:String,
-    @SerializedName("socials")
-    val socials: List<Social>,
-    @SerializedName("contacts")
-    val contacts: List<Contact>,
-    @SerializedName("partners")
-    val partners: List<Partner>,
-    @SerializedName("app_desc")
     val appDesc:String,
-    @SerializedName("app_landing_page_text")
     val landingPageText:String
 
 )

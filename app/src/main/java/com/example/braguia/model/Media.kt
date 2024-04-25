@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName
 
 
 @Entity(
-    tableName = "content",
+    tableName = "media",
     indices = [Index(value = ["id"],unique = true),Index(value = ["mediaPin"])],
     foreignKeys = [
         ForeignKey(
@@ -19,7 +19,7 @@ import com.google.gson.annotations.SerializedName
         )
     ]
 )
-data class Content(
+data class Media(
 
     @PrimaryKey
     @SerializedName("id")
