@@ -6,7 +6,7 @@ import androidx.room.Upsert
 import com.example.braguia.model.TrailDB
 
 
-/*@Dao
+@Dao
 interface TrailDBDAO {
 
     @Upsert()
@@ -18,6 +18,4 @@ interface TrailDBDAO {
 
     @Query("DELETE FROM trail")
     suspend fun deleteAll()
-
-
-}*/
+}

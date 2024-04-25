@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.example.braguia.model.EdgeDB
 
-/*
 @Dao
 interface EdgeDBDAO {
 
@@ -20,4 +19,4 @@ interface EdgeDBDAO {
     @Query("DELETE FROM edge")
     suspend fun deleteAll()
 
-}*/
+}

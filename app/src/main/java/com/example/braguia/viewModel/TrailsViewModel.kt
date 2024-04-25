@@ -73,7 +73,7 @@ class TrailsViewModel(
 
         viewModelScope.launch {
             homeUiState = try {
-                val result = trailRepository.getTrails()
+                val result = trailRepository.fetchAPI()
                 HomeUiState(result, homeUiState.mediaList, homeUiState.appInfo)
             } catch (e: Exception) {
                 Log.e("TRAILS", e.toString())

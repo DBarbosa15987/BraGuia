@@ -7,7 +7,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.example.braguia.model.RelPin
 
-/*
+
 @Dao
 interface RelPinDAO {
 
@@ -20,4 +20,4 @@ interface RelPinDAO {
     @Query("DELETE FROM relPin")
     suspend fun deleteAll()
 
-}*/
+}

@@ -34,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.braguia.model.Trail
+import com.example.braguia.ui.TrailList
 import com.example.braguia.viewModel.HomeUiState
 import com.google.gson.GsonBuilder
 
@@ -46,71 +47,14 @@ fun BraGuiaApp() {
 
     trailsViewModel.login()
     val uiState = trailsViewModel.homeUiState
-    Trails(uiState.trailList)
+    TrailList(uiState.trailList)
 
 
 }
-
-
-
-
-
-@Composable
-fun Trails(trails: List<Trail>) {
-
-    LazyColumn(contentPadding = PaddingValues(10.dp)) {
-        items(trails) {
-            TrailCard(trail = it)
-        }
-    }
-
-}
-
-@Composable
-fun TrailCard(trail: Trail, modifier: Modifier = Modifier) {
-
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(180.dp)
-            .clip(MaterialTheme.shapes.small)
-            .padding(PaddingValues(8.dp))
-    ) {
-        Row {
-            Column(
-                modifier = modifier
-                    .padding(8.dp)
-                    .weight(0.5f)
-            ) {
-
-                Text(text = trail.trailName)
-                Text(text = trail.trailDuration.toString() + " min")
-                Text(text = trail.trailDifficulty)
-
-            }
-            Log.i("IMG",trail.trailImg)
-            AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(trail.trailImg)
-                    .build(),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(0.5f),
-                contentScale = ContentScale.Crop,
-                contentDescription = "Trail Image",
-                placeholder = painterResource(id = R.drawable.loading_img),
-                error = painterResource(id = R.drawable.ic_broken_image)
-            )
-        }
-    }
-
-}
-
 
 @Composable
 @Preview(showSystemUi = true)
 fun BraGuiaAppPrev() {
-
     val lista: MutableList<String> = listOf<String>().toMutableList()
     for (a in 1..100) {
         lista.add(a.toString())
@@ -124,6 +68,4 @@ fun BraGuiaAppPrev() {
             }
         }
     }
-
-
 }

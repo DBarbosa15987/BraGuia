@@ -7,7 +7,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.example.braguia.model.RelTrail
 
-/*
+
 @Dao
 interface RelTrailDAO {
 
@@ -21,4 +21,4 @@ interface RelTrailDAO {
     suspend fun deleteAll()
 
 
-}*/
+}

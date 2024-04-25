@@ -7,7 +7,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.example.braguia.model.PinDB
 
-/*
+
 @Dao
 interface PinDBDAO {
 
@@ -20,4 +20,4 @@ interface PinDBDAO {
     @Query("DELETE FROM pin")
     suspend fun deleteAll()
 
-}*/
+}

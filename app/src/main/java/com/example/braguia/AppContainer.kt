@@ -4,6 +4,8 @@ import android.content.Context
 import com.example.braguia.model.GuideDatabase
 import com.example.braguia.network.API
 import com.example.braguia.repositories.AppInfoRepository
+import com.example.braguia.repositories.MediaRepository
+import com.example.braguia.repositories.PinRepository
 import com.example.braguia.repositories.TrailRepository
 import com.example.braguia.repositories.UserRepository
 import okhttp3.Interceptor
@@ -14,6 +16,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 interface AppContainer {
     val trailRepository: TrailRepository
+    val pinRepository: PinRepository
+    val mediaRepository: MediaRepository
     val appInfoRepository: AppInfoRepository
     val userRepository: UserRepository
 }
@@ -40,8 +44,15 @@ class BraGuiaAppContainer(val context: Context) : AppContainer {
 
     private val database: GuideDatabase by lazy { GuideDatabase.getInstance(context) }
 
+    override val mediaRepository: MediaRepository by lazy {
+        MediaRepository(database.mediaDAO())
+    }
+    override val pinRepository: PinRepository by lazy {
+       PinRepository(database.pinDBDAO(),database.relPinDAO(),mediaRepository)
+    }
+
     override val trailRepository: TrailRepository by lazy {
-        TrailRepository(retrofitService/*, database.trailDAO()*/)
+        TrailRepository(retrofitService,database.trailDBDAO(), database.edgeDBDAO(),database.relTrailDAO(),pinRepository)
     }
 
     override val appInfoRepository: AppInfoRepository by lazy {

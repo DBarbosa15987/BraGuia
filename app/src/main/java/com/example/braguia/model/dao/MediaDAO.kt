@@ -7,14 +7,14 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.example.braguia.model.Media
 
-/*
+
 @Dao
 interface MediaDAO {
 
-        @Upsert()
+        @Upsert
         suspend fun insert(media: List<Media>)
 
-        @Query("SELECT DISTINCT * FROM media")
-        suspend fun getMedia(): List<Media>
+        @Query("SELECT DISTINCT * FROM media WHERE :pinId = mediaPin")
+        suspend fun getMedia(pinId: Long): List<Media>
 
-}*/
+}
