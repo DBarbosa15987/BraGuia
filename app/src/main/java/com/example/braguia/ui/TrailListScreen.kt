@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import com.example.braguia.model.Trail
 import com.example.braguia.ui.components.TrailCard
 
+@Composable
 fun TrailListScreen(trails: List<Trail>){
 
 
