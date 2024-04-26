@@ -26,6 +26,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.maps.android.compose.GoogleMap
+
+
+// TODO qual o objetivo de standard e premium quando no trails tem os pins todos
+// como usar jwt tokens para login
+// cenas da db
 
 @Composable
 @Preview(showSystemUi = true)

@@ -34,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.braguia.model.Trail
+import com.example.braguia.ui.MapsScreen
 import com.example.braguia.ui.TrailList
 import com.example.braguia.viewModel.HomeUiState
 import com.google.gson.GsonBuilder
@@ -42,14 +43,13 @@ import com.google.gson.GsonBuilder
 @Composable
 fun BraGuiaApp() {
 
-    val trailsViewModel: TrailsViewModel =
-        viewModel(factory = TrailsViewModel.Factory)
-
-    trailsViewModel.login()
-    val uiState = trailsViewModel.homeUiState
-    TrailList(uiState.trailList)
-
-
+//    val trailsViewModel: TrailsViewModel =
+//        viewModel(factory = TrailsViewModel.Factory)
+//
+//    trailsViewModel.login()
+//    val uiState = trailsViewModel.homeUiState
+//    TrailList(uiState.trailList)
+    MapsScreen()
 }
 
 @Composable
