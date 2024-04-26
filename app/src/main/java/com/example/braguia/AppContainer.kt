@@ -30,9 +30,6 @@ class BraGuiaAppContainer(val context: Context) : AppContainer {
      * Use the Retrofit builder to build a retrofit object using a kotlinx.serialization converter
      */
 
-
-    val client = OkHttpClient().newBuilder()
-
     private val retrofit: Retrofit =
         Retrofit.Builder().baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())

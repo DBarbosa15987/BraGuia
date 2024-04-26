@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = TrailDB::class,
             parentColumns = ["id"],
-            childColumns = ["appInfoId"],
+            childColumns = ["edgeTrail"],
             onDelete = ForeignKey.CASCADE // Define what to do when the referenced Pin is deleted
         ),
         ForeignKey(

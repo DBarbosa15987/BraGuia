@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName
     indices = [Index(value = ["id"],unique = true), Index(value = ["trail"])],
     foreignKeys = [
         ForeignKey(
-            entity = Trail::class,
+            entity = TrailDB::class,
             parentColumns = ["id"],
             childColumns = ["trail"],
             onDelete = ForeignKey.CASCADE // Define what to do when the referenced Pin is deleted
@@ -20,7 +20,6 @@ import com.google.gson.annotations.SerializedName
     ]
 )
 data class RelTrail(
-
     @PrimaryKey
     @SerializedName("id")
     val id: Long,
@@ -30,6 +29,4 @@ data class RelTrail(
     val attrib: String,
     @SerializedName("trail")
     val trail: Long
-
-
 )
