@@ -3,6 +3,7 @@ package com.example.braguia.repositories
 import com.example.braguia.model.Edge
 import com.example.braguia.model.EdgeDB
 import com.example.braguia.model.Pin
+import com.example.braguia.model.PinDB
 import com.example.braguia.model.RelTrail
 import com.example.braguia.model.Trail
 import com.example.braguia.model.TrailDB
@@ -11,7 +12,6 @@ import com.example.braguia.model.dao.RelTrailDAO
 import com.example.braguia.model.dao.TrailDBDAO
 import com.example.braguia.network.API
 
-//TODO Falta encapsular isto tudo no Call
 class TrailRepository(
     val API: API,
     val trailDAO: TrailDBDAO,
@@ -19,7 +19,7 @@ class TrailRepository(
     val relTrailDAO: RelTrailDAO,
     val pinRepository: PinRepository
 ) {
-    suspend fun fetchAPI(): List<Trail>{
+    suspend fun fetchAPI(){
         val trailList = API.getTrails()
 
         val trailListDB = listOf<TrailDB>().toMutableList()
@@ -42,13 +42,31 @@ class TrailRepository(
 
         trailDAO.insert(trailListDB)
         relTrailDAO.insert(relTrailList)
-        edgeDBDAO.insert(edgeListDB)
-        // FIXME insert pins perguntar ao prof
         pinRepository.insert(pinList)
-        return trailList
+        edgeDBDAO.insert(edgeListDB)
     }
 
-    //suspend fun getContent(): List<Media> = trailAPI.getContent()
+    suspend fun getTrailsPreview(): List<TrailDB> {
+        return trailDAO.getTrails()
+    }
+
+    suspend fun getRelTrails(trailId: Long): List<RelTrail> {
+        return relTrailDAO.getRelTrail(trailId)
+    }
+
+    //TODO rever
+    suspend fun getEdges(trailId: Long): List<Edge> {
+        val edgesDB: List<EdgeDB> = edgeDBDAO.getEdges(trailId)
+        val edges: MutableList<Edge> = listOf<Edge>().toMutableList()
+        for (edgeDB in edgesDB) {
+            //TODO estou a assumir um par aqui!!!
+            val pins: List<Pin> = pinRepository.getPins(edgeDB.edgeStart,edgeDB.edgeEnd)
+            edges.add(edgeDB.toEdge(pins[0],pins[1]))
+
+        }
+
+        return edges
+    }
 
 
     fun Trail.toTrailDB() = TrailDB(
@@ -70,6 +88,16 @@ class TrailRepository(
         edgeStart = edgeStart.id,
         edgeEnd = edgeEnd.id
 
+    )
+
+    fun EdgeDB.toEdge(edgeStart: Pin, edgeEnd: Pin) = Edge(
+        id = id,
+        edgeTransport = edgeTransport,
+        edgeDuration = edgeDuration,
+        edgeDesc = edgeDesc,
+        edgeTrail = edgeTrail,
+        edgeStart = edgeStart,
+        edgeEnd = edgeEnd
     )
 
 }

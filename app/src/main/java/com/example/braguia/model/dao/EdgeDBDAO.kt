@@ -10,11 +10,11 @@ import com.example.braguia.model.EdgeDB
 @Dao
 interface EdgeDBDAO {
 
-    @Upsert()
+    @Upsert
     suspend fun insert(edges: List<EdgeDB>)
 
-    @Query("SELECT DISTINCT * FROM edge" )
-    suspend fun getEdge(): List<EdgeDB>
+    @Query("SELECT DISTINCT * FROM edge WHERE edgeTrail=:trailId")
+    suspend fun getEdges(trailId:Long): List<EdgeDB>
 
     @Query("DELETE FROM edge")
     suspend fun deleteAll()

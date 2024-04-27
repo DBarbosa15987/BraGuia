@@ -11,7 +11,7 @@ class MediaRepository(
         mediaDAO.insert(media)
     }
 
-    suspend fun getMedia(id: Long): List<Media> {
-        return mediaDAO.getMedia(id)
+    suspend fun getMedia(pinId: Long): List<Media> {
+        return mediaDAO.getMedia(pinId)
     }
 }

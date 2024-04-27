@@ -13,15 +13,11 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.braguia.BraGuiaApplication
 import com.example.braguia.model.AppInfo
 import com.example.braguia.model.Media
-import com.example.braguia.model.Trail
-import com.example.braguia.network.LoginRequest
+import com.example.braguia.model.TrailDB
 import com.example.braguia.repositories.AppInfoRepository
 import com.example.braguia.repositories.TrailRepository
 import com.example.braguia.repositories.UserRepository
 import kotlinx.coroutines.launch
-import okhttp3.Response
-import okhttp3.ResponseBody
-import retrofit2.Call
 
 class TrailsViewModel(
     val trailRepository: TrailRepository,/*FIXME SO POR ENQUANTO*/
@@ -41,28 +37,32 @@ class TrailsViewModel(
         private set
 
     init {
-
+        //TODO temp
+        viewModelScope.launch {
+            appInfoRepository.fetchAppInfo()
+            trailRepository.fetchAPI()
+        }
         login()
     }
 
-/*    fun login(): ResponseBody? {
+    /*    fun login(): ResponseBody? {
 
-        var response:ResponseBody? = null
-        viewModelScope.launch {
+            var response:ResponseBody? = null
+            viewModelScope.launch {
 
-            val loginRequest: LoginRequest =
-                LoginRequest("premium_user", "premium@email.com", "paiduser")
-            response = userRepository.login(loginRequest)
-            Log.i("LOGIN",response)
+                val loginRequest: LoginRequest =
+                    LoginRequest("premium_user", "premium@email.com", "paiduser")
+                response = userRepository.login(loginRequest)
+                Log.i("LOGIN",response)
 
-        }
+            }
 
-        return response
-    }*/
+            return response
+        }*/
 
-    fun login(){
+    fun login() {
 
-        //Logica de login
+        //Logica de login getTrailsPreview
         getTrails()
         getAppInfo()
 
@@ -73,10 +73,11 @@ class TrailsViewModel(
 
         viewModelScope.launch {
             homeUiState = try {
-                val result = trailRepository.fetchAPI()
+                val result = trailRepository.getTrailsPreview()
                 HomeUiState(result, homeUiState.mediaList, homeUiState.appInfo)
             } catch (e: Exception) {
                 Log.e("TRAILS", e.toString())
+                Log.e("TRAILS", e.stackTraceToString())
                 HomeUiState(homeUiState.trailList, homeUiState.mediaList, homeUiState.appInfo)
             }
         }
@@ -113,7 +114,7 @@ class TrailsViewModel(
 }
 
 data class HomeUiState(
-    val trailList: List<Trail> = listOf(),
+    val trailList: List<TrailDB> = listOf(),
     val mediaList: List<Media> = listOf(),
     val appInfo: AppInfo,
     val test: String = "bomdia"

@@ -14,8 +14,8 @@ interface RelTrailDAO {
     @Upsert
     suspend fun insert(relTrails: List<RelTrail>)
 
-    @Query("SELECT DISTINCT * FROM relTrail")
-    suspend fun getRelTrail(): List<RelTrail>
+    @Query("SELECT DISTINCT * FROM relTrail WHERE id=:trailId")
+    suspend fun getRelTrail(trailId:Long): List<RelTrail>
 
     @Query("DELETE FROM relTrail")
     suspend fun deleteAll()

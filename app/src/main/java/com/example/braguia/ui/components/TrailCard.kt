@@ -22,9 +22,10 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.braguia.R
 import com.example.braguia.model.Trail
+import com.example.braguia.model.TrailDB
 
 @Composable
-fun TrailCard(trail: Trail, modifier: Modifier = Modifier) {
+fun TrailCard(trail: TrailDB, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .fillMaxWidth()

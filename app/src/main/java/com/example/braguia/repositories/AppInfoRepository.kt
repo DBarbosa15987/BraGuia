@@ -22,22 +22,28 @@ class AppInfoRepository(
 ) {
 
 
-    suspend fun getAppInfo(): AppInfo {
+    suspend fun fetchAppInfo() {
 
-        var appInfo:AppInfo = API.getAppInfo()[0]
+        val appInfo: AppInfo = API.getAppInfo()[0]
         val appInfoListDB = appInfoDAO.getAppInfo()
-        val id:String
 
-        if (appInfoListDB.isNotEmpty()){
-            id = appInfoListDB[0].appName
-        }
-        else{
+        val id: String
+
+        //TODO deixamos o anterior na db ou limpamos tudo??
+        if (appInfoListDB.isNotEmpty()) {
+            val appInfoDB = appInfoDAO.getAppInfo()[0]
+            if (appInfo.appName != appInfoDB.appName){
+                //TODO deleteAll e repopulação
+            }
+
+        } else {
             appInfoDAO.insert(appInfo.toAppInfoDB())
             id = appInfo.appName
             appInfo.contacts.forEach { contact -> contact.appInfoId = id }
             appInfo.socials.forEach { social -> social.appInfoId = id }
             appInfo.partners.forEach { partner -> partner.appInfoId = id }
 
+            //TODO ainda é para dar delete?
             contactDAO.deleteAll()
             socialDAO.deleteAll()
             partnerDAO.deleteAll()
@@ -46,19 +52,22 @@ class AppInfoRepository(
             socialDAO.insert(appInfo.socials)
             partnerDAO.insert(appInfo.partners)
         }
-
         //TODO Transaction aqui? coroutines?
         //TODO Cache check
-        val appInfoListDB2 = appInfoDAO.getAppInfo()
+
+    }
+
+    suspend fun getAppInfo(): AppInfo {
+
+        val appInfoListDB = appInfoDAO.getAppInfo()
+        val appInfoDB = appInfoListDB[0]
+        val id = appInfoDB.appName
         val socials: List<Social> = socialDAO.getSocials(id)
         val contacts: List<Contact> = contactDAO.getContacts(id)
         val partners: List<Partner> = partnerDAO.getPartner(id)
-        appInfo = appInfoListDB2[0].toAppInfo(socials, contacts, partners)
-        Log.i("DB2",appInfo.toString())
 
-        return appInfo
+        return appInfoDB.toAppInfo(socials, contacts, partners)
     }
-
 
 
     fun AppInfo.toAppInfoDB() = AppInfoDB(
