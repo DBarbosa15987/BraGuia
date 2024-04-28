@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">BraGuia</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="Login">Login</string>
+    <string name="HomePage">Home</string>
+    <string name="Settings">Settings</string>
+    <string name="UserPage">User Page</string>
+    <string name="TrailList">TrailList</string>
+    <string name="Trail">Trail</string>
+    <string name="EnterUsername">Enter username</string>
+    <string name="EnterPassword">Enter password</string>
 </resources>

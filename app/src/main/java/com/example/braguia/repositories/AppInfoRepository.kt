@@ -25,6 +25,7 @@ class AppInfoRepository(
     suspend fun fetchAppInfo() {
 
         val appInfo: AppInfo = API.getAppInfo()[0]
+        appInfoDAO.deleteAll()
         val appInfoListDB = appInfoDAO.getAppInfo()
 
         val id: String

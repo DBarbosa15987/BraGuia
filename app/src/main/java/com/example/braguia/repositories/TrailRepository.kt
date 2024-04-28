@@ -11,6 +11,7 @@ import com.example.braguia.model.dao.EdgeDBDAO
 import com.example.braguia.model.dao.RelTrailDAO
 import com.example.braguia.model.dao.TrailDBDAO
 import com.example.braguia.network.API
+import kotlinx.coroutines.flow.Flow
 
 class TrailRepository(
     val API: API,
@@ -46,7 +47,8 @@ class TrailRepository(
         edgeDBDAO.insert(edgeListDB)
     }
 
-    suspend fun getTrailsPreview(): List<TrailDB> {
+    fun getTrailsPreview(): Flow<List<TrailDB>> {
+    //suspend fun getTrailsPreview(): List<TrailDB> {
         return trailDAO.getTrails()
     }
 
