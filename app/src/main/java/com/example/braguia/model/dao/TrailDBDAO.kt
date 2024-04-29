@@ -18,6 +18,9 @@ interface TrailDBDAO {
     //suspend fun getTrails(): List<TrailDB>
     fun getTrails(): Flow<List<TrailDB>>
 
+    @Query("SELECT * FROM trail WHERE id=:trailId")
+    suspend fun getTrail(trailId:Long): TrailDB
+
     @Query("DELETE FROM trail")
     suspend fun deleteAll()
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,44 +21,51 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.braguia.BraguiaScreen
 import com.example.braguia.R
 import com.example.braguia.model.Trail
 import com.example.braguia.model.TrailDB
 
 @Composable
-fun TrailCard(trail: TrailDB, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(180.dp)
-            .clip(MaterialTheme.shapes.small)
-            .padding(PaddingValues(8.dp))
-    ) {
-        Row {
-            Column(
-                modifier = modifier
-                    .padding(8.dp)
-                    .weight(0.5f)
-            ) {
+fun TrailCard(trail: TrailDB, modifier: Modifier = Modifier, navigateToTrail: (Long) -> Unit) {
+    Button(onClick = {
+        //Log.i("ROUTE_IN", "${BraguiaScreen.Trail.name}/${trail.id}")
+        navigateToTrail.invoke(trail.id)
+        //navigateToTrail(trail.id)
+    }) {
+        Card(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(180.dp)
+                .clip(MaterialTheme.shapes.small)
+                .padding(PaddingValues(8.dp))
+        ) {
+            Row {
+                Column(
+                    modifier = modifier
+                        .padding(8.dp)
+                        .weight(0.5f)
+                ) {
 
-                Text(text = trail.trailName)
-                Text(text = trail.trailDuration.toString() + " min")
-                Text(text = trail.trailDifficulty)
+                    Text(text = trail.trailName)
+                    Text(text = trail.trailDuration.toString() + " min")
+                    Text(text = trail.trailDifficulty)
 
+                }
+                Log.i("IMG", trail.trailImg)
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data(trail.trailImg)
+                        .build(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(0.5f),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "Trail Image",
+                    placeholder = painterResource(id = R.drawable.loading_img),
+                    error = painterResource(id = R.drawable.ic_broken_image)
+                )
             }
-            Log.i("IMG", trail.trailImg)
-            AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(trail.trailImg)
-                    .build(),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(0.5f),
-                contentScale = ContentScale.Crop,
-                contentDescription = "Trail Image",
-                placeholder = painterResource(id = R.drawable.loading_img),
-                error = painterResource(id = R.drawable.ic_broken_image)
-            )
         }
     }
 }

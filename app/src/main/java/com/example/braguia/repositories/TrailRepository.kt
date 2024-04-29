@@ -20,7 +20,7 @@ class TrailRepository(
     val relTrailDAO: RelTrailDAO,
     val pinRepository: PinRepository
 ) {
-    suspend fun fetchAPI(){
+    suspend fun fetchAPI() {
         val trailList = API.getTrails()
 
         val trailListDB = listOf<TrailDB>().toMutableList()
@@ -48,7 +48,7 @@ class TrailRepository(
     }
 
     fun getTrailsPreview(): Flow<List<TrailDB>> {
-    //suspend fun getTrailsPreview(): List<TrailDB> {
+        //suspend fun getTrailsPreview(): List<TrailDB> {
         return trailDAO.getTrails()
     }
 
@@ -62,12 +62,21 @@ class TrailRepository(
         val edges: MutableList<Edge> = listOf<Edge>().toMutableList()
         for (edgeDB in edgesDB) {
             //TODO estou a assumir um par aqui!!!
-            val pins: List<Pin> = pinRepository.getPins(edgeDB.edgeStart,edgeDB.edgeEnd)
-            edges.add(edgeDB.toEdge(pins[0],pins[1]))
+            val pins: List<Pin> = pinRepository.getPins(edgeDB.edgeStart, edgeDB.edgeEnd)
+            edges.add(edgeDB.toEdge(pins[0], pins[1]))
 
         }
 
         return edges
+    }
+
+    suspend fun getTrail(trailId: Long): Trail {
+
+        val relRelTrails: List<RelTrail> = this.getRelTrails(trailId)
+        val edges: List<Edge> = this.getEdges(trailId)
+
+        return trailDAO.getTrail(trailId).toTrail(relRelTrails, edges)
+
     }
 
 
@@ -78,6 +87,20 @@ class TrailRepository(
         trailDesc = trailDesc,
         trailDuration = trailDuration,
         trailDifficulty = trailDifficulty
+    )
+
+    fun TrailDB.toTrail(
+        relTrail: List<RelTrail>,
+        edges: List<Edge>
+    ) = Trail(
+        id = id,
+        trailImg = trailImg,
+        trailName = trailName,
+        trailDesc = trailDesc,
+        trailDuration = trailDuration,
+        trailDifficulty = trailDifficulty,
+        relTrail = relTrail,
+        edges = edges
     )
 
     fun Edge.toEdgeDB() = EdgeDB(

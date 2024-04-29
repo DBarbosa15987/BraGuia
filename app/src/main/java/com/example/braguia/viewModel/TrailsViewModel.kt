@@ -13,6 +13,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.braguia.BraGuiaApplication
 import com.example.braguia.model.AppInfo
 import com.example.braguia.model.Media
+import com.example.braguia.model.Trail
 import com.example.braguia.model.TrailDB
 import com.example.braguia.repositories.AppInfoRepository
 import com.example.braguia.repositories.TrailRepository
@@ -99,10 +100,22 @@ class TrailsViewModel(
         }
     }
 
+    //TODO aqui faço o get assim ou retorno isto diretamente para depois ser usado?
+    //TODO faz sentido se não for o único a usar?
+    fun getTrail(trailId:Long){
+        viewModelScope.launch {
+            val result = trailRepository.getTrail(trailId)
+            _homeUiState.update {
+                currState ->
+                currState.copy(currTrail = result)
+            }
+        }
+    }
 }
 
 data class HomeUiState(
     val trailList: List<TrailDB> = listOf(),
+    val currTrail: Trail? = null,
     val mediaList: List<Media> = listOf(),
     val appInfo: AppInfo = AppInfo("", "", listOf(), listOf(), listOf(), "")
 )
