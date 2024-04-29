@@ -21,7 +21,6 @@ fun TrailList(trails: List<TrailDB>,delete:()->Unit) {
         items(trails) {
                 TrailCard(trail = it)
             Button(onClick = delete) {
-
             }
         }
     }
