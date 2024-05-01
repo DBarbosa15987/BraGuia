@@ -95,14 +95,13 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     ksp("androidx.room:room-compiler:2.6.1")
-    implementation(libs.androidx.navigation.compose)
+    //implementation(libs.androidx.navigation.compose)
 
     // Maps SDK for Android
     implementation("com.google.maps.android:maps-compose:4.4.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.maps.android:maps-ktx:5.0.0")
-
-
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
 
     implementation("com.google.code.gson:gson:2.8.6")

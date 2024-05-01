@@ -21,30 +21,36 @@ class TrailRepository(
     val pinRepository: PinRepository
 ) {
     suspend fun fetchAPI() {
-        val trailList = API.getTrails()
 
-        val trailListDB = listOf<TrailDB>().toMutableList()
-        val pinList = listOf<Pin>().toMutableList()
-        val edgeListDB = listOf<EdgeDB>().toMutableList()
-        val relTrailList = listOf<RelTrail>().toMutableList()
+        try{
+            val trailList = API.getTrails()
 
-        for (trail in trailList) {
-            trailListDB.add(trail.toTrailDB())
-            relTrailList.addAll(trail.relTrail)
+            val trailListDB = listOf<TrailDB>().toMutableList()
+            val pinList = listOf<Pin>().toMutableList()
+            val edgeListDB = listOf<EdgeDB>().toMutableList()
+            val relTrailList = listOf<RelTrail>().toMutableList()
 
-            val edges = trail.edges
+            for (trail in trailList) {
+                trailListDB.add(trail.toTrailDB())
+                relTrailList.addAll(trail.relTrail)
 
-            for (edge in edges) {
-                edgeListDB.add(edge.toEdgeDB())
-                pinList.add(edge.edgeStart)
-                pinList.add(edge.edgeEnd)
+                val edges = trail.edges
+
+                for (edge in edges) {
+                    edgeListDB.add(edge.toEdgeDB())
+                    pinList.add(edge.edgeStart)
+                    pinList.add(edge.edgeEnd)
+                }
             }
-        }
 
-        trailDAO.insert(trailListDB)
-        relTrailDAO.insert(relTrailList)
-        pinRepository.insert(pinList)
-        edgeDBDAO.insert(edgeListDB)
+            trailDAO.insert(trailListDB)
+            relTrailDAO.insert(relTrailList)
+            pinRepository.insert(pinList)
+            edgeDBDAO.insert(edgeListDB)
+        }
+        catch (_:Exception){
+
+        }
     }
 
     fun getTrailsPreview(): Flow<List<TrailDB>> {

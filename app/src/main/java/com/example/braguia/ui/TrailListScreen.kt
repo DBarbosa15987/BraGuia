@@ -11,18 +11,17 @@ import com.example.braguia.model.TrailDB
 import com.example.braguia.ui.components.TrailCard
 
 @Composable
-fun TrailListScreen(trails: List<Trail>) {
+fun TrailListScreen(trails: List<TrailDB>, navigateToTrail:(Long) -> Unit) {
 
+    TrailList(trails,navigateToTrail)
 
 }
 
 @Composable
-fun TrailList(trails: List<TrailDB>, delete: () -> Unit, navigateToTrail:(Long) -> Unit) {
+fun TrailList(trails: List<TrailDB>, navigateToTrail:(Long) -> Unit) {
     LazyColumn(contentPadding = PaddingValues(10.dp)) {
         items(trails) {
             TrailCard(trail = it, navigateToTrail= navigateToTrail )
-            Button(onClick = delete) {
-            }
         }
     }
 }

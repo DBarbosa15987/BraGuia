@@ -24,38 +24,45 @@ class AppInfoRepository(
 
     suspend fun fetchAppInfo() {
 
-        val appInfo: AppInfo = API.getAppInfo()[0]
-        appInfoDAO.deleteAll()
-        val appInfoListDB = appInfoDAO.getAppInfo()
+        val appInfo: AppInfo
 
-        val id: String
+        try {
 
-        //TODO deixamos o anterior na db ou limpamos tudo??
-        if (appInfoListDB.isNotEmpty()) {
-            val appInfoDB = appInfoDAO.getAppInfo()[0]
-            if (appInfo.appName != appInfoDB.appName){
-                //TODO deleteAll e repopulação
+            appInfo = API.getAppInfo()[0]
+            appInfoDAO.deleteAll()
+            val appInfoListDB = appInfoDAO.getAppInfo()
+
+            val id: String
+
+            //TODO deixamos o anterior na db ou limpamos tudo??
+            if (appInfoListDB.isNotEmpty()) {
+                val appInfoDB = appInfoDAO.getAppInfo()[0]
+                if (appInfo.appName != appInfoDB.appName) {
+                    //TODO deleteAll e repopulação
+                }
+
+            } else {
+                appInfoDAO.insert(appInfo.toAppInfoDB())
+                id = appInfo.appName
+                appInfo.contacts.forEach { contact -> contact.appInfoId = id }
+                appInfo.socials.forEach { social -> social.appInfoId = id }
+                appInfo.partners.forEach { partner -> partner.appInfoId = id }
+
+                //TODO ainda é para dar delete?
+                contactDAO.deleteAll()
+                socialDAO.deleteAll()
+                partnerDAO.deleteAll()
+
+                contactDAO.insert(appInfo.contacts)
+                socialDAO.insert(appInfo.socials)
+                partnerDAO.insert(appInfo.partners)
             }
-
-        } else {
-            appInfoDAO.insert(appInfo.toAppInfoDB())
-            id = appInfo.appName
-            appInfo.contacts.forEach { contact -> contact.appInfoId = id }
-            appInfo.socials.forEach { social -> social.appInfoId = id }
-            appInfo.partners.forEach { partner -> partner.appInfoId = id }
-
-            //TODO ainda é para dar delete?
-            contactDAO.deleteAll()
-            socialDAO.deleteAll()
-            partnerDAO.deleteAll()
-
-            contactDAO.insert(appInfo.contacts)
-            socialDAO.insert(appInfo.socials)
-            partnerDAO.insert(appInfo.partners)
+            //TODO Transaction aqui? coroutines?
+            //TODO Cache check
         }
-        //TODO Transaction aqui? coroutines?
-        //TODO Cache check
+        catch (_:Exception){
 
+        }
     }
 
     suspend fun getAppInfo(): AppInfo {

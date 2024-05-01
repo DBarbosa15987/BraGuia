@@ -2,16 +2,9 @@
 
 package com.example.braguia
 
-import android.util.Log
-import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,10 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -40,29 +29,28 @@ import com.example.braguia.model.Trail
 import com.example.braguia.ui.LoginScreen
 import com.example.braguia.ui.SingleTrailScreen
 import com.example.braguia.ui.TrailList
+import com.example.braguia.ui.TrailListScreen
 import com.example.braguia.viewModel.BraGuiaViewModelProvider
 import com.example.braguia.viewModel.TrailsViewModel
 
-enum class BraguiaScreen() {
+enum class BraguiaScreen {
     Login,
     HomePage,
     Settings,
     UserPage,
-    TrailList,
     Trail
 }
-
 
 @Composable
 fun BraguiaTopAppBar(
     canNavigateBack: Boolean,
-    //currentScreen: BraguiaScreen,
+    currentScreen: BraguiaScreen,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     TopAppBar(
-        title = { Text(text = "bomdia") },
+        title = { Text(text = currentScreen.name) },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
@@ -71,14 +59,13 @@ fun BraguiaTopAppBar(
             if (canNavigateBack) {
                 IconButton(onClick = navigateUp) {
                     Icon(
-                        imageVector = Icons.Filled.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back"
                     )
                 }
             }
         }
     )
-
 }
 
 
@@ -90,15 +77,18 @@ fun BraGuiaApp() {
     val navController: NavHostController = rememberNavController()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
-/*
-    val currentScreen =
-        BraguiaScreen.valueOf(backStackEntry?.destination?.route ?: BraguiaScreen.HomePage.name)
-*/
+
+    val currentRoute = backStackEntry?.destination?.route ?: BraguiaScreen.HomePage.name
+    val currentScreen = when {
+        currentRoute.startsWith(BraguiaScreen.Trail.name) -> BraguiaScreen.Trail
+        else -> BraguiaScreen.valueOf(currentRoute)
+    }
 
     Scaffold(topBar = {
         BraguiaTopAppBar(
-            canNavigateBack = navController.previousBackStackEntry != null,
-            navigateUp = { navController.navigateUp() }
+            canNavigateBack = navController.previousBackStackEntry != null || currentRoute == BraguiaScreen.HomePage.name,
+            navigateUp = { navController.navigateUp() },
+            currentScreen = currentScreen
         )
     }) { innerPadding ->
 
@@ -118,25 +108,20 @@ fun BraGuiaApp() {
             }
 
             composable(route = BraguiaScreen.HomePage.name) {
-                TrailList(
+                TrailListScreen(
                     trails = uiState.value.trailList,
-                    delete = { trailsViewModel.delete() },
                     navigateToTrail = { trailId ->
-                        navController.navigate(route = "Trail/$trailId")
-                        //navController.navigate(BraguiaScreen.Trail.name)
+                        navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
                     }
                 )
             }
 
-            //TODO experimental
-            val trailId = "trailId"
             composable(
-                route = "Trail/$trailId",
-                arguments = listOf(navArgument(trailId) {
+                route = "${BraguiaScreen.Trail.name}/{trailId}",
+                arguments = listOf(navArgument("trailId") {
                     type = NavType.LongType
                 })
             ) { b ->
-                Log.i("NAV", "bomdia")
                 val id: Long = b.arguments?.getLong("trailId") ?: 1
                 trailsViewModel.getTrail(id)
                 val trail: Trail? = uiState.value.currTrail
