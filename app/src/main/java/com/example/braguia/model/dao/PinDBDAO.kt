@@ -20,4 +20,7 @@ interface PinDBDAO {
     @Query("DELETE FROM pin")
     suspend fun deleteAll()
 
+    @Query("SELECT * FROM pin WHERE id=:pinId")
+    suspend fun getPin(pinId:Long): PinDB?
+
 }

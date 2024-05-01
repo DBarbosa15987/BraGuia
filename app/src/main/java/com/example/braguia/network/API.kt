@@ -2,9 +2,8 @@ package com.example.braguia.network
 
 import com.example.braguia.model.AppInfo
 import com.example.braguia.model.Trail
-import okhttp3.Response
 import okhttp3.ResponseBody
-import retrofit2.Retrofit
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -17,7 +16,7 @@ interface API {
     @GET("app")
     suspend fun getAppInfo(): List<AppInfo>
 
-/*    @POST("login")
-    suspend fun login(@Body loginRequest:LoginRequest): Response*/
+    @POST("login")
+    suspend fun login(@Body loginRequest:LoginRequest): Call<ResponseBody>
 
 }

@@ -89,13 +89,14 @@ fun LoginPrompt(
         Button(
             //TODO validação
             onClick = {
-                if (username == "a" && password == "a") {
+                grantAccess()
+                /*if (username == "a" && password == "a") {
                     grantAccess()
                 } else {
                     error = true
                     username = ""
                     password = ""
-                }
+                }*/
             },
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier.align(Alignment.CenterHorizontally)

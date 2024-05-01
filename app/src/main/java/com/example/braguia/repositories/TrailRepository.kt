@@ -1,5 +1,6 @@
 package com.example.braguia.repositories
 
+import android.util.Log
 import com.example.braguia.model.Edge
 import com.example.braguia.model.EdgeDB
 import com.example.braguia.model.Pin
@@ -48,8 +49,8 @@ class TrailRepository(
             pinRepository.insert(pinList)
             edgeDBDAO.insert(edgeListDB)
         }
-        catch (_:Exception){
-
+        catch (e:Exception){
+            Log.e("API",e.toString())
         }
     }
 
@@ -83,6 +84,10 @@ class TrailRepository(
 
         return trailDAO.getTrail(trailId).toTrail(relRelTrails, edges)
 
+    }
+
+    suspend fun getPin(pinId:Long) : Pin?{
+        return pinRepository.getPin(pinId)
     }
 
 

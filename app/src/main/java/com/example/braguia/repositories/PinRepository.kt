@@ -44,6 +44,17 @@ class PinRepository(
         return pins
     }
 
+    suspend fun getPin(pinId: Long):Pin?{
+        val pinDB:PinDB? = pinDBDAO.getPin(pinId)
+        var pin:Pin? = null
+        if (pinDB != null) {
+            val relPins: List<RelPin> = this.getRelPins(pinDB.id)
+            val media: List<Media> = mediaRepository.getMedia(pinDB.id)
+            pin = pinDB.toPin(relPins,media)
+        }
+        return pin
+    }
+
 
 
     fun Pin.toPinDB() = PinDB(

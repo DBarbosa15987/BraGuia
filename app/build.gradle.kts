@@ -96,6 +96,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     ksp("androidx.room:room-compiler:2.6.1")
     //implementation(libs.androidx.navigation.compose)
+    implementation("androidx.compose.material:material-icons-extended")
 
     // Maps SDK for Android
     implementation("com.google.maps.android:maps-compose:4.4.0")

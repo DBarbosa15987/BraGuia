@@ -28,7 +28,7 @@ interface AppContainer {
 }
 
 class BraGuiaAppContainer(private val context: Context) : AppContainer {
-    private val baseUrl = "https://23d3101dbed17c0e1a5b6b102c3cedd7.serveo.net/"
+    private val baseUrl = "https://79f869b14293b18d6536c5e3c254e8af.serveo.net/"
 
     /**
      * Use the Retrofit builder to build a retrofit object using a kotlinx.serialization converter

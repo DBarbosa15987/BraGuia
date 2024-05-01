@@ -12,7 +12,9 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.braguia.BraGuiaApplication
 import com.example.braguia.model.AppInfo
+import com.example.braguia.model.Edge
 import com.example.braguia.model.Media
+import com.example.braguia.model.Pin
 import com.example.braguia.model.Trail
 import com.example.braguia.model.TrailDB
 import com.example.braguia.repositories.AppInfoRepository
@@ -48,7 +50,7 @@ class TrailsViewModel(
         getTrails()
         getAppInfo()
     }
-    
+
 
     fun getTrails() {
         viewModelScope.launch {
@@ -62,21 +64,6 @@ class TrailsViewModel(
                     _homeUiState.update { curr -> curr.copy(trailList = trails) }
                 }
         }
-
-        /*        viewModelScope.launch {
-                    var result = listOf<TrailDB>()
-                    try {
-                        result = trailRepository.getTrailsPreview()
-                    } catch (e: Exception) {
-                        Log.e("TRAILS", e.toString())
-                    }
-                    _homeUiState.update { currentState ->
-                        currentState.copy(
-                            trailList = result
-                        )
-                    }
-                }*/
-
     }
 
     fun delete() {
@@ -102,19 +89,39 @@ class TrailsViewModel(
 
     //TODO aqui faço o get assim ou retorno isto diretamente para depois ser usado?
     //TODO faz sentido se não for o único a usar?
-    fun getTrail(trailId:Long){
+    fun getTrail(trailId: Long) {
         viewModelScope.launch {
             val result = trailRepository.getTrail(trailId)
-            _homeUiState.update {
-                currState ->
+            _homeUiState.update { currState ->
                 currState.copy(currTrail = result)
             }
         }
     }
+
+    fun getEdges(trailId: Long) {
+        viewModelScope.launch {
+            val result = trailRepository.getEdges(trailId)
+            _homeUiState.update { currState ->
+                currState.copy(edgeList = result)
+            }
+        }
+    }
+
+    fun getPin(pinId: Long) {
+        viewModelScope.launch {
+            val result = trailRepository.getPin(pinId)
+            _homeUiState.update { curState ->
+                curState.copy(currPin = result)
+            }
+        }
+    }
+
 }
 
 data class HomeUiState(
     val trailList: List<TrailDB> = listOf(),
+    val edgeList: List<Edge> = listOf(),
+    val currPin: Pin? = null,
     val currTrail: Trail? = null,
     val mediaList: List<Media> = listOf(),
     val appInfo: AppInfo = AppInfo("", "", listOf(), listOf(), listOf(), "")

@@ -25,8 +25,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.braguia.model.Edge
+import com.example.braguia.model.Pin
 import com.example.braguia.model.Trail
 import com.example.braguia.ui.LoginScreen
+import com.example.braguia.ui.SinglePinScreen
 import com.example.braguia.ui.SingleTrailScreen
 import com.example.braguia.ui.TrailList
 import com.example.braguia.ui.TrailListScreen
@@ -38,7 +41,8 @@ enum class BraguiaScreen {
     HomePage,
     Settings,
     UserPage,
-    Trail
+    Trail,
+    Pin
 }
 
 @Composable
@@ -81,12 +85,13 @@ fun BraGuiaApp() {
     val currentRoute = backStackEntry?.destination?.route ?: BraguiaScreen.HomePage.name
     val currentScreen = when {
         currentRoute.startsWith(BraguiaScreen.Trail.name) -> BraguiaScreen.Trail
+        currentRoute.startsWith(BraguiaScreen.Pin.name) -> BraguiaScreen.Pin
         else -> BraguiaScreen.valueOf(currentRoute)
     }
 
     Scaffold(topBar = {
         BraguiaTopAppBar(
-            canNavigateBack = navController.previousBackStackEntry != null || currentRoute == BraguiaScreen.HomePage.name,
+            canNavigateBack = navController.previousBackStackEntry != null && currentScreen != BraguiaScreen.HomePage,
             navigateUp = { navController.navigateUp() },
             currentScreen = currentScreen
         )
@@ -97,7 +102,7 @@ fun BraGuiaApp() {
         NavHost(
             navController = navController,
             startDestination = BraguiaScreen.Login.name,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
         ) {
             composable(route = BraguiaScreen.Login.name) {
                 LoginScreen(uiState.value.appInfo.appName) {
@@ -112,7 +117,8 @@ fun BraGuiaApp() {
                     trails = uiState.value.trailList,
                     navigateToTrail = { trailId ->
                         navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
-                    }
+                    },
+                    innerPadding
                 )
             }
 
@@ -122,14 +128,35 @@ fun BraGuiaApp() {
                     type = NavType.LongType
                 })
             ) { b ->
-                val id: Long = b.arguments?.getLong("trailId") ?: 1
+                val id: Long = b.arguments?.getLong("trailId") ?: 0 // TODO tratamento de errors?
                 trailsViewModel.getTrail(id)
-                val trail: Trail? = uiState.value.currTrail
+                trailsViewModel.getEdges(id)
+                val trail: Trail? = uiState.value.currTrail // TODO tratamento de errors?
+                val edges: List<Edge> = uiState.value.edgeList
                 if (trail != null) {
-                    SingleTrailScreen(trail = trail)
+                    SingleTrailScreen(
+                        trail = trail,
+                        edges = edges,
+                        innerPadding = innerPadding,
+                        navigateToPin = { pinId ->
+                            navController.navigate("${BraguiaScreen.Pin.name}/$pinId")
+                        }
+                    )
                 }
             }
-
+            composable(
+                route = "${BraguiaScreen.Pin.name}/{pinId}",
+                arguments = listOf(navArgument("pinId") {
+                    type = NavType.LongType
+                })
+            ) {b->
+                val pinId: Long = b.arguments?.getLong("pinId") ?: 0 // TODO tratamento de errors?
+                trailsViewModel.getPin(pinId)
+                val pin:Pin? = uiState.value.currPin
+                if (pin!=null) {
+                    SinglePinScreen(pin)
+                }
+            }
         }
     }
 }
@@ -139,40 +166,3 @@ private fun navigateToHomePage(navController: NavHostController) {
     navController.popBackStack(BraguiaScreen.HomePage.name, inclusive = false)
 }
 
-
-/*
-@Composable
-@Preview(showSystemUi = true)
-fun BraGuiaAppPrev() {
-    val lista: MutableList<String> = listOf<String>().toMutableList()
-    for (a in 1..100) {
-        lista.add(a.toString())
-    }
-
-    val navController: NavHostController = rememberNavController()
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = BraguiaScreen.valueOf(
-        backStackEntry?.destination?.route ?: BraguiaScreen.HomePage.name
-    )
-
-    Scaffold(topBar = {
-        BraguiaTopAppBar(
-            canNavigateBack = navController.previousBackStackEntry != null,
-            navigateUp = { navController.navigateUp() },
-            currentScreen = currentScreen
-        )
-    }) { innerPadding ->
-
-        LazyColumn(contentPadding = innerPadding) {
-            //Text(trailsViewModel.homeUiState.contentList.toString())
-            //Text(trailsViewModel.homeUiState.trailList.toString())
-            items(lista) {
-                Card {
-                    Text(text = it)
-                }
-            }
-        }
-
-    }
-}
-*/

@@ -60,8 +60,8 @@ class AppInfoRepository(
             //TODO Transaction aqui? coroutines?
             //TODO Cache check
         }
-        catch (_:Exception){
-
+        catch (e:Exception){
+            Log.e("API",e.toString())
         }
     }
 

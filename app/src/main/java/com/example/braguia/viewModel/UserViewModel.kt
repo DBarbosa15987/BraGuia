@@ -5,31 +5,36 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.braguia.model.TrailDB
+import com.example.braguia.network.API
+import com.example.braguia.network.LoginRequest
 import com.example.braguia.repositories.UserRepository
 
 class UserViewModel(
     private val userRepository: UserRepository
-): ViewModel() {
+) : ViewModel() {
 
     var userUiState: UserUiState by mutableStateOf(UserUiState())
 
-    fun login(){
+    suspend fun login(username: String, password: String) {
+
+        val loginRequest: LoginRequest = LoginRequest(username = username, password = password)
+        userRepository.login(loginRequest)
 
     }
 
-    fun logout(){
+    fun logout() {
 
     }
 
-    fun fetchUserProfile(){
+    fun fetchUserProfile() {
 
     }
 
-    fun updateHistory(){
+    fun updateHistory() {
 
     }
 
-    fun updateBookmarks(){
+    fun updateBookmarks() {
 
     }
 }
