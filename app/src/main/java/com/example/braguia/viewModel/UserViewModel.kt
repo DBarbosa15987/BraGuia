@@ -10,7 +10,11 @@ import com.example.braguia.model.TrailDB
 import com.example.braguia.network.API
 import com.example.braguia.network.LoginRequest
 import com.example.braguia.repositories.UserRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class UserViewModel(
     private val userRepository: UserRepository
@@ -18,16 +22,36 @@ class UserViewModel(
 
     var userUiState: UserUiState by mutableStateOf(UserUiState())
 
-    suspend fun login(username: String, password: String) {
+    fun login(username: String, password: String, callback: (Boolean) -> Unit) {
         viewModelScope.launch {
-            val loginRequest: LoginRequest = LoginRequest(username = username, password = password)
+            val loginRequest = LoginRequest(username = username, password = password)
             try {
-                userRepository.login(loginRequest)
-            } catch (e: Exception){
+                val successful = userRepository.login(loginRequest)
+                callback(successful)
+            } catch (e: Exception) {
                 Log.e("USERVIEWMODEL", "Login exception $e")
+                callback(false) // or handle error differently
             }
         }
     }
+
+//    fun login(username: String, password: String): Boolean {
+//        var successful = false
+//        runBlocking {
+//            val loginCoroutine = viewModelScope.launch {
+//                val loginRequest: LoginRequest =
+//                    LoginRequest(username = username, password = password)
+//                try {
+//                    successful = userRepository.login(loginRequest)
+//                } catch (e: Exception) {
+//                    Log.e("USERVIEWMODEL", "Login exception $e")
+//                }
+//            }
+//            loginCoroutine.join()
+//        }
+//        Log.i("USERVIEWMODEL","successful = $successful")
+//        return successful
+//    }
 
     fun logout() {
 
@@ -44,14 +68,15 @@ class UserViewModel(
     fun updateBookmarks() {
 
     }
+
     fun updateLoggedIn(state: Boolean) {
-       //TODO update login in variable
+        //TODO update login in variable
     }
 }
 
 data class UserUiState(
     val history: List<TrailDB> = listOf(),
     val bookmarks: List<TrailDB> = listOf(),
-    val loggedIn : Boolean = false,
+    val loggedIn: Boolean = false,
     val username: String = ""
 )

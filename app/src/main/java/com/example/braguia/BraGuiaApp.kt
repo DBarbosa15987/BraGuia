@@ -35,6 +35,7 @@ import com.example.braguia.ui.TrailList
 import com.example.braguia.ui.TrailListScreen
 import com.example.braguia.viewModel.BraGuiaViewModelProvider
 import com.example.braguia.viewModel.TrailsViewModel
+import com.example.braguia.viewModel.UserViewModel
 
 enum class BraguiaScreen {
     Login,
@@ -77,6 +78,7 @@ fun BraguiaTopAppBar(
 fun BraGuiaApp() {
 
     val trailsViewModel: TrailsViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
+    val userViewModel: UserViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
 
     val navController: NavHostController = rememberNavController()
 
@@ -105,11 +107,11 @@ fun BraGuiaApp() {
             modifier = Modifier
         ) {
             composable(route = BraguiaScreen.Login.name) {
-                LoginScreen(uiState.value.appInfo.appName) {
-                    navController.navigate(
-                        BraguiaScreen.HomePage.name
-                    )
-                }
+                LoginScreen(
+                    appName = uiState.value.appInfo.appName,
+                    login = userViewModel::login,
+                    grantAccess = { navController.navigate(BraguiaScreen.HomePage.name) }
+                )
             }
 
             composable(route = BraguiaScreen.HomePage.name) {
@@ -149,11 +151,11 @@ fun BraGuiaApp() {
                 arguments = listOf(navArgument("pinId") {
                     type = NavType.LongType
                 })
-            ) {b->
+            ) { b ->
                 val pinId: Long = b.arguments?.getLong("pinId") ?: 0 // TODO tratamento de errors?
                 trailsViewModel.getPin(pinId)
-                val pin:Pin? = uiState.value.currPin
-                if (pin!=null) {
+                val pin: Pin? = uiState.value.currPin
+                if (pin != null) {
                     SinglePinScreen(pin)
                 }
             }

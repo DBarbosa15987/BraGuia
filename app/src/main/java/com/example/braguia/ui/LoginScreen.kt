@@ -1,5 +1,6 @@
 package com.example.braguia.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,17 +37,19 @@ import com.example.braguia.R
 
 @Composable
 fun LoginScreen(
-    appName:String,
+    appName: String,
+    login: (String, String, (Boolean) -> Unit) -> Unit,
     grantAccess: () -> Unit
 ) {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        LoginPrompt(appName,grantAccess)
+        LoginPrompt(appName, login, grantAccess)
     }
 }
 
 @Composable
 fun LoginPrompt(
-    appName:String,
+    appName: String,
+    login: (String, String, (Boolean) -> Unit) -> Unit,
     grantAccess: () -> Unit
 ) {
     var username by remember { mutableStateOf("") }
@@ -89,28 +92,22 @@ fun LoginPrompt(
         Button(
             //TODO validação
             onClick = {
-                grantAccess()
-                /*if (username == "a" && password == "a") {
-                    grantAccess()
-                } else {
-                    error = true
-                    username = ""
-                    password = ""
-                }*/
+                login(username, password) { successful ->
+                    Log.i("LOGINSCREEN","$successful login for user $username")
+                    if (successful) {
+                        grantAccess()
+                    } else {
+                        error = true
+                        username = ""
+                        password = ""
+                    }
+                }
+
             },
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text(stringResource(id = R.string.Login))
         }
-    }
-}
-
-
-@Composable
-@Preview(showSystemUi = true)
-fun LoginScreenPrev() {
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        LoginPrompt("BraGuia") {}
     }
 }

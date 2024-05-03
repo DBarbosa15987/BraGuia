@@ -6,6 +6,7 @@ import com.example.braguia.network.LoginRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Response
 
 class UserRepository(
     private val API: API
@@ -22,7 +23,7 @@ class UserRepository(
 
             override fun onResponse(
                 call: Call<ResponseBody>,
-                response: retrofit2.Response<ResponseBody>
+                response: Response<ResponseBody>
             ) {
                 if (response.code() == 200){
                     // login is successful

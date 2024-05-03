@@ -1,6 +1,7 @@
 package com.example.braguia
 
 import android.content.Context
+import android.util.Log
 import android.webkit.CookieManager
 import com.example.braguia.model.GuideDatabase
 import com.example.braguia.network.API
@@ -14,9 +15,9 @@ import okhttp3.CookieJar
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
 
 
 interface AppContainer {
@@ -28,7 +29,7 @@ interface AppContainer {
 }
 
 class BraGuiaAppContainer(private val context: Context) : AppContainer {
-    private val baseUrl = "https://79f869b14293b18d6536c5e3c254e8af.serveo.net/"
+    private val baseUrl = "https://5aed44c57a0bdfa1ac08fdf5fc47c975.serveo.net/"
 
     /**
      * Use the Retrofit builder to build a retrofit object using a kotlinx.serialization converter
@@ -45,6 +46,7 @@ class BraGuiaAppContainer(private val context: Context) : AppContainer {
                     cookieManager.removeAllCookies(null)
                     val cookies1 = cookieStore[host.toHttpUrlOrNull()]
                     if (cookies1 != null) {
+                        Log.i("COOKIEJAR", "saved cookies $cookies1")
                         for (cookie in cookies1) {
                             val cookieString =
                                 cookie.name + "=" + cookie.value + "; path=" + cookie.path
@@ -58,7 +60,9 @@ class BraGuiaAppContainer(private val context: Context) : AppContainer {
                     val cookies = cookieStore[host.toHttpUrlOrNull()]
                     return cookies ?: ArrayList()
                 }
-            }).build()
+            })
+            .addInterceptor(HttpLoggingInterceptor().apply { this.level = HttpLoggingInterceptor.Level.HEADERS })
+            .build()
 
         CookieManager.getInstance().setAcceptCookie(true)
         return Retrofit.Builder().baseUrl(baseUrl)
