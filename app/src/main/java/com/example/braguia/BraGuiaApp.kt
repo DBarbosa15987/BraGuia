@@ -5,6 +5,7 @@ package com.example.braguia
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,13 +26,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.braguia.model.AppInfo
 import com.example.braguia.model.Edge
 import com.example.braguia.model.Pin
 import com.example.braguia.model.Trail
+import com.example.braguia.model.TrailDB
+import com.example.braguia.ui.AppInfoScreen
 import com.example.braguia.ui.LoginScreen
 import com.example.braguia.ui.SinglePinScreen
 import com.example.braguia.ui.SingleTrailScreen
-import com.example.braguia.ui.TrailList
 import com.example.braguia.ui.TrailListScreen
 import com.example.braguia.viewModel.BraGuiaViewModelProvider
 import com.example.braguia.viewModel.TrailsViewModel
@@ -105,20 +108,36 @@ fun BraGuiaApp() {
             modifier = Modifier
         ) {
             composable(route = BraguiaScreen.Login.name) {
-                LoginScreen(uiState.value.appInfo.appName) {
-                    navController.navigate(
-                        BraguiaScreen.HomePage.name
-                    )
-                }
+
+                LoginScreen(
+                    appName = uiState.value.appInfo.appName,
+                    grantAccess = {
+                        navController.navigate(
+                            BraguiaScreen.HomePage.name
+                        ) {
+                            popUpTo(BraguiaScreen.Login.name) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    //TODO temp!!!!
+                    settings = {
+                        navController.navigate(
+                            BraguiaScreen.Settings.name
+                        )
+                    }
+                )
             }
 
             composable(route = BraguiaScreen.HomePage.name) {
+                //TODO oof
+                trailsViewModel.getTrails()
                 TrailListScreen(
                     trails = uiState.value.trailList,
                     navigateToTrail = { trailId ->
                         navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
                     },
-                    innerPadding
+                    innerPadding = innerPadding
                 )
             }
 
@@ -149,13 +168,28 @@ fun BraGuiaApp() {
                 arguments = listOf(navArgument("pinId") {
                     type = NavType.LongType
                 })
-            ) {b->
+            ) { b ->
                 val pinId: Long = b.arguments?.getLong("pinId") ?: 0 // TODO tratamento de errors?
                 trailsViewModel.getPin(pinId)
-                val pin:Pin? = uiState.value.currPin
-                if (pin!=null) {
-                    SinglePinScreen(pin)
+                val pin: Pin? = uiState.value.currPin
+                trailsViewModel.getPinTrails(pinId)
+                val trails: List<TrailDB> = uiState.value.trailList
+                if (pin != null) {
+                    SinglePinScreen(
+                        pin = pin,
+                        innerPadding = innerPadding,
+                        navigateToTrail = { trailId ->
+                            navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
+                        },
+                        trails = trails
+                    )
                 }
+            }
+            composable(
+                route = BraguiaScreen.Settings.name
+            ) {
+                val appInfo: AppInfo = uiState.value.appInfo
+                AppInfoScreen(appInfo = appInfo,innerPadding)
             }
         }
     }

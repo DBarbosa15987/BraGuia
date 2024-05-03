@@ -11,6 +11,7 @@ import com.example.braguia.model.dao.PartnerDAO
 import com.example.braguia.model.Social
 import com.example.braguia.model.dao.SocialDAO
 import com.example.braguia.network.API
+import retrofit2.HttpException
 
 
 class AppInfoRepository(
@@ -60,7 +61,7 @@ class AppInfoRepository(
             //TODO Transaction aqui? coroutines?
             //TODO Cache check
         }
-        catch (e:Exception){
+        catch (e: HttpException){
             Log.e("API",e.toString())
         }
     }

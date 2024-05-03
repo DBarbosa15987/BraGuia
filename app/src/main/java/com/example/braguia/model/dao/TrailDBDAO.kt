@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TrailDBDAO {
 
-    @Upsert()
-    suspend fun insert(cats: List<TrailDB>)
+    @Upsert
+    suspend fun insert(trails: List<TrailDB>)
 
     //TODO talvez não seja preciso o suspend quando usar o Flow/LiveData
     @Query("SELECT DISTINCT * FROM trail")
@@ -20,6 +20,9 @@ interface TrailDBDAO {
 
     @Query("SELECT * FROM trail WHERE id=:trailId")
     suspend fun getTrail(trailId:Long): TrailDB
+
+    @Query("SELECT DISTINCT * FROM trail WHERE id IN (:trailIds)")
+    suspend fun getTrailsByIDs(trailIds:List<Long>) : List<TrailDB>
 
     @Query("DELETE FROM trail")
     suspend fun deleteAll()

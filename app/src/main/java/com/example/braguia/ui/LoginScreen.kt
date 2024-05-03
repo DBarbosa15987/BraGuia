@@ -29,25 +29,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.braguia.R
 
-
-// TODO qual o objetivo de standard e premium quando no trails tem os pins todos
-// como usar jwt tokens para login
-// cenas da db
-
 @Composable
 fun LoginScreen(
     appName:String,
-    grantAccess: () -> Unit
+    grantAccess: () -> Unit,
+    settings: () -> Unit
 ) {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        LoginPrompt(appName,grantAccess)
+        LoginPrompt(appName,grantAccess,settings)
     }
 }
 
 @Composable
 fun LoginPrompt(
     appName:String,
-    grantAccess: () -> Unit
+    grantAccess: () -> Unit,
+    settings: () -> Unit
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -70,7 +67,6 @@ fun LoginPrompt(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
             )
-
         )
         Spacer(modifier = Modifier.padding(10.dp))
         TextField(
@@ -103,14 +99,8 @@ fun LoginPrompt(
         ) {
             Text(stringResource(id = R.string.Login))
         }
-    }
-}
-
-
-@Composable
-@Preview(showSystemUi = true)
-fun LoginScreenPrev() {
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        LoginPrompt("BraGuia") {}
+        Button(onClick = settings) {
+            Text(text = "settings")
+        }
     }
 }

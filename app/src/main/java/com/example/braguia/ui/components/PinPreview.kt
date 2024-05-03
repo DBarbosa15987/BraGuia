@@ -37,7 +37,6 @@ fun PinPreview(
             },
         horizontalArrangement = Arrangement.Center
     ) {
-        //location_on
         Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = null)
         Spacer(modifier = Modifier.width(15.dp))
         Text(

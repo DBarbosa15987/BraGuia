@@ -13,6 +13,7 @@ import com.example.braguia.model.dao.RelTrailDAO
 import com.example.braguia.model.dao.TrailDBDAO
 import com.example.braguia.network.API
 import kotlinx.coroutines.flow.Flow
+import retrofit2.HttpException
 
 class TrailRepository(
     val API: API,
@@ -23,7 +24,7 @@ class TrailRepository(
 ) {
     suspend fun fetchAPI() {
 
-        try{
+        try {
             val trailList = API.getTrails()
 
             val trailListDB = listOf<TrailDB>().toMutableList()
@@ -48,9 +49,8 @@ class TrailRepository(
             relTrailDAO.insert(relTrailList)
             pinRepository.insert(pinList)
             edgeDBDAO.insert(edgeListDB)
-        }
-        catch (e:Exception){
-            Log.e("API",e.toString())
+        } catch (e: HttpException) {
+            Log.e("API", e.toString())
         }
     }
 
@@ -86,8 +86,13 @@ class TrailRepository(
 
     }
 
-    suspend fun getPin(pinId:Long) : Pin?{
+    suspend fun getPin(pinId: Long): Pin? {
         return pinRepository.getPin(pinId)
+    }
+
+    suspend fun getPinTrails(pinId: Long): List<TrailDB> {
+        val trailIds:List<Long> = edgeDBDAO.getPinEdges(pinId)
+        return trailDAO.getTrailsByIDs(trailIds)
     }
 
 

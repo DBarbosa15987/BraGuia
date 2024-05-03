@@ -66,6 +66,21 @@ class TrailsViewModel(
         }
     }
 
+    fun getPinTrails(pinId: Long){
+        viewModelScope.launch {
+            var result = listOf<TrailDB>()
+            try {
+                result = trailRepository.getPinTrails(pinId)
+            }
+            catch (e:Exception){
+                Log.e("PIN_TRAILS", e.toString())
+            }
+            _homeUiState.update { curr ->
+                curr.copy(trailList = result)
+            }
+        }
+    }
+
     fun delete() {
         viewModelScope.launch {
             trailRepository.trailDAO.deleteAll()
@@ -81,8 +96,8 @@ class TrailsViewModel(
             } catch (e: Exception) {
                 Log.e("APPINFO", e.toString())
             }
-            _homeUiState.update { currentState ->
-                currentState.copy(appInfo = result)
+            _homeUiState.update { curr ->
+                curr.copy(appInfo = result)
             }
         }
     }
