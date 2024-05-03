@@ -2,7 +2,6 @@
 
 package com.example.braguia
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -38,6 +37,7 @@ import com.example.braguia.ui.SingleTrailScreen
 import com.example.braguia.ui.TrailListScreen
 import com.example.braguia.viewModel.BraGuiaViewModelProvider
 import com.example.braguia.viewModel.TrailsViewModel
+import com.example.braguia.viewModel.UserViewModel
 
 enum class BraguiaScreen {
     Login,
@@ -80,6 +80,7 @@ fun BraguiaTopAppBar(
 fun BraGuiaApp() {
 
     val trailsViewModel: TrailsViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
+    val userViewModel: UserViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
 
     val navController: NavHostController = rememberNavController()
 
@@ -100,7 +101,8 @@ fun BraGuiaApp() {
         )
     }) { innerPadding ->
 
-        val uiState = trailsViewModel.homeUiState.collectAsState()
+        val trailsUiState = trailsViewModel.homeUiState.collectAsState()
+        val userUiState = userViewModel.userUiState.collectAsState()
 
         NavHost(
             navController = navController,
@@ -108,24 +110,12 @@ fun BraGuiaApp() {
             modifier = Modifier
         ) {
             composable(route = BraguiaScreen.Login.name) {
-
                 LoginScreen(
-                    appName = uiState.value.appInfo.appName,
-                    grantAccess = {
-                        navController.navigate(
-                            BraguiaScreen.HomePage.name
-                        ) {
-                            popUpTo(BraguiaScreen.Login.name) {
-                                inclusive = true
-                            }
-                        }
-                    },
-                    //TODO temp!!!!
-                    settings = {
-                        navController.navigate(
-                            BraguiaScreen.Settings.name
-                        )
-                    }
+                    appName = trailsUiState.value.appInfo.appName,
+                    login = userViewModel::login,
+                    onDismiss = userViewModel::dismissError,
+                    userLoginState = userUiState.value.userLoginState,
+                    grantAccess = { navController.navigate(BraguiaScreen.HomePage.name) }
                 )
             }
 
@@ -133,7 +123,7 @@ fun BraGuiaApp() {
                 //TODO oof
                 trailsViewModel.getTrails()
                 TrailListScreen(
-                    trails = uiState.value.trailList,
+                    trails = trailsUiState.value.trailList,
                     navigateToTrail = { trailId ->
                         navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
                     },
@@ -150,8 +140,8 @@ fun BraGuiaApp() {
                 val id: Long = b.arguments?.getLong("trailId") ?: 0 // TODO tratamento de errors?
                 trailsViewModel.getTrail(id)
                 trailsViewModel.getEdges(id)
-                val trail: Trail? = uiState.value.currTrail // TODO tratamento de errors?
-                val edges: List<Edge> = uiState.value.edgeList
+                val trail: Trail? = trailsUiState.value.currTrail // TODO tratamento de errors?
+                val edges: List<Edge> = trailsUiState.value.edgeList
                 if (trail != null) {
                     SingleTrailScreen(
                         trail = trail,
@@ -171,9 +161,9 @@ fun BraGuiaApp() {
             ) { b ->
                 val pinId: Long = b.arguments?.getLong("pinId") ?: 0 // TODO tratamento de errors?
                 trailsViewModel.getPin(pinId)
-                val pin: Pin? = uiState.value.currPin
+                val pin: Pin? = trailsUiState.value.currPin
                 trailsViewModel.getPinTrails(pinId)
-                val trails: List<TrailDB> = uiState.value.trailList
+                val trails: List<TrailDB> = trailsUiState.value.trailList
                 if (pin != null) {
                     SinglePinScreen(
                         pin = pin,
@@ -188,7 +178,7 @@ fun BraGuiaApp() {
             composable(
                 route = BraguiaScreen.Settings.name
             ) {
-                val appInfo: AppInfo = uiState.value.appInfo
+                val appInfo: AppInfo = trailsUiState.value.appInfo
                 AppInfoScreen(appInfo = appInfo,innerPadding)
             }
         }

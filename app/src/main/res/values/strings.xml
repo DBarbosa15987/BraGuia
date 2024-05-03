@@ -13,4 +13,8 @@
     <string name="trailDifficulty">Difficulty: %s</string>
     <string name="trailDuration">Duration: %d min</string>
     <string name="trailDesc">Description: %s</string>
+    <string name="relPinAttrib">%s: %s</string>
+    <string name="Dismiss">Dismiss</string>
+    <string name="loginErrorMessage">There was an unexpected error on log in, check your network or contact support</string>
+    <string name="loginErrorTitle">Log In Error</string>
 </resources>

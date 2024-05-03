@@ -17,6 +17,6 @@ interface API {
     suspend fun getAppInfo(): List<AppInfo>
 
     @POST("login")
-    suspend fun login(@Body loginRequest:LoginRequest): Call<ResponseBody>
+    fun login(@Body loginRequest:LoginRequest): Call<ResponseBody>
 
 }
