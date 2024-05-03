@@ -97,6 +97,7 @@ dependencies {
     ksp("androidx.room:room-compiler:2.6.1")
     //implementation(libs.androidx.navigation.compose)
     implementation("androidx.compose.material:material-icons-extended")
+    implementation ("com.google.android.exoplayer:exoplayer:2.18.7")
 
     // Maps SDK for Android
     implementation("com.google.maps.android:maps-compose:4.4.0")
@@ -107,6 +108,7 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.8.6")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     //teste
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
