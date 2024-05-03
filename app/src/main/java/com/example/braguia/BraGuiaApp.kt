@@ -2,7 +2,6 @@
 
 package com.example.braguia
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,7 +30,6 @@ import com.example.braguia.model.Trail
 import com.example.braguia.ui.LoginScreen
 import com.example.braguia.ui.SinglePinScreen
 import com.example.braguia.ui.SingleTrailScreen
-import com.example.braguia.ui.TrailList
 import com.example.braguia.ui.TrailListScreen
 import com.example.braguia.viewModel.BraGuiaViewModelProvider
 import com.example.braguia.viewModel.TrailsViewModel
@@ -99,7 +97,8 @@ fun BraGuiaApp() {
         )
     }) { innerPadding ->
 
-        val uiState = trailsViewModel.homeUiState.collectAsState()
+        val trailsUiState = trailsViewModel.homeUiState.collectAsState()
+        val userUiState = userViewModel.userUiState.collectAsState()
 
         NavHost(
             navController = navController,
@@ -108,15 +107,17 @@ fun BraGuiaApp() {
         ) {
             composable(route = BraguiaScreen.Login.name) {
                 LoginScreen(
-                    appName = uiState.value.appInfo.appName,
+                    appName = trailsUiState.value.appInfo.appName,
                     login = userViewModel::login,
+                    onDismiss = userViewModel::dismissError,
+                    userLoginState = userUiState.value.userLoginState,
                     grantAccess = { navController.navigate(BraguiaScreen.HomePage.name) }
                 )
             }
 
             composable(route = BraguiaScreen.HomePage.name) {
                 TrailListScreen(
-                    trails = uiState.value.trailList,
+                    trails = trailsUiState.value.trailList,
                     navigateToTrail = { trailId ->
                         navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
                     },
@@ -133,8 +134,8 @@ fun BraGuiaApp() {
                 val id: Long = b.arguments?.getLong("trailId") ?: 0 // TODO tratamento de errors?
                 trailsViewModel.getTrail(id)
                 trailsViewModel.getEdges(id)
-                val trail: Trail? = uiState.value.currTrail // TODO tratamento de errors?
-                val edges: List<Edge> = uiState.value.edgeList
+                val trail: Trail? = trailsUiState.value.currTrail // TODO tratamento de errors?
+                val edges: List<Edge> = trailsUiState.value.edgeList
                 if (trail != null) {
                     SingleTrailScreen(
                         trail = trail,
@@ -154,7 +155,7 @@ fun BraGuiaApp() {
             ) { b ->
                 val pinId: Long = b.arguments?.getLong("pinId") ?: 0 // TODO tratamento de errors?
                 trailsViewModel.getPin(pinId)
-                val pin: Pin? = uiState.value.currPin
+                val pin: Pin? = trailsUiState.value.currPin
                 if (pin != null) {
                     SinglePinScreen(pin)
                 }

@@ -1,57 +1,49 @@
 package com.example.braguia.viewModel
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.braguia.model.TrailDB
-import com.example.braguia.network.API
 import com.example.braguia.network.LoginRequest
 import com.example.braguia.repositories.UserRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class UserViewModel(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    var userUiState: UserUiState by mutableStateOf(UserUiState())
+    private val _userUiState = MutableStateFlow(UserUiState())
+    val userUiState: StateFlow<UserUiState> = _userUiState.asStateFlow()
 
-    fun login(username: String, password: String, callback: (Boolean) -> Unit) {
+    fun login(username: String, password: String) {
+        _userUiState.update { currState ->
+            currState.copy(userLoginState = UserLoginState.Loading)
+        }
         viewModelScope.launch {
             val loginRequest = LoginRequest(username = username, password = password)
+
             try {
-                val successful = userRepository.login(loginRequest)
-                callback(successful)
+                userRepository.login(loginRequest) { successful ->
+                    _userUiState.update { currState ->
+                        currState.copy(userLoginState = successful)
+                    }
+                }
             } catch (e: Exception) {
                 Log.e("USERVIEWMODEL", "Login exception $e")
-                callback(false) // or handle error differently
+                userRepository.login(loginRequest) {
+                    _userUiState.update { currState ->
+                        currState.copy(userLoginState = UserLoginState.Error)
+                    }
+                }
             }
+
+            Log.i("USERVIEWMODEL_STATE", userUiState.value.userLoginState.toString())
         }
     }
-
-//    fun login(username: String, password: String): Boolean {
-//        var successful = false
-//        runBlocking {
-//            val loginCoroutine = viewModelScope.launch {
-//                val loginRequest: LoginRequest =
-//                    LoginRequest(username = username, password = password)
-//                try {
-//                    successful = userRepository.login(loginRequest)
-//                } catch (e: Exception) {
-//                    Log.e("USERVIEWMODEL", "Login exception $e")
-//                }
-//            }
-//            loginCoroutine.join()
-//        }
-//        Log.i("USERVIEWMODEL","successful = $successful")
-//        return successful
-//    }
 
     fun logout() {
 
@@ -72,11 +64,26 @@ class UserViewModel(
     fun updateLoggedIn(state: Boolean) {
         //TODO update login in variable
     }
+
+    fun dismissError() {
+        _userUiState.update { currState ->
+            currState.copy(userLoginState = UserLoginState.LoggedOut)
+        }
+    }
+
+}
+
+enum class UserLoginState {
+    LoggedIn,
+    LoggedOut,
+    CredentialsWrong,
+    Error,
+    Loading
 }
 
 data class UserUiState(
     val history: List<TrailDB> = listOf(),
     val bookmarks: List<TrailDB> = listOf(),
-    val loggedIn: Boolean = false,
+    val userLoginState: UserLoginState = UserLoginState.LoggedOut,
     val username: String = ""
 )
