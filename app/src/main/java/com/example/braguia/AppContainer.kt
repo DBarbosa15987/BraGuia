@@ -12,11 +12,9 @@ import com.example.braguia.repositories.UserRepository
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
 
 
 interface AppContainer {
@@ -36,30 +34,33 @@ class BraGuiaAppContainer(private val context: Context) : AppContainer {
     private fun createRetrofit(): Retrofit {
         val client = OkHttpClient.Builder()
             .cookieJar(object : CookieJar {
-                private val cookieStore = HashMap<HttpUrl?, List<Cookie>>()
-                private val cookieManager = CookieManager.getInstance()
-
                 override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-                    val host = url.host
-                    cookieStore[host.toHttpUrlOrNull()] = cookies
+                    val cookieManager = CookieManager.getInstance()
                     cookieManager.removeAllCookies(null)
-                    val cookies1 = cookieStore[host.toHttpUrlOrNull()]
-                    if (cookies1 != null) {
-                        for (cookie in cookies1) {
+                        for (cookie in cookies) {
                             val cookieString =
                                 cookie.name + "=" + cookie.value + "; path=" + cookie.path
                             cookieManager.setCookie(cookie.domain, cookieString)
                         }
-                    }
+                    cookieManager.flush()
                 }
 
                 override fun loadForRequest(url: HttpUrl): List<Cookie> {
-                    val host = url.host
-                    val cookies = cookieStore[host.toHttpUrlOrNull()]
-                    return cookies ?: ArrayList()
+                    val cookieManager = CookieManager.getInstance()
+                    val cookies: MutableList<Cookie> = ArrayList()
+                    if (cookieManager.getCookie(url.toString()) != null) {
+                        val splitCookies =
+                            cookieManager.getCookie(url.toString()).split("[,;]".toRegex())
+                                .dropLastWhile { it.isEmpty() }
+                                .toTypedArray()
+                        for (i in splitCookies.indices) {
+                            Cookie.parse(url, splitCookies[i].trim { it <= ' ' })
+                                ?.let { cookies.add(it) }
+                        }
+                    }
+                    return cookies
                 }
             }).build()
-
         CookieManager.getInstance().setAcceptCookie(true)
         return Retrofit.Builder().baseUrl(baseUrl)
             .client(client)
