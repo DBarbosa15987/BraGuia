@@ -13,11 +13,11 @@ interface EdgeDBDAO {
     @Upsert
     suspend fun insert(edges: List<EdgeDB>)
 
-    @Query("SELECT DISTINCT * FROM edge WHERE edgeTrail=:trailId")
-    suspend fun getEdges(trailId:Long): List<EdgeDB>
+    @Query("SELECT DISTINCT * FROM edge WHERE edgeTrail=:trailId ORDER BY id")
+    suspend fun getEdges(trailId: Long): List<EdgeDB>
 
     @Query("SELECT DISTINCT edgeTrail FROM edge WHERE edgeStart=:pinId OR edgeEnd=:pinId ")
-    suspend fun getPinEdges(pinId:Long): List<Long>
+    suspend fun getPinEdges(pinId: Long): List<Long>
 
     @Query("DELETE FROM edge")
     suspend fun deleteAll()

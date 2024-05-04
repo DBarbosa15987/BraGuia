@@ -69,11 +69,11 @@ class TrailRepository(
         val edges: MutableList<Edge> = listOf<Edge>().toMutableList()
         for (edgeDB in edgesDB) {
             //TODO estou a assumir um par aqui!!!
-            val pins: List<Pin> = pinRepository.getPins(edgeDB.edgeStart, edgeDB.edgeEnd)
-            edges.add(edgeDB.toEdge(pins[0], pins[1]))
-
+            val edgeStart = pinRepository.getPin(edgeDB.edgeStart)
+            val edgeEnd = pinRepository.getPin(edgeDB.edgeEnd)
+            if (edgeStart != null && edgeEnd != null)
+                edges.add(edgeDB.toEdge(edgeStart, edgeEnd))
         }
-
         return edges
     }
 
@@ -91,8 +91,17 @@ class TrailRepository(
     }
 
     suspend fun getPinTrails(pinId: Long): List<TrailDB> {
-        val trailIds:List<Long> = edgeDBDAO.getPinEdges(pinId)
+        val trailIds: List<Long> = edgeDBDAO.getPinEdges(pinId)
         return trailDAO.getTrailsByIDs(trailIds)
+    }
+
+    fun getPinRoute(trail: Trail): List<Pin> {
+        val route = mutableListOf<Pin>()
+        for (edge in trail.edges) {
+            route.add(edge.edgeStart)
+        }
+        route.add(trail.edges.last().edgeEnd)
+        return route
     }
 
 

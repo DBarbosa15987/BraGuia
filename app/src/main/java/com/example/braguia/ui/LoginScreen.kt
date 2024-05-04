@@ -37,12 +37,13 @@ import com.example.braguia.viewModel.UserLoginState
 fun LoginScreen(
     appName: String,
     login: (String, String) -> Unit,
+    logout: () -> Unit,
     onDismiss: () -> Unit,
     userLoginState: UserLoginState,
     grantAccess: () -> Unit
 ) {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        LoginPrompt(appName, login, onDismiss, userLoginState, grantAccess)
+        LoginPrompt(appName, login,logout, onDismiss, userLoginState, grantAccess)
     }
 }
 
@@ -50,6 +51,7 @@ fun LoginScreen(
 fun LoginPrompt(
     appName: String,
     login: (String, String) -> Unit,
+    logout: () -> Unit,
     onDismiss: () -> Unit,
     userLoginState: UserLoginState,
     grantAccess: () -> Unit
@@ -120,9 +122,9 @@ fun LoginPrompt(
                     dialogText = stringResource(R.string.loginErrorMessage)
                 )
             }
-        }
-        Button(onClick = settings) {
-            Text(text = "settings")
+            Button(onClick = logout ) {
+                Text(text = "Logout")
+            }
         }
     }
 }

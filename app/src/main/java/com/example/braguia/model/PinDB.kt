@@ -13,8 +13,8 @@ data class PinDB(
     val id:Long,
     val pinName:String,
     val pinDesc:String,
-    val pinLat:Float,
-    val pinLng:Float,
-    val pinAlt:Float,
+    val pinLat:Double,
+    val pinLng:Double,
+    val pinAlt:Double,
 
 )

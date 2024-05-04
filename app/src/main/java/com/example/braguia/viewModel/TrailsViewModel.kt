@@ -81,6 +81,13 @@ class TrailsViewModel(
         }
     }
 
+    fun getPinRoute(trail:Trail) {
+        val route = trailRepository.getPinRoute(trail)
+        _homeUiState.update { curr ->
+            curr.copy(trailRoute = route)
+        }
+    }
+
     fun delete() {
         viewModelScope.launch {
             trailRepository.trailDAO.deleteAll()
@@ -136,6 +143,7 @@ class TrailsViewModel(
 data class HomeUiState(
     val trailList: List<TrailDB> = listOf(),
     val edgeList: List<Edge> = listOf(),
+    val trailRoute: List<Pin> = listOf(),
     val currPin: Pin? = null,
     val currTrail: Trail? = null,
     val mediaList: List<Media> = listOf(),

@@ -113,6 +113,7 @@ fun BraGuiaApp() {
                 LoginScreen(
                     appName = trailsUiState.value.appInfo.appName,
                     login = userViewModel::login,
+                    logout = userViewModel::logout,
                     onDismiss = userViewModel::dismissError,
                     userLoginState = userUiState.value.userLoginState,
                     grantAccess = { navController.navigate(BraguiaScreen.HomePage.name) }
@@ -141,11 +142,11 @@ fun BraGuiaApp() {
                 trailsViewModel.getTrail(id)
                 trailsViewModel.getEdges(id)
                 val trail: Trail? = trailsUiState.value.currTrail // TODO tratamento de errors?
-                val edges: List<Edge> = trailsUiState.value.edgeList
                 if (trail != null) {
+                    trailsViewModel.getPinRoute(trail)
                     SingleTrailScreen(
                         trail = trail,
-                        edges = edges,
+                        route = trailsUiState.value.trailRoute,
                         innerPadding = innerPadding,
                         navigateToPin = { pinId ->
                             navController.navigate("${BraguiaScreen.Pin.name}/$pinId")
@@ -179,7 +180,7 @@ fun BraGuiaApp() {
                 route = BraguiaScreen.Settings.name
             ) {
                 val appInfo: AppInfo = trailsUiState.value.appInfo
-                AppInfoScreen(appInfo = appInfo,innerPadding)
+                AppInfoScreen(appInfo = appInfo, innerPadding)
             }
         }
     }

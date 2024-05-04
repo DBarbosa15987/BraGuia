@@ -44,6 +44,7 @@ class BraGuiaAppContainer(private val context: Context) : AppContainer {
                                 cookie.name + "=" + cookie.value + "; path=" + cookie.path
                             cookieManager.setCookie(cookie.domain, cookieString)
                         }
+                    // saves cookies to persistent storage
                     cookieManager.flush()
                 }
 
@@ -108,7 +109,7 @@ class BraGuiaAppContainer(private val context: Context) : AppContainer {
     }
 
     override val userRepository: UserRepository by lazy {
-        UserRepository(retrofitService)
+        UserRepository(retrofitService, database.userDAO())
     }
 
 

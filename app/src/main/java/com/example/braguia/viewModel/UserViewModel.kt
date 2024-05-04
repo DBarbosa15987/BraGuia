@@ -1,6 +1,7 @@
 package com.example.braguia.viewModel
 
 import android.util.Log
+import android.webkit.CookieManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.braguia.model.TrailDB
@@ -46,7 +47,9 @@ class UserViewModel(
     }
 
     fun logout() {
-
+        // trocar variaveis de que user esta logedin
+        val cookieManager = CookieManager.getInstance()
+        cookieManager.removeAllCookies(null)
     }
 
     fun fetchUserProfile() {

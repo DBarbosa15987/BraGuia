@@ -32,18 +32,6 @@ class PinRepository(
         return relPinDAO.getRelPin(pinId)
     }
 
-    //TODO por rever, aqui saca o "par" de start e end
-    suspend fun getPins(startId:Long,endId:Long):List<Pin>{
-        val pinsDB:List<PinDB> = pinDBDAO.getPins(startId,endId)
-        val pins:MutableList<Pin> = listOf<Pin>().toMutableList()
-        for (pinDB in pinsDB){
-            val relPins:List<RelPin> = this.getRelPins(pinDB.id)
-            val media:List<Media> = mediaRepository.getMedia(pinDB.id)
-            pins.add(pinDB.toPin(relPins,media))
-        }
-        return pins
-    }
-
     suspend fun getPin(pinId: Long):Pin?{
         val pinDB:PinDB? = pinDBDAO.getPin(pinId)
         var pin:Pin? = null

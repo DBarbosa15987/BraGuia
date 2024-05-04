@@ -14,6 +14,7 @@ import com.example.braguia.model.dao.RelPinDAO
 import com.example.braguia.model.dao.RelTrailDAO
 import com.example.braguia.model.dao.SocialDAO
 import com.example.braguia.model.dao.TrailDBDAO
+import com.example.braguia.model.dao.UserDAO
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.synchronized
 
@@ -25,6 +26,7 @@ import kotlinx.coroutines.internal.synchronized
 )
 abstract class GuideDatabase : RoomDatabase() {
 
+    abstract fun userDAO(): UserDAO
     abstract fun trailDBDAO(): TrailDBDAO
     abstract fun appInfoDAO(): AppInfoDBDAO
     abstract fun contactDAO(): ContactDAO
