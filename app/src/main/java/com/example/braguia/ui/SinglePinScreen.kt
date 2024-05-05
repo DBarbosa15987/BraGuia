@@ -27,7 +27,8 @@ fun SinglePinScreen(
     trails: List<TrailDB>,
     navigateToTrail: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    toggleBookmark: (Long) -> Unit
 ) {
 
     LazyColumn(modifier = modifier.padding(innerPadding)) {
@@ -35,7 +36,7 @@ fun SinglePinScreen(
         item { TrailDetails(pin) } // detalhes
         item { } // media
         items(trails) {
-            TrailCard(trail = it, navigateToTrail = navigateToTrail)
+            TrailCard(trail = it, navigateToTrail = navigateToTrail, toggleBookmark = toggleBookmark)
         } // roteiros em que se encontra
     }
 }

@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TrailsViewModel(
-    private val trailRepository: TrailRepository,/*FIXME SO POR ENQUANTO*/
+    private val trailRepository: TrailRepository,
     private val appInfoRepository: AppInfoRepository
 ) : ViewModel() {
 
@@ -109,8 +109,6 @@ class TrailsViewModel(
         }
     }
 
-    //TODO aqui faço o get assim ou retorno isto diretamente para depois ser usado?
-    //TODO faz sentido se não for o único a usar?
     fun getTrail(trailId: Long) {
         viewModelScope.launch {
             val result = trailRepository.getTrail(trailId)

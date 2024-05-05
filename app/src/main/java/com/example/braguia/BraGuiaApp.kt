@@ -2,8 +2,16 @@
 
 package com.example.braguia
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,7 +34,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.braguia.model.AppInfo
-import com.example.braguia.model.Edge
 import com.example.braguia.model.Pin
 import com.example.braguia.model.Trail
 import com.example.braguia.model.TrailDB
@@ -35,6 +42,7 @@ import com.example.braguia.ui.LoginScreen
 import com.example.braguia.ui.SinglePinScreen
 import com.example.braguia.ui.SingleTrailScreen
 import com.example.braguia.ui.TrailListScreen
+import com.example.braguia.ui.components.TrailCard
 import com.example.braguia.viewModel.BraGuiaViewModelProvider
 import com.example.braguia.viewModel.TrailsViewModel
 import com.example.braguia.viewModel.UserViewModel
@@ -75,6 +83,41 @@ fun BraguiaTopAppBar(
     )
 }
 
+@Composable
+fun BraguiaBottomBar(
+    currentScreen: BraguiaScreen,
+    goHome: () -> Unit,
+    goToSettings: () -> Unit,
+    goToUserProfile: () -> Unit,
+    deleteAllBookmarks: () -> Unit
+) {
+    if (currentScreen != BraguiaScreen.Login) {
+        BottomAppBar {
+            Button(onClick = goHome) {
+                Icon(imageVector = Icons.Filled.Home, contentDescription = "BottomBarHomeIcon")
+            }
+            Button(onClick = goToSettings) {
+                Icon(
+                    imageVector = Icons.Filled.Settings,
+                    contentDescription = "BottomBarSettingsIcon"
+                )
+            }
+            Button(onClick = goToUserProfile) {
+                Icon(
+                    imageVector = Icons.Filled.Person,
+                    contentDescription = "BottomBarUserProfileIcon"
+                )
+            }
+            Button(onClick = deleteAllBookmarks) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = null
+                )
+            }
+        }
+    }
+}
+
 
 @Composable
 fun BraGuiaApp() {
@@ -93,13 +136,37 @@ fun BraGuiaApp() {
         else -> BraguiaScreen.valueOf(currentRoute)
     }
 
-    Scaffold(topBar = {
-        BraguiaTopAppBar(
-            canNavigateBack = navController.previousBackStackEntry != null && currentScreen != BraguiaScreen.HomePage,
-            navigateUp = { navController.navigateUp() },
-            currentScreen = currentScreen
-        )
-    }) { innerPadding ->
+    Scaffold(
+        bottomBar = {
+            BraguiaBottomBar(
+                currentScreen = currentScreen,
+                goHome = {
+                    navController.popBackStack(
+                        BraguiaScreen.HomePage.name,
+                        inclusive = false
+                    )
+                },
+                goToSettings = {
+                    navController.navigate(
+                        BraguiaScreen.Settings.name
+                    )
+                },
+                goToUserProfile = {
+                    navController.navigate(
+                        BraguiaScreen.UserPage.name
+                    )
+                },
+                //TODO temp!!!!
+                userViewModel::deleteAllBookmarks
+            )
+        },
+        topBar = {
+            BraguiaTopAppBar(
+                canNavigateBack = navController.previousBackStackEntry != null && currentScreen != BraguiaScreen.HomePage,
+                navigateUp = { navController.navigateUp() },
+                currentScreen = currentScreen
+            )
+        }) { innerPadding ->
 
         val trailsUiState = trailsViewModel.homeUiState.collectAsState()
         val userUiState = userViewModel.userUiState.collectAsState()
@@ -121,14 +188,14 @@ fun BraGuiaApp() {
             }
 
             composable(route = BraguiaScreen.HomePage.name) {
-                //TODO oof
                 trailsViewModel.getTrails()
                 TrailListScreen(
                     trails = trailsUiState.value.trailList,
                     navigateToTrail = { trailId ->
                         navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
                     },
-                    innerPadding = innerPadding
+                    innerPadding = innerPadding,
+                    toggleBookmark = userViewModel::toggleBookmark
                 )
             }
 
@@ -172,7 +239,8 @@ fun BraGuiaApp() {
                         navigateToTrail = { trailId ->
                             navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
                         },
-                        trails = trails
+                        trails = trails,
+                        toggleBookmark = userViewModel::toggleBookmark
                     )
                 }
             }
@@ -182,12 +250,23 @@ fun BraGuiaApp() {
                 val appInfo: AppInfo = trailsUiState.value.appInfo
                 AppInfoScreen(appInfo = appInfo, innerPadding)
             }
+            composable(
+                route = BraguiaScreen.UserPage.name
+            ) {
+                userViewModel.getBookmarks()
+                val bookmarks: List<TrailDB> = userUiState.value.bookmarks.values.toList()
+                LazyColumn(Modifier.padding(innerPadding)) {
+                    items(bookmarks) { trail ->
+                        TrailCard(
+                            trail = trail,
+                            navigateToTrail = { trailId ->
+                                navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
+                            },
+                            toggleBookmark = userViewModel::toggleBookmark
+                        )
+                    }
+                }
+            }
         }
     }
 }
-
-
-private fun navigateToHomePage(navController: NavHostController) {
-    navController.popBackStack(BraguiaScreen.HomePage.name, inclusive = false)
-}
-

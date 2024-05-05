@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,7 +26,12 @@ import com.example.braguia.R
 import com.example.braguia.model.TrailDB
 
 @Composable
-fun TrailCard(trail: TrailDB, modifier: Modifier = Modifier, navigateToTrail: (Long) -> Unit) {
+fun TrailCard(
+    trail: TrailDB,
+    modifier: Modifier = Modifier,
+    navigateToTrail: (Long) -> Unit,
+    toggleBookmark: (Long) -> Unit
+) {
 
     Card(
         modifier = modifier
@@ -45,6 +51,9 @@ fun TrailCard(trail: TrailDB, modifier: Modifier = Modifier, navigateToTrail: (L
                 Text(text = trail.trailName)
                 Text(text = trail.trailDuration.toString() + " min")
                 Text(text = trail.trailDifficulty)
+                Button(onClick = { toggleBookmark(trail.id) }) {
+                    Text(text = "Bookmark")
+                }
 
             }
             Log.i("IMG", trail.trailImg)

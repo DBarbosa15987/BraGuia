@@ -97,7 +97,7 @@ dependencies {
     ksp("androidx.room:room-compiler:2.6.1")
     //implementation(libs.androidx.navigation.compose)
     implementation("androidx.compose.material:material-icons-extended")
-    implementation ("com.google.android.exoplayer:exoplayer:2.18.7")
+    implementation("com.google.android.exoplayer:exoplayer:2.18.7")
 
     // Maps SDK for Android
     implementation("com.google.maps.android:maps-compose:4.4.0")
@@ -115,7 +115,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-    
+
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 

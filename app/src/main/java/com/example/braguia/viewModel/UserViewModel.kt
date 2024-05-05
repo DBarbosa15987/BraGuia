@@ -5,11 +5,14 @@ import android.webkit.CookieManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.braguia.model.TrailDB
+import com.example.braguia.model.User
 import com.example.braguia.network.LoginRequest
 import com.example.braguia.repositories.UserRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -32,6 +35,9 @@ class UserViewModel(
                     _userUiState.update { currState ->
                         currState.copy(userLoginState = successful)
                     }
+                    if (successful == UserLoginState.LoggedIn) {
+                        fetchUserInfo()
+                    }
                 }
             } catch (e: Exception) {
                 Log.e("USERVIEWMODEL", "Login exception $e")
@@ -41,7 +47,6 @@ class UserViewModel(
                     }
                 }
             }
-
             Log.i("USERVIEWMODEL_STATE", userUiState.value.userLoginState.toString())
         }
     }
@@ -52,8 +57,34 @@ class UserViewModel(
         cookieManager.removeAllCookies(null)
     }
 
-    fun fetchUserProfile() {
 
+    fun getBookmarks() {
+
+        val username: String? = _userUiState.value.user?.username
+        if (username != null) {
+            viewModelScope.launch {
+                userRepository.getBookmarks(username).flowOn(Dispatchers.IO)
+                    .collect { bookmarks: List<TrailDB> ->
+                        _userUiState.update { currState ->
+                            currState.copy(bookmarks = bookmarks.associateBy { it.id })
+                        }
+                    }
+            }
+        } else {
+            Log.e("USERPAGE", "Invalid username ${_userUiState.value.user}")
+        }
+    }
+
+    private fun fetchUserInfo() {
+        viewModelScope.launch {
+            val username = userRepository.fetchUserInfo()
+            if (username != null) {
+                val user: User? = userRepository.getUser(username)
+                _userUiState.update { currState ->
+                    currState.copy(user = user)
+                }
+            }
+        }
     }
 
     fun updateHistory() {
@@ -64,8 +95,22 @@ class UserViewModel(
 
     }
 
-    fun updateLoggedIn(state: Boolean) {
-        //TODO update login in variable
+    fun toggleBookmark(trailId: Long) {
+        viewModelScope.launch {
+            _userUiState.value.user?.let {
+                if (trailId in _userUiState.value.bookmarks) {
+                    userRepository.deleteBookmark(it.username, trailId)
+                } else {
+                    userRepository.insertBookmark(it.username, trailId)
+                }
+            }
+        }
+    }
+
+    fun deleteAllBookmarks() {
+        viewModelScope.launch {
+            userRepository.deleteAllBookmarks()
+        }
     }
 
     fun dismissError() {
@@ -86,7 +131,7 @@ enum class UserLoginState {
 
 data class UserUiState(
     val history: List<TrailDB> = listOf(),
-    val bookmarks: List<TrailDB> = listOf(),
+    val bookmarks: Map<Long, TrailDB> = mapOf(),
     val userLoginState: UserLoginState = UserLoginState.LoggedOut,
-    val username: String = ""
+    val user: User? = null
 )
