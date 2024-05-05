@@ -1,25 +1,26 @@
 package com.example.braguia.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.braguia.R
-import com.example.braguia.model.Edge
 import com.example.braguia.model.Pin
 import com.example.braguia.model.Trail
 import com.example.braguia.ui.components.EdgePreviewCard
@@ -37,10 +38,9 @@ fun SingleTrailScreen(
     innerPadding: PaddingValues,
     navigateToPin: (Long) -> Unit
 ) {
-
     LazyColumn(Modifier.padding(innerPadding)) {
-        item { TrailInformation(trail = trail) }
-        item { MapWithPins(route)}
+        item { TrailInformation(trail = trail, route = route) }
+        item { MapWithPins(route) }
         items(trail.edges) { edge ->
             EdgePreviewCard(edge = edge, navigateToPin = navigateToPin)
         }
@@ -52,14 +52,14 @@ fun SingleTrailScreen(
 @Composable
 fun MapWithPins(pins: List<Pin>) {
     // TODO: calculate the center point of all pins so everyone appears in the map
-    val firstPinLatLng = LatLng(pins[0].pinLat,pins[0].pinLng)
+    val firstPinLatLng = LatLng(pins[0].pinLat, pins[0].pinLng)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(firstPinLatLng, 10f)
     }
-    GoogleMap (
+    GoogleMap(
         modifier = Modifier.size(500.dp),
         cameraPositionState = cameraPositionState
-    ){
+    ) {
         for (pin in pins) {
             Marker(state = MarkerState(LatLng(pin.pinLat, pin.pinLng)), title = pin.pinName)
         }
@@ -67,11 +67,8 @@ fun MapWithPins(pins: List<Pin>) {
 }
 
 @Composable
-fun EdgeList() {
-}
-
-@Composable
-fun TrailInformation(trail: Trail) {
+fun TrailInformation(trail: Trail, route: List<Pin>) {
+    val context = LocalContext.current
     Column {
         AsyncImage(
             model = trail.trailImg,
@@ -93,5 +90,35 @@ fun TrailInformation(trail: Trail) {
         Text(stringResource(id = R.string.trailDifficulty, trail.trailDifficulty))
         Text(stringResource(id = R.string.trailDuration, trail.trailDuration))
         Text(stringResource(id = R.string.trailDesc, trail.trailDesc))
+        Button(
+            onClick = {
+                // launch google maps
+                val mapIntentUriString = createMapsRouteUriString(route)
+                Log.i("SINGLETRAILSCREEN", "MapIntentUriString = $mapIntentUriString")
+                val mapIntentUri = Uri.parse(mapIntentUriString)
+                val mapIntent = Intent(Intent.ACTION_VIEW, mapIntentUri);
+                try {
+                    context.startActivity(mapIntent)
+                } catch (e: Exception) {
+                    // TODO: add error dialog
+                }
+            }
+        ) {
+            Text("Start Trail")
+        }
     }
+}
+
+// FIXME change the location of this function
+fun createMapsRouteUriString(route: List<Pin>): String {
+    // origin=Google+Pyrmont+NSW&destination=QVB&destination_place_id=ChIJISz8NjyuEmsRFTQ9Iw7Ear8&travelmode=walking
+    val lastPin = route.last()
+    var destination = "destination=" + lastPin.pinLat.toString() + "," + lastPin.pinLng.toString()
+    var waypoints = "waypoints="
+    for (i in 0..<route.size - 1) {
+        waypoints += route[i].pinLat.toString() + "," + route[i].pinLng.toString()
+        if (i < route.size - 2)
+            waypoints += "|"
+    }
+    return "https://www.google.com/maps/dir/?api=1&$waypoints&$destination"
 }
