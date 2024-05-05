@@ -38,6 +38,7 @@ import com.example.braguia.ui.TrailListScreen
 import com.example.braguia.viewModel.BraGuiaViewModelProvider
 import com.example.braguia.viewModel.TrailsViewModel
 import com.example.braguia.viewModel.UserViewModel
+import com.google.android.gms.location.GeofencingClient
 
 enum class BraguiaScreen {
     Login,
@@ -77,7 +78,7 @@ fun BraguiaTopAppBar(
 
 
 @Composable
-fun BraGuiaApp() {
+fun BraGuiaApp(geofenceClient: GeofencingClient) {
 
     val trailsViewModel: TrailsViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
     val userViewModel: UserViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
