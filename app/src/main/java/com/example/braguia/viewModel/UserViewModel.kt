@@ -23,6 +23,22 @@ class UserViewModel(
     private val _userUiState = MutableStateFlow(UserUiState())
     val userUiState: StateFlow<UserUiState> = _userUiState.asStateFlow()
 
+    init {
+        checkLoggedInUser()
+    }
+
+    private fun checkLoggedInUser() {
+        viewModelScope.launch {
+            val loggedIn = userRepository.checkLoggedInUser()
+            if (loggedIn) {
+                fetchUserInfo()
+                _userUiState.update { currState ->
+                    currState.copy(userLoginState = UserLoginState.LoggedIn)
+                }
+            }
+        }
+    }
+
     fun login(username: String, password: String) {
         _userUiState.update { currState ->
             currState.copy(userLoginState = UserLoginState.Loading)
@@ -52,14 +68,17 @@ class UserViewModel(
     }
 
     fun logout() {
-        // trocar variaveis de que user esta logedin
-        val cookieManager = CookieManager.getInstance()
-        cookieManager.removeAllCookies(null)
+        viewModelScope.launch {
+            val cookieManager = CookieManager.getInstance()
+            _userUiState.value.user?.let {
+                userRepository.logout(it)
+            }
+            cookieManager.removeAllCookies(null)
+        }
     }
 
 
     fun getBookmarks() {
-
         val username: String? = _userUiState.value.user?.username
         if (username != null) {
             viewModelScope.launch {
@@ -80,19 +99,15 @@ class UserViewModel(
             val username = userRepository.fetchUserInfo()
             if (username != null) {
                 val user: User? = userRepository.getUser(username)
+                user?.let {
+                    it.loggedIn = true
+                    userRepository.updateLoggedIn(it)
+                }
                 _userUiState.update { currState ->
                     currState.copy(user = user)
                 }
             }
         }
-    }
-
-    fun updateHistory() {
-
-    }
-
-    fun updateBookmarks() {
-
     }
 
     fun toggleBookmark(trailId: Long) {

@@ -21,6 +21,15 @@ class UserRepository(
     private val bookmarkDAO: BookmarkDAO
 ) {
 
+    suspend fun checkLoggedInUser(): Boolean {
+        val users = userDAO.getLoggedInUser()
+        return users.isNotEmpty()
+    }
+
+    suspend fun updateLoggedIn(user: User) {
+        userDAO.updateLoggedIn(user)
+    }
+
     fun login(loginRequest: LoginRequest, callback: (UserLoginState) -> Unit) {
         val call = API.login(loginRequest)
         call.enqueue(object : Callback<ResponseBody> {
@@ -57,6 +66,12 @@ class UserRepository(
             }
         }
         )
+    }
+
+    suspend fun logout(user: User) {
+        API.logout()
+        user.loggedIn = false
+        userDAO.updateLoggedIn(user)
     }
 
     suspend fun fetchUserInfo(): String? {

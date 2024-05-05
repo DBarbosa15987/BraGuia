@@ -20,6 +20,9 @@ interface API {
     @POST("login")
     fun login(@Body loginRequest:LoginRequest): Call<ResponseBody>
 
+   @POST("logout")
+   suspend fun logout()
+
     @GET("user")
     suspend fun getUserInfo(): User
 

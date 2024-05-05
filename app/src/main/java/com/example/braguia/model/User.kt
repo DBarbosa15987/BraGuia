@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull
 
 @Entity(tableName = "user")
 data class User(
-
     @PrimaryKey
     @SerializedName("username")
     val username: String,
@@ -24,5 +23,6 @@ data class User(
     @SerializedName("email")
     val email: String,
     @SerializedName("date_joined")
-    val dateJoined: String
+    val dateJoined: String,
+    var loggedIn: Boolean = true
 )
