@@ -2,9 +2,11 @@ package com.example.braguia.repositories
 
 import android.util.Log
 import com.example.braguia.model.Bookmark
+import com.example.braguia.model.Preferences
 import com.example.braguia.model.TrailDB
 import com.example.braguia.model.User
 import com.example.braguia.model.dao.BookmarkDAO
+import com.example.braguia.model.dao.PreferencesDAO
 import com.example.braguia.model.dao.UserDAO
 import com.example.braguia.network.API
 import com.example.braguia.network.LoginRequest
@@ -18,8 +20,11 @@ import retrofit2.Response
 class UserRepository(
     private val API: API,
     private val userDAO: UserDAO,
-    private val bookmarkDAO: BookmarkDAO
+    private val bookmarkDAO: BookmarkDAO,
+    private val preferencesDAO: PreferencesDAO
 ) {
+
+
 
     suspend fun checkLoggedInUser(): Boolean {
         val users = userDAO.getLoggedInUser()
@@ -117,6 +122,14 @@ class UserRepository(
 
     suspend fun deleteAllBookmarks() {
         bookmarkDAO.deleteAll()
+    }
+
+    suspend fun updatePreferences(preferences: Preferences){
+        preferencesDAO.updatePreference(preferences)
+    }
+
+    fun getPreferences(username:String):Flow<Preferences?>{
+        return preferencesDAO.getPreferences(username)
     }
 
 }

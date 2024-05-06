@@ -17,4 +17,6 @@
     <string name="Dismiss">Dismiss</string>
     <string name="loginErrorMessage">There was an unexpected error on log in, check your network or contact support</string>
     <string name="loginErrorTitle">Log In Error</string>
+    <string name="notifications">Notifications</string>
+    <string name="aboutApp">About %s</string>
 </resources>

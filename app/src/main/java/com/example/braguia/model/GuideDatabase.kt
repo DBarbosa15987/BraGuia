@@ -11,6 +11,7 @@ import com.example.braguia.model.dao.EdgeDBDAO
 import com.example.braguia.model.dao.MediaDAO
 import com.example.braguia.model.dao.PartnerDAO
 import com.example.braguia.model.dao.PinDBDAO
+import com.example.braguia.model.dao.PreferencesDAO
 import com.example.braguia.model.dao.RelPinDAO
 import com.example.braguia.model.dao.RelTrailDAO
 import com.example.braguia.model.dao.SocialDAO
@@ -23,11 +24,12 @@ import kotlinx.coroutines.internal.synchronized
 @Database(
     entities = [User::class, AppInfoDB::class, Social::class, Contact::class, Media::class,
         Partner::class, TrailDB::class, PinDB::class, RelPin::class, RelTrail::class, EdgeDB::class,
-        Bookmark::class],
-    version = 17
+        Bookmark::class,Preferences::class],
+    version = 18
 )
 abstract class GuideDatabase : RoomDatabase() {
 
+    abstract fun preferencesDAO(): PreferencesDAO
     abstract fun bookmarkDAO(): BookmarkDAO
     abstract fun userDAO(): UserDAO
     abstract fun trailDBDAO(): TrailDBDAO

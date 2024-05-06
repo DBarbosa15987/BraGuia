@@ -2,6 +2,8 @@
 
 package com.example.braguia
 
+import android.content.Context
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,10 +37,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.braguia.model.AppInfo
 import com.example.braguia.model.Pin
+import com.example.braguia.model.Preferences
 import com.example.braguia.model.Trail
 import com.example.braguia.model.TrailDB
 import com.example.braguia.ui.AppInfoScreen
 import com.example.braguia.ui.LoginScreen
+import com.example.braguia.ui.SettingsScreen
 import com.example.braguia.ui.SinglePinScreen
 import com.example.braguia.ui.SingleTrailScreen
 import com.example.braguia.ui.TrailListScreen
@@ -58,6 +62,7 @@ enum class BraguiaScreen {
     AppInfo
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BraguiaTopAppBar(
     canNavigateBack: Boolean,
@@ -123,6 +128,7 @@ fun BraguiaBottomBar(
 
 @Composable
 fun BraGuiaApp(geofenceClient: GeofencingClient) {
+
 
     val trailsViewModel: TrailsViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
     val userViewModel: UserViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
@@ -252,10 +258,26 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
                 route = BraguiaScreen.Settings.name
             ) {
                 val appInfo: AppInfo? = trailsUiState.value.appInfo
+                val preferences: Preferences? = userUiState.value.preferences
+                if (appInfo != null && preferences != null) {
+                    SettingsScreen(
+                        appName = appInfo.appName,
+                        innerPadding = innerPadding,
+                        goToAppInfo = { navController.navigate(BraguiaScreen.AppInfo.name) },
+                        notification = preferences.notification,
+                        toggleNotification = { not -> userViewModel.updatePreferences(notification = not) }
+                    )
+                }
+            }
+            composable(
+                route = BraguiaScreen.AppInfo.name
+            ) {
+                val appInfo: AppInfo? = trailsUiState.value.appInfo
                 if (appInfo != null) {
                     AppInfoScreen(appInfo = appInfo, innerPadding)
                 }
             }
+
             composable(
                 route = BraguiaScreen.UserPage.name
             ) {

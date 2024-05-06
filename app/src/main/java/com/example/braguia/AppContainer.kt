@@ -3,6 +3,9 @@ package com.example.braguia
 import android.content.Context
 import android.util.Log
 import android.webkit.CookieManager
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.example.braguia.model.GuideDatabase
 import com.example.braguia.network.API
 import com.example.braguia.repositories.AppInfoRepository
@@ -27,9 +30,13 @@ interface AppContainer {
     val userRepository: UserRepository
 }
 
-class BraGuiaAppContainer(private val context: Context) : AppContainer {
-//    private val baseUrl = "http://192.168.85.186"
+class BraGuiaAppContainer(
+    private val context: Context
+) : AppContainer {
+    //    private val baseUrl = "http://192.168.85.186"
     private val baseUrl = "https://48dc9358343e97b5a7360114db120ee5.serveo.net"
+
+
     /**
      * Use the Retrofit builder to build a retrofit object using a kotlinx.serialization converter
      */
@@ -39,11 +46,11 @@ class BraGuiaAppContainer(private val context: Context) : AppContainer {
                 override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
                     val cookieManager = CookieManager.getInstance()
                     cookieManager.removeAllCookies(null)
-                        for (cookie in cookies) {
-                            val cookieString =
-                                cookie.name + "=" + cookie.value + "; path=" + cookie.path
-                            cookieManager.setCookie(cookie.domain, cookieString)
-                        }
+                    for (cookie in cookies) {
+                        val cookieString =
+                            cookie.name + "=" + cookie.value + "; path=" + cookie.path
+                        cookieManager.setCookie(cookie.domain, cookieString)
+                    }
                     // saves cookies to persistent storage
                     cookieManager.flush()
                 }
@@ -64,7 +71,9 @@ class BraGuiaAppContainer(private val context: Context) : AppContainer {
                     return cookies
                 }
             })
-            .addInterceptor(HttpLoggingInterceptor().apply { this.level = HttpLoggingInterceptor.Level.HEADERS })
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                this.level = HttpLoggingInterceptor.Level.HEADERS
+            })
             .build()
         CookieManager.getInstance().setAcceptCookie(true)
         return Retrofit.Builder().baseUrl(baseUrl)
@@ -109,7 +118,7 @@ class BraGuiaAppContainer(private val context: Context) : AppContainer {
     }
 
     override val userRepository: UserRepository by lazy {
-        UserRepository(retrofitService, database.userDAO(),database.bookmarkDAO())
+        UserRepository(retrofitService, database.userDAO(), database.bookmarkDAO(),database.preferencesDAO())
     }
 
 

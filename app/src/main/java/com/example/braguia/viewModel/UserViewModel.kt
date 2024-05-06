@@ -4,6 +4,7 @@ import android.util.Log
 import android.webkit.CookieManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.braguia.model.Preferences
 import com.example.braguia.model.TrailDB
 import com.example.braguia.model.User
 import com.example.braguia.network.LoginRequest
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 
 class UserViewModel(
     private val userRepository: UserRepository
@@ -35,6 +37,7 @@ class UserViewModel(
                 _userUiState.update { currState ->
                     currState.copy(userLoginState = UserLoginState.LoggedIn)
                 }
+
             }
         }
     }
@@ -53,6 +56,7 @@ class UserViewModel(
                     }
                     if (successful == UserLoginState.LoggedIn) {
                         fetchUserInfo()
+
                     }
                 }
             } catch (e: Exception) {
@@ -102,6 +106,7 @@ class UserViewModel(
                 user?.let {
                     it.loggedIn = true
                     userRepository.updateLoggedIn(it)
+                    getPreferences(user.username)
                 }
                 _userUiState.update { currState ->
                     currState.copy(user = user)
@@ -134,6 +139,34 @@ class UserViewModel(
         }
     }
 
+    private fun getPreferences(username: String) {
+        viewModelScope.launch {
+
+            userRepository.getPreferences(username).collect { pref ->
+                if (pref == null) {
+                    updatePreferences()
+                }
+                _userUiState.update { currState ->
+                    currState.copy(preferences = pref)
+                }
+                Log.i("PREFS", _userUiState.value.preferences.toString())
+            }
+
+            if (_userUiState.value.user == null) {
+                Log.i("USER", "USER A NULL")
+            }
+        }
+    }
+
+    fun updatePreferences(darkTheme: Boolean = false, notification: Boolean = true) {
+        viewModelScope.launch {
+            _userUiState.value.user?.let { user ->
+                userRepository.updatePreferences(
+                    Preferences(user.username, notification, darkTheme)
+                )
+            }
+        }
+    }
 }
 
 enum class UserLoginState {
@@ -148,5 +181,6 @@ data class UserUiState(
     val history: List<TrailDB> = listOf(),
     val bookmarks: Map<Long, TrailDB> = mapOf(),
     val userLoginState: UserLoginState = UserLoginState.LoggedOut,
-    val user: User? = null
+    val user: User? = null,
+    val preferences: Preferences? = null
 )
