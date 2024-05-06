@@ -43,7 +43,9 @@ class PinRepository(
         return pin
     }
 
-
+    suspend fun getPinMedia(pinId: Long){
+        mediaRepository.getMedia(pinId)
+    }
 
     fun Pin.toPinDB() = PinDB(
 

@@ -97,7 +97,10 @@ dependencies {
     ksp("androidx.room:room-compiler:2.6.1")
     //implementation(libs.androidx.navigation.compose)
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("com.google.android.exoplayer:exoplayer:2.18.7")
+    implementation("androidx.media3:media3-exoplayer:1.3.1")
+    implementation("androidx.media3:media3-exoplayer-dash:1.3.1")
+    implementation("androidx.media3:media3-ui:1.3.1")
+
 
     // Maps SDK for Android
     implementation("com.google.maps.android:maps-compose:4.4.0")
