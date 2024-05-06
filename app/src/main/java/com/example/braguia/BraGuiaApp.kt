@@ -54,7 +54,8 @@ enum class BraguiaScreen {
     Settings,
     UserPage,
     Trail,
-    Pin
+    Pin,
+    AppInfo
 }
 
 @Composable
@@ -178,14 +179,16 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
             modifier = Modifier
         ) {
             composable(route = BraguiaScreen.Login.name) {
-                LoginScreen(
-                    appName = trailsUiState.value.appInfo.appName,
-                    login = userViewModel::login,
-                    logout = userViewModel::logout,
-                    onDismiss = userViewModel::dismissError,
-                    userLoginState = userUiState.value.userLoginState,
-                    grantAccess = { navController.navigate(BraguiaScreen.HomePage.name) }
-                )
+                trailsUiState.value.appInfo?.let { it1 ->
+                    LoginScreen(
+                        appName = it1.appName,
+                        login = userViewModel::login,
+                        logout = userViewModel::logout,
+                        onDismiss = userViewModel::dismissError,
+                        userLoginState = userUiState.value.userLoginState,
+                        grantAccess = { navController.navigate(BraguiaScreen.HomePage.name) }
+                    )
+                }
             }
 
             composable(route = BraguiaScreen.HomePage.name) {
@@ -248,8 +251,10 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
             composable(
                 route = BraguiaScreen.Settings.name
             ) {
-                val appInfo: AppInfo = trailsUiState.value.appInfo
-                AppInfoScreen(appInfo = appInfo, innerPadding)
+                val appInfo: AppInfo? = trailsUiState.value.appInfo
+                if (appInfo != null) {
+                    AppInfoScreen(appInfo = appInfo, innerPadding)
+                }
             }
 
             composable(

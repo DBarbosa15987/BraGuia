@@ -59,6 +59,7 @@ fun AppInfoScreen(appInfo: AppInfo, innerPadding: PaddingValues) {
         items(appInfo.socials) { social ->
             SocialCard(social = social)
         }
+        //TODO fix nisto...
         item {
             LazyRow {
                 items(appInfo.partners) { partner ->

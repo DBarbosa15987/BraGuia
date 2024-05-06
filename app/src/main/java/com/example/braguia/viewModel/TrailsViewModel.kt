@@ -33,9 +33,9 @@ class TrailsViewModel(
         viewModelScope.launch {
             appInfoRepository.fetchAppInfo()
             trailRepository.fetchAPI()
+            getAppInfo()
+            getTrails()
         }
-        getTrails()
-        getAppInfo()
     }
 
 
@@ -83,7 +83,7 @@ class TrailsViewModel(
     fun getAppInfo() {
 
         viewModelScope.launch {
-            var result = AppInfo("", "", listOf(), listOf(), listOf(), "")
+            var result: AppInfo? = null
             try {
                 result = appInfoRepository.getAppInfo()
             } catch (e: Exception) {
@@ -130,6 +130,6 @@ data class HomeUiState(
     val currPin: Pin? = null,
     val currTrail: Trail? = null,
     val mediaList: List<Media> = listOf(),
-    val appInfo: AppInfo = AppInfo("", "", listOf(), listOf(), listOf(), "")
+    val appInfo: AppInfo? = null
 )
 

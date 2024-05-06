@@ -24,7 +24,7 @@ import kotlinx.coroutines.internal.synchronized
     entities = [User::class, AppInfoDB::class, Social::class, Contact::class, Media::class,
         Partner::class, TrailDB::class, PinDB::class, RelPin::class, RelTrail::class, EdgeDB::class,
         Bookmark::class],
-    version = 16
+    version = 17
 )
 abstract class GuideDatabase : RoomDatabase() {
 
