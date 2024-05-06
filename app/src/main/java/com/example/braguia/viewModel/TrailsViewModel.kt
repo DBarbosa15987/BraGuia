@@ -2,15 +2,8 @@ package com.example.braguia.viewModel
 
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.braguia.BraGuiaApplication
 import com.example.braguia.model.AppInfo
 import com.example.braguia.model.Edge
 import com.example.braguia.model.Media
@@ -19,17 +12,11 @@ import com.example.braguia.model.Trail
 import com.example.braguia.model.TrailDB
 import com.example.braguia.repositories.AppInfoRepository
 import com.example.braguia.repositories.TrailRepository
-import com.example.braguia.repositories.UserRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -66,13 +53,12 @@ class TrailsViewModel(
         }
     }
 
-    fun getPinTrails(pinId: Long){
+    fun getPinTrails(pinId: Long) {
         viewModelScope.launch {
             var result = listOf<TrailDB>()
             try {
                 result = trailRepository.getPinTrails(pinId)
-            }
-            catch (e:Exception){
+            } catch (e: Exception) {
                 Log.e("PIN_TRAILS", e.toString())
             }
             _homeUiState.update { curr ->
@@ -81,8 +67,8 @@ class TrailsViewModel(
         }
     }
 
-    fun getPinRoute(trail:Trail) {
-        val route = trailRepository.getPinRoute(trail)
+    fun getTrailRoute(trail: Trail) {
+        val route = trailRepository.getTrailRoute(trail)
         _homeUiState.update { curr ->
             curr.copy(trailRoute = route)
         }
@@ -135,7 +121,6 @@ class TrailsViewModel(
             }
         }
     }
-
 }
 
 data class HomeUiState(

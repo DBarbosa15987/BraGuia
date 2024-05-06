@@ -3,8 +3,8 @@ package com.example.braguia.repositories
 import android.util.Log
 import com.example.braguia.model.Edge
 import com.example.braguia.model.EdgeDB
+import com.example.braguia.model.Media
 import com.example.braguia.model.Pin
-import com.example.braguia.model.PinDB
 import com.example.braguia.model.RelTrail
 import com.example.braguia.model.Trail
 import com.example.braguia.model.TrailDB
@@ -83,7 +83,16 @@ class TrailRepository(
         val edges: List<Edge> = this.getEdges(trailId)
 
         return trailDAO.getTrail(trailId).toTrail(relRelTrails, edges)
+    }
 
+    fun getTrailMedia(trail: Trail): List<Media> {
+        val mediaList = mutableListOf<Media>()
+        for (edge in trail.edges) {
+            mediaList.addAll(edge.edgeStart.media)
+        }
+        val lastPin = trail.edges.last().edgeEnd
+        mediaList.addAll(lastPin.media)
+        return mediaList
     }
 
     suspend fun getPin(pinId: Long): Pin? {
@@ -95,7 +104,7 @@ class TrailRepository(
         return trailDAO.getTrailsByIDs(trailIds)
     }
 
-    fun getPinRoute(trail: Trail): List<Pin> {
+    fun getTrailRoute(trail: Trail): List<Pin> {
         val route = mutableListOf<Pin>()
         for (edge in trail.edges) {
             route.add(edge.edgeStart)

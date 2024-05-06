@@ -211,7 +211,7 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
                 trailsViewModel.getEdges(id)
                 val trail: Trail? = trailsUiState.value.currTrail // TODO tratamento de errors?
                 if (trail != null) {
-                    trailsViewModel.getPinRoute(trail)
+                    trailsViewModel.getTrailRoute(trail)
                     SingleTrailScreen(
                         trail = trail,
                         route = trailsUiState.value.trailRoute,
@@ -251,6 +251,7 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
                 val appInfo: AppInfo = trailsUiState.value.appInfo
                 AppInfoScreen(appInfo = appInfo, innerPadding)
             }
+
             composable(
                 route = BraguiaScreen.UserPage.name
             ) {
