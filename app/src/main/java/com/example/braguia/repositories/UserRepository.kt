@@ -2,10 +2,13 @@ package com.example.braguia.repositories
 
 import android.util.Log
 import com.example.braguia.model.Bookmark
+import com.example.braguia.model.HistoryEntry
+import com.example.braguia.model.HistoryEntryDB
 import com.example.braguia.model.Preferences
 import com.example.braguia.model.TrailDB
 import com.example.braguia.model.User
 import com.example.braguia.model.dao.BookmarkDAO
+import com.example.braguia.model.dao.HistoryEntryDAO
 import com.example.braguia.model.dao.PreferencesDAO
 import com.example.braguia.model.dao.UserDAO
 import com.example.braguia.network.API
@@ -21,7 +24,8 @@ class UserRepository(
     private val API: API,
     private val userDAO: UserDAO,
     private val bookmarkDAO: BookmarkDAO,
-    private val preferencesDAO: PreferencesDAO
+    private val preferencesDAO: PreferencesDAO,
+    private val historyEntryDAO: HistoryEntryDAO
 ) {
 
 
@@ -131,5 +135,27 @@ class UserRepository(
     fun getPreferences(username:String):Flow<Preferences?>{
         return preferencesDAO.getPreferences(username)
     }
+
+    suspend fun updateHistory(historyEntryDB: HistoryEntryDB){
+        historyEntryDAO.insert(historyEntryDB)
+    }//TODO
+
+    fun getHistory(username:String):Flow<List<HistoryEntry>>{
+        return historyEntryDAO.getHistory(username)
+    }//TODO
+
+    fun HistoryEntryDB.toHistoryEntry(trailDB: TrailDB) = HistoryEntry(
+        entryId = id,
+        timeStamp = timeStamp,
+        trailDB = trailDB,
+        username = username
+    )
+
+    fun HistoryEntry.toHistoryEntryDB() = HistoryEntryDB(
+        id = entryId,
+        timeStamp = timeStamp,
+        trailId = trailDB.id,
+        username = username
+    )
 
 }

@@ -4,6 +4,8 @@ import android.util.Log
 import android.webkit.CookieManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.braguia.model.HistoryEntry
+import com.example.braguia.model.HistoryEntryDB
 import com.example.braguia.model.Preferences
 import com.example.braguia.model.TrailDB
 import com.example.braguia.model.User
@@ -142,15 +144,16 @@ class UserViewModel(
     private fun getPreferences(username: String) {
         viewModelScope.launch {
 
-            userRepository.getPreferences(username).collect { pref ->
-                if (pref == null) {
-                    updatePreferences()
+            userRepository.getPreferences(username).flowOn(Dispatchers.IO)
+                .collect { pref ->
+                    if (pref == null) {
+                        updatePreferences()
+                    }
+                    _userUiState.update { currState ->
+                        currState.copy(preferences = pref)
+                    }
+                    Log.i("PREFS", _userUiState.value.preferences.toString())
                 }
-                _userUiState.update { currState ->
-                    currState.copy(preferences = pref)
-                }
-                Log.i("PREFS", _userUiState.value.preferences.toString())
-            }
 
             if (_userUiState.value.user == null) {
                 Log.i("USER", "USER A NULL")
@@ -167,6 +170,33 @@ class UserViewModel(
             }
         }
     }
+
+    fun getHistory() {
+        viewModelScope.launch {
+            _userUiState.value.user?.let { user ->
+                userRepository.getHistory(user.username).flowOn(Dispatchers.IO)
+                    .collect { history ->
+                        _userUiState.update { currState ->
+                            currState.copy(history = history)
+                        }
+                    }
+            }
+        }
+    }
+
+    fun updateHistory(trailId: Long) {
+        viewModelScope.launch {
+            _userUiState.value.user?.let { user ->
+                userRepository.updateHistory(
+                    HistoryEntryDB(
+                        trailId = trailId,
+                        username = user.username
+                    )
+                )
+            }
+        }
+    }
+
 }
 
 enum class UserLoginState {
@@ -178,7 +208,7 @@ enum class UserLoginState {
 }
 
 data class UserUiState(
-    val history: List<TrailDB> = listOf(),
+    val history: List<HistoryEntry> = listOf(),
     val bookmarks: Map<Long, TrailDB> = mapOf(),
     val userLoginState: UserLoginState = UserLoginState.LoggedOut,
     val user: User? = null,

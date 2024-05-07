@@ -113,6 +113,10 @@ class TrailRepository(
         return route
     }
 
+    suspend fun getTrailsByIDs(trailIds:List<Long>):List<TrailDB>{
+        return trailDAO.getTrailsByIDs(trailIds)
+    }
+
 
     fun Trail.toTrailDB() = TrailDB(
         id = id,

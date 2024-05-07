@@ -3,6 +3,7 @@
 package com.example.braguia
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,6 +37,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.braguia.model.AppInfo
+import com.example.braguia.model.HistoryEntry
 import com.example.braguia.model.Pin
 import com.example.braguia.model.Preferences
 import com.example.braguia.model.Trail
@@ -227,7 +229,8 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
                         innerPadding = innerPadding,
                         navigateToPin = { pinId ->
                             navController.navigate("${BraguiaScreen.Pin.name}/$pinId")
-                        }
+                        },
+                        updateHistory = userViewModel::updateHistory
                     )
                 }
             }
@@ -283,6 +286,9 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
             ) {
                 userViewModel.getBookmarks()
                 val bookmarks: List<TrailDB> = userUiState.value.bookmarks.values.toList()
+                userViewModel.getHistory()
+                val history: List<HistoryEntry> = userUiState.value.history
+                Log.i("HISTORY", history.toString())
                 LazyColumn(Modifier.padding(innerPadding)) {
                     items(bookmarks) { trail ->
                         TrailCard(

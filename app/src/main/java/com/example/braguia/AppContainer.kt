@@ -1,11 +1,7 @@
 package com.example.braguia
 
 import android.content.Context
-import android.util.Log
 import android.webkit.CookieManager
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.example.braguia.model.GuideDatabase
 import com.example.braguia.network.API
 import com.example.braguia.repositories.AppInfoRepository
@@ -33,9 +29,8 @@ interface AppContainer {
 class BraGuiaAppContainer(
     private val context: Context
 ) : AppContainer {
-    //    private val baseUrl = "http://192.168.85.186"
-    private val baseUrl = "https://48dc9358343e97b5a7360114db120ee5.serveo.net"
-
+    private val baseUrl = "http://192.168.85.186"
+    //private val baseUrl = "https://48dc9358343e97b5a7360114db120ee5.serveo.net"
 
     /**
      * Use the Retrofit builder to build a retrofit object using a kotlinx.serialization converter
@@ -118,7 +113,13 @@ class BraGuiaAppContainer(
     }
 
     override val userRepository: UserRepository by lazy {
-        UserRepository(retrofitService, database.userDAO(), database.bookmarkDAO(),database.preferencesDAO())
+        UserRepository(
+            retrofitService,
+            database.userDAO(),
+            database.bookmarkDAO(),
+            database.preferencesDAO(),
+            database.historyEntryDAO()
+        )
     }
 
 

@@ -8,6 +8,7 @@ import com.example.braguia.model.dao.AppInfoDBDAO
 import com.example.braguia.model.dao.BookmarkDAO
 import com.example.braguia.model.dao.ContactDAO
 import com.example.braguia.model.dao.EdgeDBDAO
+import com.example.braguia.model.dao.HistoryEntryDAO
 import com.example.braguia.model.dao.MediaDAO
 import com.example.braguia.model.dao.PartnerDAO
 import com.example.braguia.model.dao.PinDBDAO
@@ -24,11 +25,12 @@ import kotlinx.coroutines.internal.synchronized
 @Database(
     entities = [User::class, AppInfoDB::class, Social::class, Contact::class, Media::class,
         Partner::class, TrailDB::class, PinDB::class, RelPin::class, RelTrail::class, EdgeDB::class,
-        Bookmark::class,Preferences::class],
-    version = 18
+        Bookmark::class, Preferences::class, HistoryEntryDB::class],
+    version = 19
 )
 abstract class GuideDatabase : RoomDatabase() {
 
+    abstract fun historyEntryDAO(): HistoryEntryDAO
     abstract fun preferencesDAO(): PreferencesDAO
     abstract fun bookmarkDAO(): BookmarkDAO
     abstract fun userDAO(): UserDAO
@@ -54,13 +56,10 @@ abstract class GuideDatabase : RoomDatabase() {
             return Instance ?: synchronized(this) {
 
                 Room.databaseBuilder(context, GuideDatabase::class.java, DATABASE_NAME)
-                    //.createFromAsset("database/flight_search.db")
                     .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
-
             }
-
         }
     }
 }

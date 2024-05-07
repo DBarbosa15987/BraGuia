@@ -56,10 +56,14 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun SingleTrailScreen(
-    route: List<Pin>, trail: Trail, innerPadding: PaddingValues, navigateToPin: (Long) -> Unit
+    route: List<Pin>,
+    trail: Trail,
+    innerPadding: PaddingValues,
+    navigateToPin: (Long) -> Unit,
+    updateHistory: (Long) -> Unit
 ) {
     LazyColumn(Modifier.padding(innerPadding)) {
-        item { TrailInformation(trail = trail, route = route) }
+        item { TrailInformation(trail = trail, route = route, updateHistory = updateHistory) }
         item { MapWithPins(route) }
         items(trail.edges) { edge ->
             EdgePreviewCard(edge = edge, navigateToPin = navigateToPin)
@@ -149,7 +153,8 @@ fun MediaGalleryScreen(pins: List<Pin>) {
 
 @Composable
 fun MapWithPins(pins: List<Pin>) {
-    // TODO: calculate the center point of all pins so everyone appears in the map
+    //TODO calculate the center point of all pins so everyone appears in the map
+    //FIXME isto deu index out of bounds...
     val firstPinLatLng = LatLng(pins[0].pinLat, pins[0].pinLng)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(firstPinLatLng, 10f)
@@ -166,7 +171,7 @@ fun MapWithPins(pins: List<Pin>) {
 }
 
 @Composable
-fun TrailInformation(trail: Trail, route: List<Pin>) {
+fun TrailInformation(trail: Trail, route: List<Pin>, updateHistory: (Long) -> Unit) {
     val context = LocalContext.current
     Column(modifier = Modifier.fillMaxWidth()) {
         AsyncImage(
@@ -204,7 +209,9 @@ fun TrailInformation(trail: Trail, route: List<Pin>) {
             val mapIntentUri = Uri.parse(mapIntentUriString)
             val mapIntent = Intent(Intent.ACTION_VIEW, mapIntentUri)
             try {
+                updateHistory(trail.id)
                 context.startActivity(mapIntent)
+
             } catch (e: Exception) {
                 // TODO: add error dialog
             }
