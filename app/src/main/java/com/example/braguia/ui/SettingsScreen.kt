@@ -50,8 +50,6 @@ fun AboutAppButton(appName: String, goToAppInfo: () -> Unit) {
 @Composable
 fun NotificationToggle(toggleNotification: (Boolean) -> Unit, notification: Boolean) {
 
-    //var checked by remember { mutableStateOf(notification) }
-
 
     Row {
         Column {

@@ -9,16 +9,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.example.braguia.R
 
 @Composable
-fun ErrorAlertDialog(
+fun AlertDialogTemplate(
     onDismiss: () -> Unit,
+
     dialogTitle: String,
     dialogText: String,
+    confirmButton: @Composable () -> Unit = {}
 ) {
     AlertDialog(
         icon = {
@@ -30,7 +31,7 @@ fun ErrorAlertDialog(
         title = { Text(text = dialogTitle) },
         text = { Text(text = dialogText) },
         onDismissRequest = { onDismiss() },
-        confirmButton = { },
+        confirmButton = confirmButton,
         dismissButton = {
             TextButton(onClick = { onDismiss() }, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(id = R.string.Dismiss), textAlign = TextAlign.Center)

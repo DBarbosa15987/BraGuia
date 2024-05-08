@@ -3,16 +3,17 @@ package com.example.braguia.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,8 +29,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.braguia.R
-import com.example.braguia.ui.components.ErrorAlertDialog
+import com.example.braguia.ui.components.AlertDialogTemplate
 import com.example.braguia.viewModel.UserLoginState
 
 
@@ -43,7 +45,14 @@ fun LoginScreen(
     grantAccess: () -> Unit
 ) {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        LoginPrompt(appName, login,logout, onDismiss, userLoginState, grantAccess)
+        LoginPrompt(
+            appName,
+            login,
+            logout,
+            onDismiss,
+            userLoginState,
+            grantAccess
+        )
     }
 }
 
@@ -116,15 +125,18 @@ fun LoginPrompt(
                 }
             }
             if (userLoginState == UserLoginState.Error) {
-                ErrorAlertDialog(
+                AlertDialogTemplate(
                     onDismiss = onDismiss,
                     dialogTitle = stringResource(R.string.loginErrorTitle),
                     dialogText = stringResource(R.string.loginErrorMessage)
                 )
             }
-            Button(onClick = logout ) {
+            Button(onClick = logout) {
                 Text(text = "Logout")
             }
+
         }
     }
 }
+
+

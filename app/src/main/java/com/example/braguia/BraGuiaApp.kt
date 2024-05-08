@@ -27,6 +27,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -42,12 +45,14 @@ import com.example.braguia.model.Pin
 import com.example.braguia.model.Preferences
 import com.example.braguia.model.Trail
 import com.example.braguia.model.TrailDB
+import com.example.braguia.model.User
 import com.example.braguia.ui.AppInfoScreen
 import com.example.braguia.ui.LoginScreen
 import com.example.braguia.ui.SettingsScreen
 import com.example.braguia.ui.SinglePinScreen
 import com.example.braguia.ui.SingleTrailScreen
 import com.example.braguia.ui.TrailListScreen
+import com.example.braguia.ui.UserPageScreen
 import com.example.braguia.ui.components.TrailCard
 import com.example.braguia.viewModel.BraGuiaViewModelProvider
 import com.example.braguia.viewModel.TrailsViewModel
@@ -136,8 +141,9 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
     val userViewModel: UserViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
 
     val navController: NavHostController = rememberNavController()
-
     val backStackEntry by navController.currentBackStackEntryAsState()
+    var warningAsked by remember { mutableStateOf(false) }
+
 
     val currentRoute = backStackEntry?.destination?.route ?: BraguiaScreen.HomePage.name
     val currentScreen = when {
@@ -187,9 +193,10 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
             modifier = Modifier
         ) {
             composable(route = BraguiaScreen.Login.name) {
-                trailsUiState.value.appInfo?.let { it1 ->
+                val appInfo: AppInfo? = trailsUiState.value.appInfo
+                if (appInfo != null) {
                     LoginScreen(
-                        appName = it1.appName,
+                        appName = appInfo.appName,
                         login = userViewModel::login,
                         logout = userViewModel::logout,
                         onDismiss = userViewModel::dismissError,
@@ -201,14 +208,21 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
 
             composable(route = BraguiaScreen.HomePage.name) {
                 trailsViewModel.getTrails()
-                TrailListScreen(
-                    trails = trailsUiState.value.trailList,
-                    navigateToTrail = { trailId ->
-                        navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
-                    },
-                    innerPadding = innerPadding,
-                    toggleBookmark = userViewModel::toggleBookmark
-                )
+                val preferences: Preferences? = userUiState.value.preferences
+                if (preferences != null) {
+                    TrailListScreen(
+                        trails = trailsUiState.value.trailList,
+                        navigateToTrail = { trailId ->
+                            navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
+                        },
+                        innerPadding = innerPadding,
+                        toggleBookmark = userViewModel::toggleBookmark,
+                        googleMapsAskAgain = preferences.googleMapsAskAgain,
+                        dontAskAgain = { b -> userViewModel.updatePreferences(googleMapsAskAgain = b) },
+                        alreadyAsked = warningAsked,
+                        alreadyAskedtoggle = { warningAsked = false }
+                    )
+                }
             }
 
             composable(
@@ -289,16 +303,13 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
                 userViewModel.getHistory()
                 val history: List<HistoryEntry> = userUiState.value.history
                 Log.i("HISTORY", history.toString())
-                LazyColumn(Modifier.padding(innerPadding)) {
-                    items(bookmarks) { trail ->
-                        TrailCard(
-                            trail = trail,
-                            navigateToTrail = { trailId ->
-                                navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
-                            },
-                            toggleBookmark = userViewModel::toggleBookmark
-                        )
-                    }
+                val user: User? = userUiState.value.user
+                if (user != null) {
+                    UserPageScreen(
+                        innerPadding = innerPadding,
+                        user = user,
+                        logOff = { userViewModel.logout();navController.navigate(BraguiaScreen.Login.name) }
+                    )
                 }
             }
         }

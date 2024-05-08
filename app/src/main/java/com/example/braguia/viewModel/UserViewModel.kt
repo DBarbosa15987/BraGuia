@@ -77,7 +77,9 @@ class UserViewModel(
         viewModelScope.launch {
             val cookieManager = CookieManager.getInstance()
             _userUiState.value.user?.let {
+                Log.i("LOGOUT","Logging out")
                 userRepository.logout(it)
+                Log.i("LOGOUT","Logging out done")
             }
             cookieManager.removeAllCookies(null)
         }
@@ -161,11 +163,11 @@ class UserViewModel(
         }
     }
 
-    fun updatePreferences(darkTheme: Boolean = false, notification: Boolean = true) {
+    fun updatePreferences(darkTheme: Boolean = false, notification: Boolean = true, googleMapsAskAgain:Boolean = true) {
         viewModelScope.launch {
             _userUiState.value.user?.let { user ->
                 userRepository.updatePreferences(
-                    Preferences(user.username, notification, darkTheme)
+                    Preferences(user.username, notification, darkTheme,googleMapsAskAgain)
                 )
             }
         }
