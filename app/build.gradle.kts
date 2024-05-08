@@ -100,6 +100,8 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:1.3.1")
     implementation("androidx.media3:media3-exoplayer-dash:1.3.1")
     implementation("androidx.media3:media3-ui:1.3.1")
+    implementation("androidx.work:work-runtime-ktx:2.7.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
 
 
     // Maps SDK for Android

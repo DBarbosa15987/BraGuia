@@ -12,7 +12,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,8 +41,9 @@ fun LoginScreen(
     userLoginState: UserLoginState,
     grantAccess: () -> Unit
 ) {
+
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        LoginPrompt(appName, login,logout, onDismiss, userLoginState, grantAccess)
+        LoginPrompt(appName, login, logout, onDismiss, userLoginState, grantAccess)
     }
 }
 
@@ -122,7 +122,7 @@ fun LoginPrompt(
                     dialogText = stringResource(R.string.loginErrorMessage)
                 )
             }
-            Button(onClick = logout ) {
+            Button(onClick = logout) {
                 Text(text = "Logout")
             }
         }

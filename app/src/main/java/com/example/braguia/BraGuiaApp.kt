@@ -2,9 +2,10 @@
 
 package com.example.braguia
 
-import android.content.Context
+import android.Manifest
+import android.app.PendingIntent
+import android.content.Intent
 import android.util.Log
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.TimeToLeave
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,9 +27,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -52,7 +60,8 @@ import com.example.braguia.ui.components.TrailCard
 import com.example.braguia.viewModel.BraGuiaViewModelProvider
 import com.example.braguia.viewModel.TrailsViewModel
 import com.example.braguia.viewModel.UserViewModel
-import com.google.android.gms.location.GeofencingClient
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 enum class BraguiaScreen {
     Login,
@@ -96,6 +105,7 @@ fun BraguiaTopAppBar(
 fun BraguiaBottomBar(
     currentScreen: BraguiaScreen,
     goHome: () -> Unit,
+    logout: () -> Unit,
     goToSettings: () -> Unit,
     goToUserProfile: () -> Unit,
     deleteAllBookmarks: () -> Unit
@@ -123,15 +133,16 @@ fun BraguiaBottomBar(
                     contentDescription = null
                 )
             }
+            Button(onClick = logout) {
+                Icon(imageVector = Icons.Filled.TimeToLeave, contentDescription = "BottomBarHomeIcon")
+            }
         }
     }
 }
 
 
 @Composable
-fun BraGuiaApp(geofenceClient: GeofencingClient) {
-
-
+fun BraGuiaApp() {
     val trailsViewModel: TrailsViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
     val userViewModel: UserViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
 
@@ -145,10 +156,10 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
         currentRoute.startsWith(BraguiaScreen.Pin.name) -> BraguiaScreen.Pin
         else -> BraguiaScreen.valueOf(currentRoute)
     }
-
     Scaffold(
         bottomBar = {
             BraguiaBottomBar(
+                logout = userViewModel::logout,
                 currentScreen = currentScreen,
                 goHome = {
                     navController.popBackStack(
@@ -167,7 +178,7 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
                     )
                 },
                 //TODO temp!!!!
-                userViewModel::deleteAllBookmarks
+                deleteAllBookmarks = userViewModel::deleteAllBookmarks
             )
         },
         topBar = {

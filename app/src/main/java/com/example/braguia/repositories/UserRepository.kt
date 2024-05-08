@@ -14,6 +14,7 @@ import com.example.braguia.model.dao.UserDAO
 import com.example.braguia.network.API
 import com.example.braguia.network.LoginRequest
 import com.example.braguia.viewModel.UserLoginState
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -27,7 +28,6 @@ class UserRepository(
     private val preferencesDAO: PreferencesDAO,
     private val historyEntryDAO: HistoryEntryDAO
 ) {
-
 
 
     suspend fun checkLoggedInUser(): Boolean {
@@ -48,8 +48,7 @@ class UserRepository(
             }
 
             override fun onResponse(
-                call: Call<ResponseBody>,
-                response: Response<ResponseBody>
+                call: Call<ResponseBody>, response: Response<ResponseBody>
             ) {
                 if (response.code() == 200) {
                     // login is successful
@@ -73,12 +72,29 @@ class UserRepository(
                     callback(UserLoginState.Error)
                 }
             }
-        }
-        )
+        })
     }
 
     suspend fun logout(user: User) {
-        API.logout()
+        Log.i("USERREPOSITORY", "Reached logout")
+        val call = API.logout()
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                throw t
+            }
+
+            override fun onResponse(
+                call: Call<ResponseBody>, response: Response<ResponseBody>
+            ) {
+                if (response.code() == 200) {
+                    Log.i("LOGOUT", "Logout successful")
+                } else {
+                    Log.i(
+                        "LOGOUT", "Logout unsuccessful"
+                    )
+                }
+            }
+        })
         user.loggedIn = false
         userDAO.updateLoggedIn(user)
     }
@@ -128,34 +144,28 @@ class UserRepository(
         bookmarkDAO.deleteAll()
     }
 
-    suspend fun updatePreferences(preferences: Preferences){
+    suspend fun updatePreferences(preferences: Preferences) {
         preferencesDAO.updatePreference(preferences)
     }
 
-    fun getPreferences(username:String):Flow<Preferences?>{
+    fun getPreferences(username: String): Flow<Preferences?> {
         return preferencesDAO.getPreferences(username)
     }
 
-    suspend fun updateHistory(historyEntryDB: HistoryEntryDB){
+    suspend fun updateHistory(historyEntryDB: HistoryEntryDB) {
         historyEntryDAO.insert(historyEntryDB)
     }//TODO
 
-    fun getHistory(username:String):Flow<List<HistoryEntry>>{
+    fun getHistory(username: String): Flow<List<HistoryEntry>> {
         return historyEntryDAO.getHistory(username)
     }//TODO
 
     fun HistoryEntryDB.toHistoryEntry(trailDB: TrailDB) = HistoryEntry(
-        entryId = id,
-        timeStamp = timeStamp,
-        trailDB = trailDB,
-        username = username
+        entryId = id, timeStamp = timeStamp, trailDB = trailDB, username = username
     )
 
     fun HistoryEntry.toHistoryEntryDB() = HistoryEntryDB(
-        id = entryId,
-        timeStamp = timeStamp,
-        trailId = trailDB.id,
-        username = username
+        id = entryId, timeStamp = timeStamp, trailId = trailDB.id, username = username
     )
 
 }

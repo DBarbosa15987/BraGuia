@@ -5,6 +5,7 @@ import com.example.braguia.model.Edge
 import com.example.braguia.model.EdgeDB
 import com.example.braguia.model.Media
 import com.example.braguia.model.Pin
+import com.example.braguia.model.PinDB
 import com.example.braguia.model.RelTrail
 import com.example.braguia.model.Trail
 import com.example.braguia.model.TrailDB
@@ -22,8 +23,10 @@ class TrailRepository(
     val relTrailDAO: RelTrailDAO,
     val pinRepository: PinRepository
 ) {
+    suspend fun getAllPins(): List<PinDB>{
+        return pinRepository.getAllPins()
+    }
     suspend fun fetchAPI() {
-
         try {
             val trailList = API.getTrails()
 

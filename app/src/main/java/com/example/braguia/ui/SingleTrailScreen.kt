@@ -6,8 +6,10 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,6 +29,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import androidx.media3.common.MediaItem.fromUri
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -75,9 +83,11 @@ fun SingleTrailScreen(
 
 @SuppressLint("OpaqueUnitKey")
 @Composable
-fun MediaPlayerScreen(media: Media) {
+fun MediaPlayer(media: Media) {
     Surface(
-        modifier = Modifier.fillMaxSize(), color = Color.Black
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp), color = Color.Black
     ) {
         val url = media.mediaFile
         val context = LocalContext.current
@@ -92,6 +102,7 @@ fun MediaPlayerScreen(media: Media) {
             AndroidView(factory = {
                 PlayerView(context).apply {
                     useController = true
+
                     player = exoPlayer
                 }
             })
@@ -105,6 +116,9 @@ fun MediaPlayerScreen(media: Media) {
 @Composable
 fun MediaGalleryScreen(pins: List<Pin>) {
     Column {
+        var displayMedia by remember { mutableStateOf<Media?>(null) }
+        var parentId by remember { mutableLongStateOf(-1) }
+        var showing by remember { mutableStateOf(false) }
         val filteredPins = pins.distinctBy { it.id }
         for (pin in filteredPins) {
             if (pin.media.isNotEmpty()) {
@@ -115,15 +129,21 @@ fun MediaGalleryScreen(pins: List<Pin>) {
                 )
                 LazyRow {
                     items(pin.media) { media ->
-                        val modifier = Modifier.size(100.dp)
+                        val modifier = Modifier
+                            .size(100.dp)
+                            .clickable {
+                                showing = true
+                                parentId = pin.id
+                                displayMedia = media
+                            }
                         when (media.mediaType) {
                             "I" -> {
                                 AsyncImage(
                                     model = media.mediaFile,
-                                    modifier = modifier,
                                     contentScale = ContentScale.Crop,
                                     contentDescription = "PinMedia",
                                     placeholder = painterResource(id = R.drawable.loading_img),
+                                    modifier = modifier,
                                     error = painterResource(id = R.drawable.ic_broken_image)
                                 )
                             }
@@ -131,17 +151,46 @@ fun MediaGalleryScreen(pins: List<Pin>) {
                             "V" -> {
                                 Icon(
                                     imageVector = Icons.Filled.PlayCircleOutline,
+                                    modifier = modifier,
                                     contentDescription = "PlayCircle",
-                                    modifier = modifier
                                 )
                             }
 
                             "R" -> {
                                 Icon(
                                     imageVector = Icons.Filled.MusicNote,
-                                    contentDescription = "MusicNote",
                                     modifier = modifier,
+                                    contentDescription = "MusicNote",
                                 )
+                            }
+                        }
+                    }
+                }
+                Log.i("SINGLETRAILSCREEN", "$displayMedia $parentId")
+                Log.i("SINGLETRAILSCREEN", "$showing")
+                if (displayMedia != null && !showing) {
+                    showing = true
+                    Dialog(onDismissRequest = {
+                        displayMedia = null
+                        showing = false
+                    }) {
+                        when (displayMedia?.mediaType) {
+                            "I" -> {
+                                AsyncImage(
+                                    model = displayMedia?.mediaFile,
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentDescription = "PinMedia",
+                                    placeholder = painterResource(id = R.drawable.loading_img),
+                                    error = painterResource(id = R.drawable.ic_broken_image)
+                                )
+                            }
+
+                            "V" -> {
+                                MediaPlayer(media = displayMedia!!)
+                            }
+
+                            "R" -> {
+                                MediaPlayer(media = displayMedia!!)
                             }
                         }
                     }

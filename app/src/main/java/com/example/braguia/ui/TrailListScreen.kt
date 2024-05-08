@@ -1,5 +1,8 @@
 package com.example.braguia.ui
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,7 +19,11 @@ fun TrailListScreen(
 ) {
     LazyColumn(contentPadding = innerPadding) {
         items(trails) {
-            TrailCard(trail = it, navigateToTrail = navigateToTrail, toggleBookmark = toggleBookmark)
+            TrailCard(
+                trail = it,
+                navigateToTrail = navigateToTrail,
+                toggleBookmark = toggleBookmark
+            )
         }
     }
 }

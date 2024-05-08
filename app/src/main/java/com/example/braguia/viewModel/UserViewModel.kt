@@ -75,11 +75,11 @@ class UserViewModel(
 
     fun logout() {
         viewModelScope.launch {
-            val cookieManager = CookieManager.getInstance()
             _userUiState.value.user?.let {
+                val cookieManager = CookieManager.getInstance()
                 userRepository.logout(it)
+                cookieManager.removeSessionCookies(null)
             }
-            cookieManager.removeAllCookies(null)
         }
     }
 

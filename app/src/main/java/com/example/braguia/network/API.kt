@@ -21,9 +21,8 @@ interface API {
     fun login(@Body loginRequest:LoginRequest): Call<ResponseBody>
 
     @POST("logout")
-    suspend fun logout()
+    fun logout(): Call<ResponseBody>
 
     @GET("user")
     suspend fun getUserInfo(): User
-
 }
