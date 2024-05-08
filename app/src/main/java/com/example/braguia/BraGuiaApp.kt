@@ -3,6 +3,11 @@
 package com.example.braguia
 
 import android.util.Log
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -26,7 +31,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -49,8 +57,11 @@ import com.example.braguia.ui.SinglePinScreen
 import com.example.braguia.ui.SingleTrailScreen
 import com.example.braguia.ui.TrailListScreen
 import com.example.braguia.ui.UserPageScreen
+import com.example.braguia.ui.components.BraguiaBottomBar
+import com.example.braguia.ui.components.BraguiaTopAppBar
 import com.example.braguia.viewModel.BraGuiaViewModelProvider
 import com.example.braguia.viewModel.TrailsViewModel
+import com.example.braguia.viewModel.UserLoginState
 import com.example.braguia.viewModel.UserViewModel
 
 enum class BraguiaScreen {
@@ -60,74 +71,9 @@ enum class BraguiaScreen {
     UserPage,
     Trail,
     Pin,
-    AppInfo
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BraguiaTopAppBar(
-    canNavigateBack: Boolean,
-    currentScreen: BraguiaScreen,
-    navigateUp: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-
-    TopAppBar(
-        title = { Text(text = currentScreen.name) },
-        colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        modifier = modifier,
-        navigationIcon = {
-            if (canNavigateBack) {
-                IconButton(onClick = navigateUp) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back"
-                    )
-                }
-            }
-        }
-    )
-}
-
-@Composable
-fun BraguiaBottomBar(
-    currentScreen: BraguiaScreen,
-    goHome: () -> Unit,
-    logout: () -> Unit,
-    goToSettings: () -> Unit,
-    goToUserProfile: () -> Unit,
-    deleteAllBookmarks: () -> Unit
-) {
-    if (currentScreen != BraguiaScreen.Login) {
-        BottomAppBar {
-            Button(onClick = goHome) {
-                Icon(imageVector = Icons.Filled.Home, contentDescription = "BottomBarHomeIcon")
-            }
-            Button(onClick = goToSettings) {
-                Icon(
-                    imageVector = Icons.Filled.Settings,
-                    contentDescription = "BottomBarSettingsIcon"
-                )
-            }
-            Button(onClick = goToUserProfile) {
-                Icon(
-                    imageVector = Icons.Filled.Person,
-                    contentDescription = "BottomBarUserProfileIcon"
-                )
-            }
-            Button(onClick = deleteAllBookmarks) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = null
-                )
-            }
-            Button(onClick = logout) {
-                Icon(imageVector = Icons.Filled.TimeToLeave, contentDescription = "BottomBarHomeIcon")
-            }
-        }
-    }
+    AppInfo,
+    History,
+    Bookmarks
 }
 
 
@@ -136,10 +82,11 @@ fun BraGuiaApp() {
     val trailsViewModel: TrailsViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
     val userViewModel: UserViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
 
+    val trailsUiState = trailsViewModel.homeUiState.collectAsState()
+    val userUiState = userViewModel.userUiState.collectAsState()
+
     val navController: NavHostController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
-    var warningAsked by remember { mutableStateOf(false) }
-
 
     val currentRoute = backStackEntry?.destination?.route ?: BraguiaScreen.HomePage.name
     val currentScreen = when {
@@ -150,7 +97,6 @@ fun BraGuiaApp() {
     Scaffold(
         bottomBar = {
             BraguiaBottomBar(
-                logout = userViewModel::logout,
                 currentScreen = currentScreen,
                 goHome = {
                     navController.popBackStack(
@@ -167,21 +113,17 @@ fun BraGuiaApp() {
                     navController.navigate(
                         BraguiaScreen.UserPage.name
                     )
-                },
-                //TODO temp!!!!
-                deleteAllBookmarks = userViewModel::deleteAllBookmarks
+                }
             )
         },
         topBar = {
             BraguiaTopAppBar(
                 canNavigateBack = navController.previousBackStackEntry != null && currentScreen != BraguiaScreen.HomePage,
                 navigateUp = { navController.navigateUp() },
-                currentScreen = currentScreen
+                currentScreen = currentScreen,
+                userLoginState = userUiState.value.userLoginState
             )
         }) { innerPadding ->
-
-        val trailsUiState = trailsViewModel.homeUiState.collectAsState()
-        val userUiState = userViewModel.userUiState.collectAsState()
 
         NavHost(
             navController = navController,
@@ -194,7 +136,6 @@ fun BraGuiaApp() {
                     LoginScreen(
                         appName = appInfo.appName,
                         login = userViewModel::login,
-                        logout = userViewModel::logout,
                         onDismiss = userViewModel::dismissError,
                         userLoginState = userUiState.value.userLoginState,
                         grantAccess = { navController.navigate(BraguiaScreen.HomePage.name) }
@@ -294,11 +235,6 @@ fun BraGuiaApp() {
             composable(
                 route = BraguiaScreen.UserPage.name
             ) {
-                userViewModel.getBookmarks()
-                val bookmarks: List<TrailDB> = userUiState.value.bookmarks.values.toList()
-                userViewModel.getHistory()
-                val history: List<HistoryEntry> = userUiState.value.history
-                Log.i("HISTORY", history.toString())
                 val user: User? = userUiState.value.user
                 if (user != null) {
                     UserPageScreen(
@@ -307,6 +243,20 @@ fun BraGuiaApp() {
                         logOff = { userViewModel.logout();navController.navigate(BraguiaScreen.Login.name) }
                     )
                 }
+            }
+
+            composable(
+                route = BraguiaScreen.History.name
+            ){
+                userViewModel.getBookmarks()
+                val bookmarks: List<TrailDB> = userUiState.value.bookmarks.values.toList()
+            }
+
+            composable(
+                route = BraguiaScreen.Bookmarks.name
+            ){
+                userViewModel.getHistory()
+                val history: List<HistoryEntry> = userUiState.value.history
             }
         }
     }

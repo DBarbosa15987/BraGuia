@@ -39,7 +39,10 @@ class UserViewModel(
                 _userUiState.update { currState ->
                     currState.copy(userLoginState = UserLoginState.LoggedIn)
                 }
-
+            } else {
+                _userUiState.update { currState ->
+                    currState.copy(userLoginState = UserLoginState.LoggedOut)
+                }
             }
         }
     }
@@ -76,6 +79,9 @@ class UserViewModel(
     fun logout() {
         viewModelScope.launch {
             _userUiState.value.user?.let {
+                _userUiState.update { currState ->
+                    currState.copy(userLoginState = UserLoginState.LoggedOut)
+                }
                 val cookieManager = CookieManager.getInstance()
                 userRepository.logout(it)
                 cookieManager.removeSessionCookies(null)
@@ -161,11 +167,15 @@ class UserViewModel(
         }
     }
 
-    fun updatePreferences(darkTheme: Boolean = false, notification: Boolean = true, googleMapsAskAgain:Boolean = true) {
+    fun updatePreferences(
+        darkTheme: Boolean = false,
+        notification: Boolean = true,
+        googleMapsAskAgain: Boolean = true
+    ) {
         viewModelScope.launch {
             _userUiState.value.user?.let { user ->
                 userRepository.updatePreferences(
-                    Preferences(user.username, notification, darkTheme,googleMapsAskAgain)
+                    Preferences(user.username, notification, darkTheme, googleMapsAskAgain)
                 )
             }
         }
@@ -197,8 +207,8 @@ class UserViewModel(
         }
     }
 
-    fun alreadyAskedtoggle(){
-        _userUiState.update {currState ->
+    fun alreadyAskedtoggle() {
+        _userUiState.update { currState ->
             currState.copy(warningAsked = true)
         }
     }
@@ -216,7 +226,7 @@ enum class UserLoginState {
 data class UserUiState(
     val history: List<HistoryEntry> = listOf(),
     val bookmarks: Map<Long, TrailDB> = mapOf(),
-    val userLoginState: UserLoginState = UserLoginState.LoggedOut,
+    val userLoginState: UserLoginState = UserLoginState.Loading,
     val user: User? = null,
     val preferences: Preferences? = null,
     val warningAsked: Boolean = false

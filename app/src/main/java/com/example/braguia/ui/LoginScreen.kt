@@ -1,14 +1,19 @@
 package com.example.braguia.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -36,21 +41,22 @@ import com.example.braguia.viewModel.UserLoginState
 fun LoginScreen(
     appName: String,
     login: (String, String) -> Unit,
-    logout: () -> Unit,
     onDismiss: () -> Unit,
     userLoginState: UserLoginState,
     grantAccess: () -> Unit
 ) {
 
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        LoginPrompt(
-            appName,
-            login,
-            logout,
-            onDismiss,
-            userLoginState,
-            grantAccess
-        )
+        when (userLoginState){
+            UserLoginState.Loading -> DisplayLoading(appName)
+            UserLoginState.LoggedIn -> grantAccess()
+            else -> LoginPrompt(
+                appName,
+                login,
+                onDismiss,
+                userLoginState
+            )
+        }
     }
 }
 
@@ -58,83 +64,88 @@ fun LoginScreen(
 fun LoginPrompt(
     appName: String,
     login: (String, String) -> Unit,
-    logout: () -> Unit,
     onDismiss: () -> Unit,
-    userLoginState: UserLoginState,
-    grantAccess: () -> Unit
+    userLoginState: UserLoginState
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    if (userLoginState == UserLoginState.LoggedIn) {
-        grantAccess.invoke()
-    } else {
-        Column {
-            Text(
-                text = appName,
-                style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+    Column {
+        Text(
+            text = appName,
+            style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.padding(10.dp))
+        TextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text(stringResource(R.string.EnterUsername)) },
+            isError = userLoginState == UserLoginState.CredentialsWrong,
+            singleLine = true,
+            enabled = userLoginState != UserLoginState.Loading,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
             )
-            Spacer(modifier = Modifier.padding(10.dp))
-            TextField(
-                value = username,
-                onValueChange = { username = it },
-                label = { Text(stringResource(R.string.EnterUsername)) },
-                isError = userLoginState == UserLoginState.CredentialsWrong,
-                singleLine = true,
-                enabled = userLoginState != UserLoginState.Loading,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                )
+        )
+        Spacer(modifier = Modifier.padding(10.dp))
+        TextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text(stringResource(R.string.EnterPassword)) },
+            visualTransformation = PasswordVisualTransformation(),
+            singleLine = true,
+            enabled = userLoginState != UserLoginState.Loading,
+            isError = userLoginState == UserLoginState.CredentialsWrong,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
             )
-            Spacer(modifier = Modifier.padding(10.dp))
-            TextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text(stringResource(R.string.EnterPassword)) },
-                visualTransformation = PasswordVisualTransformation(),
-                singleLine = true,
-                enabled = userLoginState != UserLoginState.Loading,
-                isError = userLoginState == UserLoginState.CredentialsWrong,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
+        )
+        Spacer(modifier = Modifier.padding(10.dp))
+        Button(
+            onClick = {
+                login(username, password)
+                username = ""
+                password = ""
+            },
+            enabled = userLoginState != UserLoginState.Loading,
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            if (userLoginState == UserLoginState.Loading) {
+                Image(
+                    painter = painterResource(id = R.drawable.loading_img),
+                    contentDescription = "LoadingLogin"
                 )
+            } else {
+                Text(stringResource(id = R.string.Login))
+            }
+        }
+        if (userLoginState == UserLoginState.Error) {
+            AlertDialogTemplate(
+                onDismiss = onDismiss,
+                dialogTitle = stringResource(R.string.loginErrorTitle),
+                dialogText = stringResource(R.string.loginErrorMessage)
             )
-            Spacer(modifier = Modifier.padding(10.dp))
-            Button(
-                onClick = {
-                    login(username, password)
-                    username = ""
-                    password = ""
-                },
-                enabled = userLoginState != UserLoginState.Loading,
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                if (userLoginState == UserLoginState.Loading) {
-                    Image(
-                        painter = painterResource(id = R.drawable.loading_img),
-                        contentDescription = "LoadingLogin"
-                    )
-                } else {
-                    Text(stringResource(id = R.string.Login))
-                }
-            }
-            if (userLoginState == UserLoginState.Error) {
-                AlertDialogTemplate(
-                    onDismiss = onDismiss,
-                    dialogTitle = stringResource(R.string.loginErrorTitle),
-                    dialogText = stringResource(R.string.loginErrorMessage)
-                )
-            }
-            Button(onClick = logout) {
-                Text(text = "Logout")
-            }
-
         }
     }
 }
+
+@Composable
+fun DisplayLoading(appName:String){
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = appName,
+            style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        CircularProgressIndicator(
+            modifier = Modifier.width(64.dp),
+        )
+    }
+}
+
 
 
