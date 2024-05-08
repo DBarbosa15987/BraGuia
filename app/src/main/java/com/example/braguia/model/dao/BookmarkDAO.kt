@@ -20,7 +20,7 @@ interface BookmarkDAO {
     @Query("DELETE FROM bookmark WHERE trailId=:trailId AND username=:username")
     suspend fun delete(username:String,trailId:Long)
 
-    @Query("DELETE FROM bookmark")
-    suspend fun deleteAll()
+    @Query("DELETE FROM bookmark WHERE username=:username")
+    suspend fun deleteAllFromUser(username: String)
 
 }

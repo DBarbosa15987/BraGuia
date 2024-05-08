@@ -140,10 +140,6 @@ class UserRepository(
         bookmarkDAO.delete(username, trailId)
     }
 
-    suspend fun deleteAllBookmarks() {
-        bookmarkDAO.deleteAll()
-    }
-
     suspend fun updatePreferences(preferences: Preferences) {
         preferencesDAO.updatePreference(preferences)
     }
@@ -154,11 +150,16 @@ class UserRepository(
 
     suspend fun updateHistory(historyEntryDB: HistoryEntryDB) {
         historyEntryDAO.insert(historyEntryDB)
-    }//TODO
+    }
 
     fun getHistory(username: String): Flow<List<HistoryEntry>> {
         return historyEntryDAO.getHistory(username)
-    }//TODO
+    }
+
+    suspend fun deleteUserInfo(username: String){
+        bookmarkDAO.deleteAllFromUser(username)
+        historyEntryDAO.deleteAllFromUser(username)
+    }
 
     fun HistoryEntryDB.toHistoryEntry(trailDB: TrailDB) = HistoryEntry(
         entryId = id, timeStamp = timeStamp, trailDB = trailDB, username = username

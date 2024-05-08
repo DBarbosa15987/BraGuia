@@ -16,4 +16,7 @@ interface HistoryEntryDAO {
     @Insert
     suspend fun insert(historyEntryDB: HistoryEntryDB)
 
+    @Query("DELETE FROM history WHERE username=:username")
+    suspend fun deleteAllFromUser(username: String)
+
 }

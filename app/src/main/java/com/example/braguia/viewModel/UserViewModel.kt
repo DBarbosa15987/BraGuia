@@ -135,12 +135,6 @@ class UserViewModel(
         }
     }
 
-    fun deleteAllBookmarks() {
-        viewModelScope.launch {
-            userRepository.deleteAllBookmarks()
-        }
-    }
-
     fun dismissError() {
         _userUiState.update { currState ->
             currState.copy(userLoginState = UserLoginState.LoggedOut)
@@ -177,6 +171,20 @@ class UserViewModel(
                 userRepository.updatePreferences(
                     Preferences(user.username, notification, darkTheme, googleMapsAskAgain)
                 )
+            }
+        }
+    }
+
+    fun resetPreferences() {
+        updatePreferences()
+    }
+
+    fun deleteUserData() {
+        viewModelScope.launch {
+            _userUiState.value.user?.let {
+                userRepository.deleteUserInfo(it.username)
+                resetPreferences()//TODO prefs e tal
+
             }
         }
     }
