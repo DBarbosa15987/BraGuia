@@ -1,5 +1,6 @@
 package com.example.braguia.ui
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.PersonOutline
+import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -48,16 +50,23 @@ import com.example.braguia.ui.components.AlertDialogTemplate
 @Composable
 fun UserPageScreen(innerPadding: PaddingValues, user: User, logOff: () -> Unit) {
 
-    val modifier = Modifier
-        .size(150.dp)
-        .padding(5.dp)
-        .clip(CircleShape)
+    val modifier: Modifier
 
     if (user.userType.lowercase() == "premium") {
-        modifier.border(
-            BorderStroke(5.dp, Color.Yellow),
-            CircleShape
-        )
+        Log.i("ICON", "HELLO")
+        modifier = Modifier
+            .size(150.dp)
+            .padding(5.dp)
+            .clip(CircleShape)
+            .border(
+                BorderStroke(5.dp, Color.Yellow),
+                CircleShape
+            )
+    } else {
+        modifier = Modifier
+            .size(150.dp)
+            .padding(5.dp)
+            .clip(CircleShape)
     }
 
     var logOffPopUp by remember { mutableStateOf(false) }
@@ -119,6 +128,7 @@ fun UserInfoColumn(user: User) {
     Column {
         UserInfoCard("Name", "${user.firstName} ${user.lastName}", Icons.Filled.Badge)
         UserInfoCard("Username", user.username, Icons.Filled.PersonOutline)
+        UserInfoCard("User Type", user.userType, Icons.Filled.WorkspacePremium)
         UserInfoCard("Email", user.email, Icons.Filled.Mail)
         UserInfoCard("Date Joined", user.dateJoined, Icons.Filled.DateRange)
         UserInfoCard("Last Login", user.lastLogin, Icons.AutoMirrored.Filled.Login)
@@ -127,7 +137,7 @@ fun UserInfoColumn(user: User) {
 
 @Composable
 fun UserInfoCard(attribute: String, value: String, icon: ImageVector) {
-    if (value.isNotEmpty()){
+    if (value.isNotEmpty()) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()

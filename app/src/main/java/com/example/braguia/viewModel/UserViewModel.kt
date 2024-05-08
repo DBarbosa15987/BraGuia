@@ -199,6 +199,12 @@ class UserViewModel(
         }
     }
 
+    fun alreadyAskedtoggle(){
+        _userUiState.update {currState ->
+            currState.copy(warningAsked = true)
+        }
+    }
+
 }
 
 enum class UserLoginState {
@@ -214,5 +220,6 @@ data class UserUiState(
     val bookmarks: Map<Long, TrailDB> = mapOf(),
     val userLoginState: UserLoginState = UserLoginState.LoggedOut,
     val user: User? = null,
-    val preferences: Preferences? = null
+    val preferences: Preferences? = null,
+    val warningAsked: Boolean = false
 )

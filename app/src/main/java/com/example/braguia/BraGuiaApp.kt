@@ -2,12 +2,7 @@
 
 package com.example.braguia
 
-import android.content.Context
 import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -53,7 +48,6 @@ import com.example.braguia.ui.SinglePinScreen
 import com.example.braguia.ui.SingleTrailScreen
 import com.example.braguia.ui.TrailListScreen
 import com.example.braguia.ui.UserPageScreen
-import com.example.braguia.ui.components.TrailCard
 import com.example.braguia.viewModel.BraGuiaViewModelProvider
 import com.example.braguia.viewModel.TrailsViewModel
 import com.example.braguia.viewModel.UserViewModel
@@ -219,8 +213,8 @@ fun BraGuiaApp(geofenceClient: GeofencingClient) {
                         toggleBookmark = userViewModel::toggleBookmark,
                         googleMapsAskAgain = preferences.googleMapsAskAgain,
                         dontAskAgain = { b -> userViewModel.updatePreferences(googleMapsAskAgain = b) },
-                        alreadyAsked = warningAsked,
-                        alreadyAskedtoggle = { warningAsked = false }
+                        alreadyAsked = userUiState.value.warningAsked,
+                        alreadyAskedtoggle = { userViewModel.alreadyAskedtoggle() }
                     )
                 }
             }
