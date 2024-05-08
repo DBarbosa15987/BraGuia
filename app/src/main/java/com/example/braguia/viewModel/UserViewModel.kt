@@ -161,11 +161,11 @@ class UserViewModel(
         }
     }
 
-    fun updatePreferences(darkTheme: Boolean = false, notification: Boolean = true) {
+    fun updatePreferences(darkTheme: Boolean = false, notification: Boolean = true, googleMapsAskAgain:Boolean = true) {
         viewModelScope.launch {
             _userUiState.value.user?.let { user ->
                 userRepository.updatePreferences(
-                    Preferences(user.username, notification, darkTheme)
+                    Preferences(user.username, notification, darkTheme,googleMapsAskAgain)
                 )
             }
         }
@@ -197,6 +197,12 @@ class UserViewModel(
         }
     }
 
+    fun alreadyAskedtoggle(){
+        _userUiState.update {currState ->
+            currState.copy(warningAsked = true)
+        }
+    }
+
 }
 
 enum class UserLoginState {
@@ -212,5 +218,6 @@ data class UserUiState(
     val bookmarks: Map<Long, TrailDB> = mapOf(),
     val userLoginState: UserLoginState = UserLoginState.LoggedOut,
     val user: User? = null,
-    val preferences: Preferences? = null
+    val preferences: Preferences? = null,
+    val warningAsked: Boolean = false
 )

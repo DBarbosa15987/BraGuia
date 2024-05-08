@@ -8,5 +8,6 @@ data class Preferences(
     @PrimaryKey
     val username:String,
     val notification:Boolean,
-    val darkTheme:Boolean
+    val darkTheme:Boolean,
+    val googleMapsAskAgain:Boolean = true
 )

@@ -19,4 +19,9 @@
     <string name="loginErrorTitle">Log In Error</string>
     <string name="notifications">Notifications</string>
     <string name="aboutApp">About %s</string>
+    <string name="logOffDialogTitle">Are you sure you want to Log Off?</string>
+    <string name="logOffDialogText">After logging off you will be taken to the login page and will need to log in again</string>
+    <string name="warningGoogleMaps">Warning!</string>
+    <string name="warningGoogleMapsText">You must have Google Maps installed on your device for Braguia to work correctly</string>
+    <string name="dontAskAgainText">Don\'t ask again</string>
 </resources>

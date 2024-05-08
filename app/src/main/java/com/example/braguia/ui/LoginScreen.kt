@@ -28,7 +28,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.braguia.R
-import com.example.braguia.ui.components.ErrorAlertDialog
+import com.example.braguia.ui.components.AlertDialogTemplate
 import com.example.braguia.viewModel.UserLoginState
 
 
@@ -43,7 +43,14 @@ fun LoginScreen(
 ) {
 
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        LoginPrompt(appName, login, logout, onDismiss, userLoginState, grantAccess)
+        LoginPrompt(
+            appName,
+            login,
+            logout,
+            onDismiss,
+            userLoginState,
+            grantAccess
+        )
     }
 }
 
@@ -116,7 +123,7 @@ fun LoginPrompt(
                 }
             }
             if (userLoginState == UserLoginState.Error) {
-                ErrorAlertDialog(
+                AlertDialogTemplate(
                     onDismiss = onDismiss,
                     dialogTitle = stringResource(R.string.loginErrorTitle),
                     dialogText = stringResource(R.string.loginErrorMessage)
@@ -125,6 +132,9 @@ fun LoginPrompt(
             Button(onClick = logout) {
                 Text(text = "Logout")
             }
+
         }
     }
 }
+
+
