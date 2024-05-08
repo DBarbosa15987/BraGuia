@@ -9,8 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Bookmark
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,7 +35,8 @@ fun TrailCard(
     trail: TrailDB,
     modifier: Modifier = Modifier,
     navigateToTrail: (Long) -> Unit,
-    toggleBookmark: (Long) -> Unit
+    toggleBookmark: (Long) -> Unit,
+    isBookmark: Boolean
 ) {
 
     Card(
@@ -42,21 +48,6 @@ fun TrailCard(
             .clickable { navigateToTrail.invoke(trail.id) }
     ) {
         Row {
-            Column(
-                modifier = modifier
-                    .padding(8.dp)
-                    .weight(0.5f)
-            ) {
-
-                Text(text = trail.trailName)
-                Text(text = trail.trailDuration.toString() + " min")
-                Text(text = trail.trailDifficulty)
-                Button(onClick = { toggleBookmark(trail.id) }) {
-                    Text(text = "Bookmark")
-                }
-
-            }
-            Log.i("IMG", trail.trailImg)
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(trail.trailImg)
@@ -69,6 +60,34 @@ fun TrailCard(
                 placeholder = painterResource(id = R.drawable.loading_img),
                 error = painterResource(id = R.drawable.ic_broken_image)
             )
+            Log.i("IMG", trail.trailImg)
+            Column(
+                modifier = modifier
+                    .padding(8.dp)
+                    .weight(0.5f)
+            ) {
+
+                Text(text = trail.trailName)
+                Text(text = trail.trailDuration.toString() + " min")
+                Text(text = trail.trailDifficulty)
+                if (isBookmark) {
+                    IconButton(onClick = { toggleBookmark(trail.id) }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Bookmark,
+                            contentDescription = "BookmakedIcon"
+                        )
+                    }
+                } else {
+                    IconButton(onClick = { toggleBookmark(trail.id) }) {
+                        Icon(
+                            imageVector = Icons.Outlined.BookmarkBorder,
+                            contentDescription = "NotBookmakedIcon"
+                        )
+                    }
+                }
+
+
+            }
         }
     }
 

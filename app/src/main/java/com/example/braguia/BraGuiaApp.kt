@@ -51,6 +51,8 @@ import com.example.braguia.model.Trail
 import com.example.braguia.model.TrailDB
 import com.example.braguia.model.User
 import com.example.braguia.ui.AppInfoScreen
+import com.example.braguia.ui.BookmarkScreen
+import com.example.braguia.ui.HistoryScreen
 import com.example.braguia.ui.LoginScreen
 import com.example.braguia.ui.SettingsScreen
 import com.example.braguia.ui.SinglePinScreen
@@ -70,6 +72,7 @@ enum class BraguiaScreen {
     Settings,
     UserPage,
     Trail,
+    TrailList,
     Pin,
     AppInfo,
     History,
@@ -94,6 +97,7 @@ fun BraGuiaApp() {
         currentRoute.startsWith(BraguiaScreen.Pin.name) -> BraguiaScreen.Pin
         else -> BraguiaScreen.valueOf(currentRoute)
     }
+
     Scaffold(
         bottomBar = {
             BraguiaBottomBar(
@@ -145,6 +149,7 @@ fun BraGuiaApp() {
 
             composable(route = BraguiaScreen.HomePage.name) {
                 trailsViewModel.getTrails()
+                userViewModel.getBookmarks()
                 val preferences: Preferences? = userUiState.value.preferences
                 if (preferences != null) {
                     TrailListScreen(
@@ -157,7 +162,10 @@ fun BraGuiaApp() {
                         googleMapsAskAgain = preferences.googleMapsAskAgain,
                         dontAskAgain = { b -> userViewModel.updatePreferences(googleMapsAskAgain = b) },
                         alreadyAsked = userUiState.value.warningAsked,
-                        alreadyAskedtoggle = { userViewModel.alreadyAskedtoggle() }
+                        alreadyAskedtoggle = { userViewModel.alreadyAskedtoggle() },
+                        isBookmarked = { trailId ->
+                            trailId in userUiState.value.bookmarks
+                        }
                     )
                 }
             }
@@ -196,6 +204,7 @@ fun BraGuiaApp() {
                 val pin: Pin? = trailsUiState.value.currPin
                 trailsViewModel.getPinTrails(pinId)
                 val trails: List<TrailDB> = trailsUiState.value.trailList
+                userViewModel.getBookmarks()
                 if (pin != null) {
                     SinglePinScreen(
                         pin = pin,
@@ -204,7 +213,11 @@ fun BraGuiaApp() {
                             navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
                         },
                         trails = trails,
-                        toggleBookmark = userViewModel::toggleBookmark
+                        toggleBookmark = userViewModel::toggleBookmark,
+                        isBookmarked = { trailId ->
+                            trailId in userUiState.value.bookmarks
+                        }
+
                     )
                 }
             }
@@ -240,23 +253,50 @@ fun BraGuiaApp() {
                     UserPageScreen(
                         innerPadding = innerPadding,
                         user = user,
-                        logOff = { userViewModel.logout();navController.navigate(BraguiaScreen.Login.name) }
+                        logOff = {
+                            userViewModel.logout()
+                            navController.navigate(BraguiaScreen.Login.name)
+                        }
                     )
                 }
             }
 
             composable(
-                route = BraguiaScreen.History.name
-            ){
+                route = BraguiaScreen.Bookmarks.name
+            ) {
                 userViewModel.getBookmarks()
                 val bookmarks: List<TrailDB> = userUiState.value.bookmarks.values.toList()
+                BookmarkScreen(
+                    bookmarks = bookmarks,
+                    innerPadding = innerPadding,
+                    navigateToTrail = { trailId ->
+                        navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
+                    },
+                    toggleBookmark = userViewModel::toggleBookmark,
+                    isBookmarked = { trailId ->
+                        trailId in userUiState.value.bookmarks
+                    }
+                )
+
             }
 
             composable(
-                route = BraguiaScreen.Bookmarks.name
-            ){
+                route = BraguiaScreen.History.name
+            ) {
                 userViewModel.getHistory()
+                userViewModel.getBookmarks()
                 val history: List<HistoryEntry> = userUiState.value.history
+                HistoryScreen(
+                    history = history,
+                    innerPadding = innerPadding,
+                    navigateToTrail = { trailId ->
+                        navController.navigate("${BraguiaScreen.Trail.name}/$trailId")
+                    },
+                    toggleBookmark = userViewModel::toggleBookmark,
+                    isBookmarked = { trailId ->
+                        trailId in userUiState.value.bookmarks
+                    }
+                )
             }
         }
     }

@@ -29,7 +29,8 @@ fun TrailListScreen(
     googleMapsAskAgain: Boolean,
     dontAskAgain: (Boolean) -> Unit,
     alreadyAskedtoggle: () -> Unit,
-    alreadyAsked:Boolean
+    alreadyAsked:Boolean,
+    isBookmarked: (Long)->Boolean
 ) {
 
 
@@ -55,7 +56,8 @@ fun TrailListScreen(
             TrailCard(
                 trail = it,
                 navigateToTrail = navigateToTrail,
-                toggleBookmark = toggleBookmark
+                toggleBookmark = toggleBookmark,
+                isBookmark = isBookmarked(it.id)
             )
         }
 

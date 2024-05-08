@@ -38,7 +38,8 @@ fun SinglePinScreen(
     navigateToTrail: (Long) -> Unit,
     modifier: Modifier = Modifier,
     innerPadding: PaddingValues,
-    toggleBookmark: (Long) -> Unit
+    toggleBookmark: (Long) -> Unit,
+    isBookmarked: (Long) -> Boolean
 ) {
 
     LazyColumn(modifier = modifier.padding(innerPadding)) {
@@ -46,7 +47,12 @@ fun SinglePinScreen(
         item { TrailDetails(pin) } // detalhes
         item { } // media
         items(trails) {
-            TrailCard(trail = it, navigateToTrail = navigateToTrail, toggleBookmark = toggleBookmark)
+            TrailCard(
+                trail = it,
+                navigateToTrail = navigateToTrail,
+                toggleBookmark = toggleBookmark,
+                isBookmark = isBookmarked(it.id)
+            )
         } // roteiros em que se encontra
     }
 }
@@ -58,11 +64,13 @@ fun MapWithPin(pin: Pin) {
         position = CameraPosition.fromLatLngZoom(pinLatLng, 5f)
     }
     GoogleMap(
-        modifier = Modifier.fillMaxWidth().height(150.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp),
         cameraPositionState = cameraPositionState
     ) {
         Marker(
-            state = MarkerState(position = LatLng(pin.pinLat,pin.pinLng))
+            state = MarkerState(position = LatLng(pin.pinLat, pin.pinLng))
         )
     }
 }
