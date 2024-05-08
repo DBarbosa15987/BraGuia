@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmarks
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.PinDrop
 import androidx.compose.material.icons.filled.Route
 import androidx.compose.material3.Card
@@ -24,88 +27,101 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.braguia.model.AppInfo
 
 @Composable
-fun HomepageScreen(innerPadding: PaddingValues) {
-    // app name
-    // app landing page text
-    // trail list
-    // pin list
+fun HomepageScreen(appInfo: AppInfo, innerPadding: PaddingValues) {
     Column(modifier = Modifier.padding(innerPadding)) {
-        Text(
-            // FIXME change to var
-            "BraGuia",
-            fontFamily = FontFamily.Cursive,
-            textAlign = TextAlign.Center,
-            fontSize = 50.sp,
-            modifier = Modifier.fillMaxWidth()
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
         )
         Text(
             // FIXME change to var
-            "Discover the hidden gems of Braga with our virtual guide app! Explore the city's rich history, stunning architecture, and vibrant culture from the palm of your hand. With personalized recommendations and insider tips, you'll experience the best of Braga like a local. Download the app now and start your adventure!",
+            appInfo.appName,
+            fontFamily = FontFamily.Cursive,
+            textAlign = TextAlign.Center,
+            fontSize = 60.sp,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        )
+        Text(
+            // FIXME change to var
+            appInfo.landingPageText,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium
         )
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
+        Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp)
-
+                .height(150.dp)
+        )
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .fillMaxHeight()
-                    .padding(
-                        start = 10.dp, end = 5.dp
-                    )
-            ) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.PinDrop,
-                            contentDescription = null,
-                            modifier = Modifier.size(50.dp),
-                        )
-                        Text("Pins")
-                    }
-                }
+            item {
+                CardButton("Pins", Icons.Filled.PinDrop)
             }
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .padding(
-                        start = 5.dp, end = 10.dp
-                    )
-            ) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Route,
-                            contentDescription = null,
-                            modifier = Modifier.size(50.dp),
-                        )
-                        Text("Trails")
-                    }
-                }
+            item {
+                CardButton("Trails", Icons.Filled.Route)
+            }
+            item {
+                CardButton("Bookmarks", Icons.Filled.Bookmarks)
+            }
+            item {
+                CardButton("History", Icons.Filled.History)
             }
         }
     }
 }
 
+@Composable
+fun CardButton(textContent: String, icon: ImageVector) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(50.dp),
+                )
+                Text(textContent)
+            }
+        }
+    }
+
+}
+
 @Preview(showSystemUi = true)
 @Composable
 fun HomePageScreenPreview() {
-    HomepageScreen(PaddingValues(2.dp))
+    HomepageScreen(
+        AppInfo(
+            appName = "BraGuia",
+            appDesc = "",
+            contacts = listOf(),
+            partners = listOf(),
+            socials = listOf(),
+            landingPageText = "Discover the hidden gems of Braga with our virtual guide app! Explore the city's rich history, stunning architecture, and vibrant culture from the palm of your hand. With personalized recommendations and insider tips, you'll experience the best of Braga like a local. Download the app now and start your adventure!"
+        ), PaddingValues(2.dp)
+    )
 }
