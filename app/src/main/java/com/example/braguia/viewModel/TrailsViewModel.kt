@@ -65,6 +65,7 @@ class TrailsViewModel(
                 .collect { trails: List<TrailDB> ->
                     _homeUiState.update { curr -> curr.copy(trailList = trails) }
                 }
+
         }
     }
 

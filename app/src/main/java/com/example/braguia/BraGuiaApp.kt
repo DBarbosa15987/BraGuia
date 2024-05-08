@@ -46,6 +46,7 @@ import androidx.navigation.navArgument
 import com.example.braguia.model.AppInfo
 import com.example.braguia.model.HistoryEntry
 import com.example.braguia.model.Pin
+import com.example.braguia.model.PinDB
 import com.example.braguia.model.Preferences
 import com.example.braguia.model.Trail
 import com.example.braguia.model.TrailDB
@@ -53,7 +54,9 @@ import com.example.braguia.model.User
 import com.example.braguia.ui.AppInfoScreen
 import com.example.braguia.ui.BookmarkScreen
 import com.example.braguia.ui.HistoryScreen
+import com.example.braguia.ui.HomepageScreen
 import com.example.braguia.ui.LoginScreen
+import com.example.braguia.ui.PinsListScreen
 import com.example.braguia.ui.SettingsScreen
 import com.example.braguia.ui.SinglePinScreen
 import com.example.braguia.ui.SingleTrailScreen
@@ -76,7 +79,8 @@ enum class BraguiaScreen {
     Pin,
     AppInfo,
     History,
-    Bookmarks
+    Bookmarks,
+    Pins
 }
 
 
@@ -149,6 +153,32 @@ fun BraGuiaApp() {
 
             composable(route = BraguiaScreen.HomePage.name) {
                 trailsViewModel.getTrails()
+                val appInfo: AppInfo? = trailsUiState.value.appInfo
+                if (appInfo != null) {
+                    HomepageScreen(
+                        appInfo = appInfo,
+                        innerPadding = innerPadding,
+                        navigateToPins = {navController.navigate(BraguiaScreen.Pins.name) },
+                        navigateToTrails = { navController.navigate(BraguiaScreen.TrailList.name) },
+                        navigateToBookmarks = { navController.navigate(BraguiaScreen.Bookmarks.name) },
+                        navigateToHistory = { navController.navigate(BraguiaScreen.History.name) }
+                    )
+                }
+            }
+
+            composable(route = BraguiaScreen.Pins.name) {
+                trailsViewModel.getAllPins()
+                val pins: List<PinDB> = trailsUiState.value.pinList
+                PinsListScreen(
+                    pins = pins,
+                    navigateToPin = { pinId ->
+                        navController.navigate("${BraguiaScreen.Pin.name}/$pinId")
+                    },
+                    innerPadding = innerPadding
+                )
+            }
+
+            composable(route = BraguiaScreen.TrailList.name) {
                 userViewModel.getBookmarks()
                 val preferences: Preferences? = userUiState.value.preferences
                 if (preferences != null) {

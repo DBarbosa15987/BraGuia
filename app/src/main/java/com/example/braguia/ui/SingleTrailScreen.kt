@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,6 +70,7 @@ fun SingleTrailScreen(
     innerPadding: PaddingValues,
     navigateToPin: (Long) -> Unit,
     updateHistory: (Long) -> Unit
+
 ) {
     LazyColumn(Modifier.padding(innerPadding)) {
         item { TrailInformation(trail = trail, route = route, updateHistory = updateHistory) }
@@ -76,7 +78,9 @@ fun SingleTrailScreen(
         items(trail.edges) { edge ->
             EdgePreviewCard(edge = edge, navigateToPin = navigateToPin)
         }
-        item { MediaGalleryScreen(pins = route) }
+        item {
+            MediaGalleryScreen(pins = route)
+        }
     }
 }
 
@@ -102,7 +106,6 @@ fun MediaPlayer(media: Media) {
             AndroidView(factory = {
                 PlayerView(context).apply {
                     useController = true
-
                     player = exoPlayer
                 }
             })
@@ -112,29 +115,24 @@ fun MediaPlayer(media: Media) {
     }
 }
 
-
 @Composable
 fun MediaGalleryScreen(pins: List<Pin>) {
     Column {
-        var displayMedia by remember { mutableStateOf<Media?>(null) }
-        var parentId by remember { mutableLongStateOf(-1) }
-        var showing by remember { mutableStateOf(false) }
+        var selectedMedia by remember { mutableStateOf<Media?>(null) }
         val filteredPins = pins.distinctBy { it.id }
         for (pin in filteredPins) {
             if (pin.media.isNotEmpty()) {
                 Text(
                     pin.pinName,
                     style = MaterialTheme.typography.headlineMedium,
-//                fontWeight = FontWeight.Bold
+                    // FontWeight = FontWeight.Bold
                 )
                 LazyRow {
                     items(pin.media) { media ->
                         val modifier = Modifier
                             .size(100.dp)
                             .clickable {
-                                showing = true
-                                parentId = pin.id
-                                displayMedia = media
+                                selectedMedia = media
                             }
                         when (media.mediaType) {
                             "I" -> {
@@ -166,33 +164,26 @@ fun MediaGalleryScreen(pins: List<Pin>) {
                         }
                     }
                 }
-                Log.i("SINGLETRAILSCREEN", "$displayMedia $parentId")
-                Log.i("SINGLETRAILSCREEN", "$showing")
-                if (displayMedia != null && !showing) {
-                    showing = true
-                    Dialog(onDismissRequest = {
-                        displayMedia = null
-                        showing = false
-                    }) {
-                        when (displayMedia?.mediaType) {
-                            "I" -> {
-                                AsyncImage(
-                                    model = displayMedia?.mediaFile,
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentDescription = "PinMedia",
-                                    placeholder = painterResource(id = R.drawable.loading_img),
-                                    error = painterResource(id = R.drawable.ic_broken_image)
-                                )
-                            }
+            }
+        }
+        selectedMedia?.let { media ->
+            Log.i("SINGLETRAILSCREEN", "$media ")
+            Dialog(
+                onDismissRequest = { selectedMedia = null }
+            ) {
+                when (media.mediaType) {
+                    "I" -> {
+                        AsyncImage(
+                            model = media.mediaFile,
+                            modifier = Modifier.fillMaxSize(),
+                            contentDescription = "PinMedia",
+                            placeholder = painterResource(id = R.drawable.loading_img),
+                            error = painterResource(id = R.drawable.ic_broken_image)
+                        )
+                    }
 
-                            "V" -> {
-                                MediaPlayer(media = displayMedia!!)
-                            }
-
-                            "R" -> {
-                                MediaPlayer(media = displayMedia!!)
-                            }
-                        }
+                    "V", "R" -> {
+                        MediaPlayer(media = media)
                     }
                 }
             }
@@ -204,17 +195,19 @@ fun MediaGalleryScreen(pins: List<Pin>) {
 fun MapWithPins(pins: List<Pin>) {
     //TODO calculate the center point of all pins so everyone appears in the map
     //FIXME isto deu index out of bounds...
-    val firstPinLatLng = LatLng(pins[0].pinLat, pins[0].pinLng)
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(firstPinLatLng, 10f)
-    }
-    GoogleMap(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(500.dp), cameraPositionState = cameraPositionState
-    ) {
-        for (pin in pins) {
-            Marker(state = MarkerState(LatLng(pin.pinLat, pin.pinLng)), title = pin.pinName)
+    if (pins.isNotEmpty()) {
+        val firstPinLatLng = LatLng(pins[0].pinLat, pins[0].pinLng)
+        val cameraPositionState = rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(firstPinLatLng, 10f)
+        }
+        GoogleMap(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(500.dp), cameraPositionState = cameraPositionState
+        ) {
+            for (pin in pins) {
+                Marker(state = MarkerState(LatLng(pin.pinLat, pin.pinLng)), title = pin.pinName)
+            }
         }
     }
 }

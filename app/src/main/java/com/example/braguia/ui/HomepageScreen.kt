@@ -1,5 +1,6 @@
 package com.example.braguia.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmarks
@@ -36,66 +38,113 @@ import androidx.compose.ui.unit.sp
 import com.example.braguia.model.AppInfo
 
 @Composable
-fun HomepageScreen(appInfo: AppInfo, innerPadding: PaddingValues) {
-    Column(modifier = Modifier.padding(innerPadding)) {
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-        )
-        Text(
-            // FIXME change to var
-            appInfo.appName,
-            fontFamily = FontFamily.Cursive,
-            textAlign = TextAlign.Center,
-            fontSize = 60.sp,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-        )
-        Text(
-            // FIXME change to var
-            appInfo.landingPageText,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-        )
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(5.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            item {
-                CardButton("Pins", Icons.Filled.PinDrop)
+fun HomepageScreen(
+    appInfo: AppInfo,
+    innerPadding: PaddingValues,
+    navigateToPins: () -> Unit,
+    navigateToTrails: () -> Unit,
+    navigateToBookmarks: () -> Unit,
+    navigateToHistory: () -> Unit
+) {
+    val spanCount: Int = 2
+    LazyVerticalGrid(
+        modifier = Modifier.padding(innerPadding),
+        columns = GridCells.Fixed(spanCount),
+        verticalArrangement = Arrangement.spacedBy(5.dp),
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        item(
+            span = {
+                /** Take a full row */
+                GridItemSpan(currentLineSpan = spanCount)
             }
-            item {
-                CardButton("Trails", Icons.Filled.Route)
-            }
-            item {
-                CardButton("Bookmarks", Icons.Filled.Bookmarks)
-            }
-            item {
-                CardButton("History", Icons.Filled.History)
+        ){
+            Column{
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(25.dp)
+                )
+                Text(
+                    appInfo.appName,
+                    fontFamily = FontFamily.Cursive,
+                    textAlign = TextAlign.Center,
+                    fontSize = 60.sp,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(25.dp)
+                )
+                Text(
+                    appInfo.landingPageText,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                )
             }
         }
+
+        item {
+            CardButton("Pins", Icons.Filled.PinDrop, navigateToPins)
+        }
+        item {
+            CardButton("Trails", Icons.Filled.Route, navigateToTrails)
+        }
+        item {
+            CardButton("Bookmarks", Icons.Filled.Bookmarks, navigateToBookmarks)
+        }
+        item {
+            CardButton("History", Icons.Filled.History, navigateToHistory)
+        }
     }
+    /*Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                )
+                Text(
+                    appInfo.appName,
+                    fontFamily = FontFamily.Cursive,
+                    textAlign = TextAlign.Center,
+                    fontSize = 60.sp,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                )
+                Text(
+                    appInfo.landingPageText,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                )*/
+
 }
 
 @Composable
-fun CardButton(textContent: String, icon: ImageVector) {
+fun CardButton(textContent: String, icon: ImageVector, navigate: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
     ) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable { navigate() }, contentAlignment = Alignment.Center
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -111,6 +160,7 @@ fun CardButton(textContent: String, icon: ImageVector) {
 
 }
 
+/*
 @Preview(showSystemUi = true)
 @Composable
 fun HomePageScreenPreview() {
@@ -124,4 +174,4 @@ fun HomePageScreenPreview() {
             landingPageText = "Discover the hidden gems of Braga with our virtual guide app! Explore the city's rich history, stunning architecture, and vibrant culture from the palm of your hand. With personalized recommendations and insider tips, you'll experience the best of Braga like a local. Download the app now and start your adventure!"
         ), PaddingValues(2.dp)
     )
-}
+}*/
