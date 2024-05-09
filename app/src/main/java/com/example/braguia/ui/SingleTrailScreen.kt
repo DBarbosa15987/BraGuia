@@ -3,14 +3,12 @@ package com.example.braguia.ui
 import android.content.Intent
 import androidx.compose.material.icons.filled.MusicNote
 import android.annotation.SuppressLint
+import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,14 +22,11 @@ import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,6 +50,7 @@ import com.example.braguia.R
 import com.example.braguia.model.Media
 import com.example.braguia.model.Pin
 import com.example.braguia.model.Trail
+import com.example.braguia.ui.components.DescriptionShowMore
 import com.example.braguia.ui.components.EdgePreviewCard
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -75,19 +71,19 @@ fun SingleTrailScreen(
     LazyColumn(contentPadding = PaddingValues(10.dp), modifier = Modifier.padding(innerPadding)) {
         item { TrailInformation(trail = trail, route = route, updateHistory = updateHistory) }
         item { MapWithPins(route) }
-        // FIXME isto incrementa a seguir a todos os recomposes
-        var i = 1
-        items(trail.edges) { edge ->
-            val title = "Stop $i"
-            EdgePreviewCard(edge = edge, title, navigateToPin = navigateToPin)
-            i++
+        item {
+            Column {
+                for (i in 0..<trail.edges.size) {
+                    val title = "Stop ${i + 1}"
+                    EdgePreviewCard(edge = trail.edges[i], title, navigateToPin = navigateToPin)
+                }
+            }
         }
         item {
             MediaGalleryScreen(pins = route)
         }
     }
 }
-
 
 @SuppressLint("OpaqueUnitKey")
 @Composable
@@ -240,28 +236,42 @@ fun TrailInformation(trail: Trail, route: List<Pin>, updateHistory: (Long) -> Un
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.headlineLarge
         )
+        StartTrailButton(trail.id, route, context, updateHistory)
         for (reltrail in trail.relTrail) {
             Text(reltrail.attrib + ": " + reltrail.value)
         }
+
         Text(stringResource(id = R.string.trailDifficulty, trail.trailDifficulty))
         Text(stringResource(id = R.string.trailDuration, trail.trailDuration))
-        Text(stringResource(id = R.string.trailDesc, trail.trailDesc))
-        Button(onClick = {
-            // launch google maps
-            val mapIntentUriString = createMapsRouteUriString(route)
-            Log.i("SINGLETRAILSCREEN", "MapIntentUriString = $mapIntentUriString")
-            val mapIntentUri = Uri.parse(mapIntentUriString)
-            val mapIntent = Intent(Intent.ACTION_VIEW, mapIntentUri)
-            try {
-                updateHistory(trail.id)
-                context.startActivity(mapIntent)
+        DescriptionShowMore(
+            stringResource(id = R.string.trailDesc, trail.trailDesc),
+            pinId = trail.id
+        )
+    }
+}
 
-            } catch (e: Exception) {
-                // TODO: add error dialog
-            }
-        }) {
-            Text("Start Trail")
+@Composable
+fun StartTrailButton(
+    trailId: Long,
+    route: List<Pin>,
+    context: Context,
+    updateHistory: (Long) -> Unit
+) {
+    Button(onClick = {
+        // launch google maps
+        val mapIntentUriString = createMapsRouteUriString(route)
+        Log.i("SINGLETRAILSCREEN", "MapIntentUriString = $mapIntentUriString")
+        val mapIntentUri = Uri.parse(mapIntentUriString)
+        val mapIntent = Intent(Intent.ACTION_VIEW, mapIntentUri)
+        try {
+            updateHistory(trailId)
+            context.startActivity(mapIntent)
+
+        } catch (e: Exception) {
+            // TODO: add error dialog
         }
+    }) {
+        Text("Start Trail")
     }
 }
 
