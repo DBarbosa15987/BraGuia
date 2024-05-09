@@ -20,28 +20,36 @@ import com.example.braguia.R
 fun SettingsScreen(
     innerPadding: PaddingValues,
     appName: String,
-    notification: Boolean,
     goToAppInfo: () -> Unit,
-    toggleNotification: (Boolean) -> Unit,
+    darkTheme: Boolean,
+    toggleDarkTheme: () -> Unit,
     deleteUserData: () -> Unit,
     resetPreferences: () -> Unit
 ) {
-    // notification
     // location (revogar as permissões)
-    // clearCache (media or all)
-    // darktheme?
-    //
     LazyColumn(modifier = Modifier.padding(innerPadding)) {
         item {
             SettingsToggle(
-                toggle = toggleNotification,
-                checked = notification,
-                title = stringResource(R.string.notifications),
-                desc = stringResource(id = R.string.notificationsToggle)
+                toggle = toggleDarkTheme,
+                checked = darkTheme,
+                title = stringResource(R.string.darkTheme),
+                desc = stringResource(id = R.string.darktThemeToggleDesc)
             )
         }
-        item { DeleteUserDataButton(deleteUserData) }
-        item { ResetPreferencesButton(resetPreferences) }
+        item {
+            SettingsButton(
+                action = deleteUserData,
+                title = stringResource(id = R.string.deleteUserDataTitle),
+                desc = stringResource(id = R.string.deleteUserDataDesc)
+            )
+        }
+        item {
+            SettingsButton(
+                action = resetPreferences,
+                title = stringResource(id = R.string.resetPreferencesTitle),
+                desc = stringResource(id = R.string.resetPreferencesDesc)
+            )
+        }
         item { AboutAppButton(appName, goToAppInfo) }
     }
 }
@@ -56,7 +64,7 @@ fun AboutAppButton(appName: String, goToAppInfo: () -> Unit) {
 }
 
 @Composable
-fun SettingsToggle(toggle: (Boolean) -> Unit, checked: Boolean, title: String, desc: String) {
+fun SettingsToggle(toggle: () -> Unit, checked: Boolean, title: String, desc: String) {
     Row {
         Column {
             Text(text = title)
@@ -65,34 +73,9 @@ fun SettingsToggle(toggle: (Boolean) -> Unit, checked: Boolean, title: String, d
         Spacer(modifier = Modifier.weight(1f))
         Switch(
             checked = checked,
-            onCheckedChange = {
-                toggle(it)
-            }
+            onCheckedChange = { toggle() }
         )
     }
-}
-
-@Composable
-fun ClearCacheButton() {
-
-}
-
-@Composable
-fun DeleteUserDataButton(deleteUserData: () -> Unit) {
-    SettingsButton(
-        action = deleteUserData,
-        title = stringResource(id = R.string.deleteUserDataTitle),
-        desc = stringResource(id = R.string.deleteUserDataDesc)
-    )
-}
-
-@Composable
-fun ResetPreferencesButton(resetPreferences: () -> Unit) {
-    SettingsButton(
-        action = resetPreferences,
-        title = stringResource(id = R.string.resetPreferencesTitle),
-        desc = stringResource(id = R.string.resetPreferencesDesc)
-    )
 }
 
 @Composable
@@ -108,5 +91,13 @@ fun SettingsButton(action: () -> Unit, title: String, desc: String) {
 @Composable
 @Preview(showSystemUi = true)
 fun SettingsScreenPrev() {
-    SettingsScreen(PaddingValues(10.dp), "String", true, {}, {}, {}, {})
+    SettingsScreen(
+        innerPadding = PaddingValues(0.dp),
+        appName = "appName",
+        goToAppInfo = {},
+        darkTheme = false,
+        toggleDarkTheme = {},
+        deleteUserData = {},
+        resetPreferences = {}
+    )
 }

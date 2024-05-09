@@ -53,7 +53,6 @@ fun UserPageScreen(innerPadding: PaddingValues, user: User, logOff: () -> Unit) 
     val modifier: Modifier
 
     if (user.userType.lowercase() == "premium") {
-        Log.i("ICON", "HELLO")
         modifier = Modifier
             .size(150.dp)
             .padding(5.dp)
@@ -89,36 +88,34 @@ fun UserPageScreen(innerPadding: PaddingValues, user: User, logOff: () -> Unit) 
             Spacer(modifier = Modifier.height(20.dp))
             UserInfoColumn(user)
         }
-        /*item {
-            Button(onClick = { logOffPopUp = true }) {
-
-            }
-        }*/
-        /*item {
+        item {
             if (logOffPopUp) {
                 AlertDialogTemplate(
                     onDismiss = { logOffPopUp = false },
                     dialogTitle = stringResource(R.string.logOffDialogTitle),
                     dialogText = stringResource(R.string.logOffDialogText),
-                    confirmButton = { 
+                    confirmButton = {
                         TextButton(onClick = { logOffPopUp = false;logOff() }) {
                             Text(text = "Yes")
                         }
-                        *//**//*
+
                     }
                 )
             }
-
-            }*/
+        }
         item {
             Spacer(modifier = Modifier.height(30.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Button(onClick = logOff) {
+                Button(onClick = { logOffPopUp = true }) {
                     Text(text = "Logout")
                 }
             }
         }
     }
+}
+
+@Composable
+fun ConfirmationDialog(){
 
 }
 

@@ -30,4 +30,7 @@
     <string name="deleteUserDataDesc">Delete all user data, including preferences, history and bookmarks</string>
     <string name="resetPreferencesTitle">Reset Preferences</string>
     <string name="resetPreferencesDesc">Reset Preferences to the app\'s defaults</string>
+
+    <string name="darkTheme">Dark Theme</string>
+    <string name="darktThemeToggleDesc">Switch between Dark Theme and Light Theme</string>
 </resources>

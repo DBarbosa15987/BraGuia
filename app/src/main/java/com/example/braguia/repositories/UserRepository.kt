@@ -25,7 +25,6 @@ class UserRepository(
     private val API: API,
     private val userDAO: UserDAO,
     private val bookmarkDAO: BookmarkDAO,
-    private val preferencesDAO: PreferencesDAO,
     private val historyEntryDAO: HistoryEntryDAO
 ) {
 
@@ -132,20 +131,12 @@ class UserRepository(
         try {
             bookmarkDAO.insert(bookmark)
         } catch (e: Exception) {
-            Log.e("BOOKMARK", "${e}${bookmark}")
+            Log.e("BOOKMARK", "${e}_${bookmark}")
         }
     }
 
     suspend fun deleteBookmark(username: String, trailId: Long) {
         bookmarkDAO.delete(username, trailId)
-    }
-
-    suspend fun updatePreferences(preferences: Preferences) {
-        preferencesDAO.updatePreference(preferences)
-    }
-
-    fun getPreferences(username: String): Flow<Preferences?> {
-        return preferencesDAO.getPreferences(username)
     }
 
     suspend fun updateHistory(historyEntryDB: HistoryEntryDB) {
@@ -160,13 +151,5 @@ class UserRepository(
         bookmarkDAO.deleteAllFromUser(username)
         historyEntryDAO.deleteAllFromUser(username)
     }
-
-    fun HistoryEntryDB.toHistoryEntry(trailDB: TrailDB) = HistoryEntry(
-        entryId = id, timeStamp = timeStamp, trailDB = trailDB, username = username
-    )
-
-    fun HistoryEntry.toHistoryEntryDB() = HistoryEntryDB(
-        id = entryId, timeStamp = timeStamp, trailId = trailDB.id, username = username
-    )
 
 }

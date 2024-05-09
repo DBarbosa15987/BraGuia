@@ -114,7 +114,6 @@ class UserViewModel(
                 user?.let {
                     it.loggedIn = true
                     userRepository.updateLoggedIn(it)
-                    getPreferences(user.username)
                 }
                 _userUiState.update { currState ->
                     currState.copy(user = user)
@@ -141,50 +140,10 @@ class UserViewModel(
         }
     }
 
-    private fun getPreferences(username: String) {
-        viewModelScope.launch {
-
-            userRepository.getPreferences(username).flowOn(Dispatchers.IO)
-                .collect { pref ->
-                    if (pref == null) {
-                        updatePreferences()
-                    }
-                    _userUiState.update { currState ->
-                        currState.copy(preferences = pref)
-                    }
-                    Log.i("PREFS", _userUiState.value.preferences.toString())
-                }
-
-            if (_userUiState.value.user == null) {
-                Log.i("USER", "USER A NULL")
-            }
-        }
-    }
-
-    fun updatePreferences(
-        darkTheme: Boolean = false,
-        notification: Boolean = true,
-        googleMapsAskAgain: Boolean = true
-    ) {
-        viewModelScope.launch {
-            _userUiState.value.user?.let { user ->
-                userRepository.updatePreferences(
-                    Preferences(user.username, notification, darkTheme, googleMapsAskAgain)
-                )
-            }
-        }
-    }
-
-    fun resetPreferences() {
-        updatePreferences()
-    }
-
     fun deleteUserData() {
         viewModelScope.launch {
             _userUiState.value.user?.let {
                 userRepository.deleteUserInfo(it.username)
-                resetPreferences()//TODO prefs e tal
-
             }
         }
     }
@@ -236,6 +195,5 @@ data class UserUiState(
     val bookmarks: Map<Long, TrailDB> = mapOf(),
     val userLoginState: UserLoginState = UserLoginState.Loading,
     val user: User? = null,
-    val preferences: Preferences? = null,
     val warningAsked: Boolean = false
 )

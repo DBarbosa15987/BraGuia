@@ -16,7 +16,6 @@ import com.example.braguia.R
 @Composable
 fun AlertDialogTemplate(
     onDismiss: () -> Unit,
-
     dialogTitle: String,
     dialogText: String,
     confirmButton: @Composable () -> Unit = {}

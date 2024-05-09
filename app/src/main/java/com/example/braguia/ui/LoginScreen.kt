@@ -52,28 +52,28 @@ fun LoginScreen(
     onDismiss: () -> Unit,
     userLoginState: UserLoginState,
     grantAccess: () -> Unit,
-    //googleMapsAskAgain: Boolean,
-    //dontAskAgain: (Boolean) -> Unit,
-    //alreadyAskedtoggle: () -> Unit,
-    //alreadyAsked:Boolean,
+    googleMapsAskAgain: Boolean,
+    dontAskAgain: (Boolean) -> Unit,
+    alreadyAskedtoggle: () -> Unit,
+    alreadyAsked:Boolean,
 ) {
 
-//    var showing by remember { mutableStateOf(true) }
-//    var checked by remember { mutableStateOf(false) }
-//
-//    if (showing && googleMapsAskAgain && !alreadyAsked){
-//        AlertDialogTemplate(
-//            onDismiss = { showing = false;alreadyAskedtoggle();dontAskAgain(!checked) },
-//            dialogTitle = stringResource(id = R.string.warningGoogleMaps),
-//            dialogText = stringResource(id = R.string.warningGoogleMapsText),
-//            confirmButton = {
-//                Row {
-//                    Text(text = stringResource(R.string.dontAskAgainText))
-//                    Checkbox(checked = checked, onCheckedChange = { checked = it })
-//                }
-//            }
-//        )
-//    }
+    var showing by remember { mutableStateOf(true) }
+    var checked by remember { mutableStateOf(false) }
+
+    if (showing && googleMapsAskAgain && !alreadyAsked){
+        AlertDialogTemplate(
+            onDismiss = { showing = false;alreadyAskedtoggle();dontAskAgain(!checked) },
+            dialogTitle = stringResource(id = R.string.warningGoogleMaps),
+            dialogText = stringResource(id = R.string.warningGoogleMapsText),
+            confirmButton = {
+                Row {
+                    Text(text = stringResource(R.string.dontAskAgainText))
+                    Checkbox(checked = checked, onCheckedChange = { checked = it })
+                }
+            }
+        )
+    }
 
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
         when (userLoginState){
