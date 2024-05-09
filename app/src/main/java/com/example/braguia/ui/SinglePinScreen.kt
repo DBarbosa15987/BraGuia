@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -44,7 +43,7 @@ fun SinglePinScreen(
 
     LazyColumn(modifier = modifier.padding(innerPadding)) {
         item { MapWithPin(pin) } // mapa
-        item { TrailDetails(pin) } // detalhes
+        item { PinDetails(pin) } // detalhes
         item { } // media
         items(trails) {
             TrailCard(
@@ -76,7 +75,7 @@ fun MapWithPin(pin: Pin) {
 }
 
 @Composable
-fun TrailDetails(pin: Pin, modifier: Modifier = Modifier) {
+fun PinDetails(pin: Pin, modifier: Modifier = Modifier) {
     Column {
         RelPinsDisplay(relPins = pin.relPin)
         DescriptionShowMore(text = pin.pinDesc, pinId = pin.id)

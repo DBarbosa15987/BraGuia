@@ -38,7 +38,6 @@ fun TrailCard(
     toggleBookmark: (Long) -> Unit,
     isBookmark: Boolean
 ) {
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -67,7 +66,7 @@ fun TrailCard(
                     .weight(0.5f)
             ) {
 
-                Text(text = trail.trailName)
+                Text(text = trail.trailName, style = MaterialTheme.typography.titleLarge)
                 Text(text = trail.trailDuration.toString() + " min")
                 Text(text = trail.trailDifficulty)
                 if (isBookmark) {
