@@ -8,10 +8,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.braguia.model.Bookmark
 import com.example.braguia.model.HistoryEntry
-import com.example.braguia.model.TrailDB
 import com.example.braguia.ui.components.TrailCard
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @Composable
 fun HistoryScreen(
@@ -28,11 +28,13 @@ fun HistoryScreen(
         modifier = Modifier.padding(innerPadding)
     ) {
         items(history) { historyEntry ->
+            val dateTime = Date(historyEntry.timeStamp)
             TrailCard(
                 trail = historyEntry.trailDB,
                 navigateToTrail = navigateToTrail,
                 toggleBookmark = toggleBookmark,
-                isBookmark = isBookmarked(historyEntry.trailDB.id)
+                isBookmark = isBookmarked(historyEntry.trailDB.id),
+                historyDate = dateTime
             )
         }
     }
