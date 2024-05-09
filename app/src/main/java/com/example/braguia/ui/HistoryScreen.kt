@@ -1,11 +1,13 @@
 package com.example.braguia.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.braguia.model.Bookmark
 import com.example.braguia.model.HistoryEntry
 import com.example.braguia.model.TrailDB
@@ -17,10 +19,14 @@ fun HistoryScreen(
     innerPadding: PaddingValues,
     navigateToTrail: (Long) -> Unit,
     toggleBookmark: (Long) -> Unit,
-    isBookmarked:(Long) -> Boolean
+    isBookmarked: (Long) -> Boolean
 ) {
 
-    LazyColumn(modifier = Modifier.padding(innerPadding)) {
+    LazyColumn(
+        contentPadding = PaddingValues(10.dp),
+        verticalArrangement = Arrangement.spacedBy(5.dp),
+        modifier = Modifier.padding(innerPadding)
+    ) {
         items(history) { historyEntry ->
             TrailCard(
                 trail = historyEntry.trailDB,
