@@ -115,7 +115,7 @@ class UserRepository(
         var user: User? = null
         try {
             user = userDAO.getUser(username)
-            Log.i("FETCH_USER_GOOD", user.toString())
+            Log.i("FETCH_USER_SUCCESSFUL", user.toString())
         } catch (e: Exception) {
             Log.e("FETCH_USER", e.toString())
         }

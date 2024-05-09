@@ -1,9 +1,5 @@
 package com.example.braguia.ui
 
-import android.content.pm.PackageManager
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +15,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -29,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -39,8 +33,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import com.example.braguia.R
+import com.example.braguia.ui.components.AlertConfirmDialog
 import com.example.braguia.ui.components.AlertDialogTemplate
 import com.example.braguia.viewModel.UserLoginState
 
@@ -55,36 +49,41 @@ fun LoginScreen(
     googleMapsAskAgain: Boolean,
     dontAskAgain: (Boolean) -> Unit,
     alreadyAskedtoggle: () -> Unit,
-    alreadyAsked:Boolean,
+    alreadyAsked: Boolean,
 ) {
 
     var showing by remember { mutableStateOf(true) }
     var checked by remember { mutableStateOf(false) }
 
-    if (showing && googleMapsAskAgain && !alreadyAsked){
-        AlertDialogTemplate(
-            onDismiss = { showing = false;alreadyAskedtoggle();dontAskAgain(!checked) },
-            dialogTitle = stringResource(id = R.string.warningGoogleMaps),
-            dialogText = stringResource(id = R.string.warningGoogleMapsText),
-            confirmButton = {
-                Row {
-                    Text(text = stringResource(R.string.dontAskAgainText))
-                    Checkbox(checked = checked, onCheckedChange = { checked = it })
-                }
-            }
-        )
-    }
-
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        when (userLoginState){
+        when (userLoginState) {
             UserLoginState.Loading -> DisplayLoading(appName)
-            UserLoginState.LoggedIn -> { grantAccess() }
-            else -> LoginPrompt(
-                appName,
-                login,
-                onDismiss,
-                userLoginState
-            )
+            UserLoginState.LoggedIn -> {
+                grantAccess()
+            }
+
+            else -> {
+                if (showing && googleMapsAskAgain && !alreadyAsked) {
+                    AlertDialogTemplate(
+                        onDismiss = { showing = false;alreadyAskedtoggle();dontAskAgain(!checked) },
+                        dialogTitle = stringResource(id = R.string.warningGoogleMaps),
+                        dialogText = stringResource(id = R.string.warningGoogleMapsText),
+                        confirmButton = {
+                            Row(
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = stringResource(R.string.dontAskAgainText))
+                                Checkbox(checked = checked, onCheckedChange = { checked = it })
+                            }
+                        }
+                    )
+                }
+                LoginPrompt(appName, login, onDismiss, userLoginState)
+            }
         }
     }
 }
@@ -163,7 +162,7 @@ fun LoginPrompt(
 }
 
 @Composable
-fun DisplayLoading(appName:String){
+fun DisplayLoading(appName: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = appName,
