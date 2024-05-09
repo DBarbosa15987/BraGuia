@@ -29,9 +29,15 @@ class UserRepository(
 ) {
 
 
-    suspend fun checkLoggedInUser(): Boolean {
+    suspend fun checkLoggedInUser(): String {
         val users = userDAO.getLoggedInUser()
-        return users.isNotEmpty()
+        var username:String = ""
+        try {
+            username = users[0].username
+        }catch (e:Exception){
+            Log.i("LOGIN", "No one is logged in")
+        }
+        return username
     }
 
     suspend fun updateLoggedIn(user: User) {
@@ -106,6 +112,7 @@ class UserRepository(
             username = user.username
             Log.i("USER_INSERTED", user.toString())
         } catch (e: Exception) {
+
             Log.e("FETCH_USER", e.toString())
         }
         return username

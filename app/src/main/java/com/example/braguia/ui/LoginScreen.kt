@@ -34,7 +34,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.braguia.R
-import com.example.braguia.ui.components.AlertConfirmDialog
 import com.example.braguia.ui.components.AlertDialogTemplate
 import com.example.braguia.viewModel.UserLoginState
 

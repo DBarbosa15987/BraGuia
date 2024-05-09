@@ -33,9 +33,10 @@ class UserViewModel(
 
     private fun checkLoggedInUser() {
         viewModelScope.launch {
-            val loggedIn = userRepository.checkLoggedInUser()
+            val username:String = userRepository.checkLoggedInUser()
+            val loggedIn = username.isNotEmpty()
             if (loggedIn) {
-                fetchUserInfo()
+                fetchUserInfo(username)
                 _userUiState.update { currState ->
                     currState.copy(userLoginState = UserLoginState.LoggedIn)
                 }
@@ -60,7 +61,7 @@ class UserViewModel(
                         currState.copy(userLoginState = successful)
                     }
                     if (successful == UserLoginState.LoggedIn) {
-                        fetchUserInfo()
+                        fetchUserInfo(username)
 
                     }
                 }
@@ -106,7 +107,7 @@ class UserViewModel(
         }
     }
 
-    private fun fetchUserInfo() {
+    private fun fetchUserInfo(usernameOffline:String) {
         viewModelScope.launch {
             val username = userRepository.fetchUserInfo()
             if (username != null) {
@@ -118,7 +119,13 @@ class UserViewModel(
                 _userUiState.update { currState ->
                     currState.copy(user = user)
                 }
+            }else{
+                val user: User? = userRepository.getUser(usernameOffline)
+                _userUiState.update { currState ->
+                    currState.copy(user = user)
+                }
             }
+
         }
     }
 

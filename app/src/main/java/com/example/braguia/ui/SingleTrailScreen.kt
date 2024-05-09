@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,6 +53,7 @@ import com.example.braguia.R
 import com.example.braguia.model.Media
 import com.example.braguia.model.Pin
 import com.example.braguia.model.Trail
+import com.example.braguia.ui.components.AlertDialogTemplate
 import com.example.braguia.ui.components.DescriptionShowMore
 import com.example.braguia.ui.components.EdgePreviewCard
 import com.example.braguia.ui.components.MediaPlayer
@@ -68,13 +70,23 @@ fun SingleTrailScreen(
     trail: Trail,
     innerPadding: PaddingValues,
     navigateToPin: (Long) -> Unit,
-    updateHistory: (Long) -> Unit
+    updateHistory: (Long) -> Unit,
+    userType: String,
+    navigateToMedia: () -> Unit
 
 ) {
     LazyColumn(contentPadding = PaddingValues(10.dp), modifier = Modifier.padding(innerPadding)) {
-        item { TrailInformation(trail = trail, route = route, updateHistory = updateHistory) }
+        item {
+            TrailInformation(
+                trail = trail,
+                route = route,
+                updateHistory = updateHistory,
+                userType = userType,
+                navigateToMedia = navigateToMedia
+            )
+        }
         item { MapWithPins(route) }
-        item { Spacer(modifier = Modifier.padding(5.dp)) }
+        item { Spacer(modifier = Modifier.height(5.dp)) }
         item {
             Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 for (i in 0..<trail.edges.size) {
@@ -83,88 +95,9 @@ fun SingleTrailScreen(
                 }
             }
         }
-        item {
+        /*item {
             MediaGalleryScreen(pins = route)
-        }
-    }
-}
-
-@Composable
-fun MediaGalleryScreen(pins: List<Pin>) {
-    var selectedMedia by remember { mutableStateOf<Media?>(null) }
-    Column {
-        // section title
-//        Text("Media", style = MaterialTheme.typography.headlineMedium)
-
-        val filteredPins = pins.distinctBy { it.id }
-        for (pin in filteredPins) {
-            if (pin.media.isNotEmpty()) {
-                Text(
-                    pin.pinName,
-                    style = MaterialTheme.typography.headlineMedium,
-                    // FontWeight = FontWeight.Bold
-                )
-                LazyRow {
-                    items(pin.media) { media ->
-                        val modifier = Modifier
-                            .size(100.dp)
-                            .clickable {
-                                selectedMedia = media
-                            }
-                        when (media.mediaType) {
-                            "I" -> {
-                                AsyncImage(
-                                    model = media.mediaFile,
-                                    contentScale = ContentScale.Crop,
-                                    contentDescription = "PinMedia",
-                                    placeholder = painterResource(id = R.drawable.loading_img),
-                                    modifier = modifier,
-                                    error = painterResource(id = R.drawable.ic_broken_image)
-                                )
-                            }
-
-                            "V" -> {
-                                Icon(
-                                    imageVector = Icons.Filled.PlayCircleOutline,
-                                    modifier = modifier,
-                                    contentDescription = "PlayCircle",
-                                )
-                            }
-
-                            "R" -> {
-                                Icon(
-                                    imageVector = Icons.Filled.MusicNote,
-                                    modifier = modifier,
-                                    contentDescription = "MusicNote",
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    selectedMedia?.let { media ->
-        Log.i("SINGLETRAILSCREEN", "$media ")
-        Dialog(
-            onDismissRequest = { selectedMedia = null }
-        ) {
-            when (media.mediaType) {
-                "I" -> {
-                    AsyncImage(
-                        model = media.mediaFile,
-                        modifier = Modifier.fillMaxWidth(),
-                        contentDescription = "PinMedia",
-                        placeholder = painterResource(id = R.drawable.loading_img),
-                        error = painterResource(id = R.drawable.ic_broken_image)
-                    )
-                }
-
-                "V", "R" -> {
-                    MediaPlayer(media = media)
-                }
-            }
-        }
+        }*/
     }
 }
 
@@ -189,7 +122,13 @@ fun MapWithPins(pins: List<Pin>) {
 }
 
 @Composable
-fun TrailInformation(trail: Trail, route: List<Pin>, updateHistory: (Long) -> Unit) {
+fun TrailInformation(
+    trail: Trail,
+    route: List<Pin>,
+    updateHistory: (Long) -> Unit,
+    userType: String,
+    navigateToMedia: () -> Unit
+) {
     val context = LocalContext.current
     Column(modifier = Modifier.fillMaxWidth()) {
         AsyncImage(
@@ -211,7 +150,13 @@ fun TrailInformation(trail: Trail, route: List<Pin>, updateHistory: (Long) -> Un
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.headlineLarge
         )
-        StartTrailButton(trail.id, route, context, updateHistory)
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Spacer(modifier = Modifier.weight(0.5f))
+            StartTrailButton(trail.id, route, context, updateHistory)
+            Spacer(modifier = Modifier.weight(1f))
+            MediaButton(userType, navigateToMedia)
+            Spacer(modifier = Modifier.weight(0.5f))
+        }
         for (reltrail in trail.relTrail) {
             Text(reltrail.attrib + ": " + reltrail.value)
         }
@@ -223,6 +168,32 @@ fun TrailInformation(trail: Trail, route: List<Pin>, updateHistory: (Long) -> Un
         )
     }
 }
+
+@Composable
+fun MediaButton(userType: String, navigateToMedia: () -> Unit) {
+
+    var showing by remember { mutableStateOf(false) }
+
+    if (showing) {
+        AlertDialogTemplate(
+            onDismiss = { showing = false },
+            dialogTitle = stringResource(id = R.string.accessDenied),
+            dialogText = stringResource(id = R.string.accessDeniedText)
+        )
+    }
+
+    Button(onClick = {
+        if (userType.lowercase() == "premium") {
+            navigateToMedia.invoke()
+        } else {
+            showing = true
+        }
+    }) {
+        Text("Check Media")
+    }
+
+}
+
 
 @Composable
 fun StartTrailButton(

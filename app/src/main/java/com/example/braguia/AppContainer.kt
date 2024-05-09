@@ -16,10 +16,17 @@ import com.example.braguia.repositories.UserRepository
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
+import okhttp3.Response
+import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
+import java.net.SocketTimeoutException
+import java.util.concurrent.TimeUnit
 
 
 private const val LAYOUT_PREFERENCE_NAME = "layout_preferences"
@@ -45,8 +52,9 @@ class BraGuiaAppContainer(
     /**
      * Use the Retrofit builder to build a retrofit object using a kotlinx.serialization converter
      */
+
     private fun createRetrofit(): Retrofit {
-        val client = OkHttpClient.Builder()
+        val client = OkHttpClient.Builder().connectTimeout(5,TimeUnit.SECONDS)
             .cookieJar(object : CookieJar {
                 override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
                     val cookieManager = CookieManager.getInstance()
@@ -78,8 +86,42 @@ class BraGuiaAppContainer(
             })
             .addInterceptor(HttpLoggingInterceptor().apply {
                 this.level = HttpLoggingInterceptor.Level.HEADERS
-            })
-            .build()
+            }).addInterceptor(object : Interceptor {
+                override fun intercept(chain: Interceptor.Chain): Response {
+
+                    val request = chain.request()
+
+                    try {
+                        val response = chain.proceed(request)
+                        val bodyString = response.body!!.string()
+
+                        return response.newBuilder()
+                            .body(bodyString.toResponseBody(response.body?.contentType()))
+                            .build()
+                    } catch (e: Exception) {
+                        var msg = ""
+                        val interceptorCode: Int
+                        when (e) {
+                            is SocketTimeoutException -> {
+                                msg = "Socket timeout error"
+                                interceptorCode = 408
+                            }
+
+                            else -> {
+                                msg = "Other Connextion error"
+                                interceptorCode = 500
+
+                            }
+                        }
+                        return Response.Builder()
+                            .request(request)
+                            .protocol(Protocol.HTTP_1_1)
+                            .code(interceptorCode)
+                            .message(msg)
+                            .body("{${e}}".toResponseBody(null)).build()
+                    }
+                }
+            }).build()
         CookieManager.getInstance().setAcceptCookie(true)
         return Retrofit.Builder().baseUrl(baseUrl)
             .client(client)

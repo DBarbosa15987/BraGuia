@@ -44,6 +44,7 @@ import com.example.braguia.ui.BookmarkScreen
 import com.example.braguia.ui.HistoryScreen
 import com.example.braguia.ui.HomepageScreen
 import com.example.braguia.ui.LoginScreen
+import com.example.braguia.ui.MediaGalleryScreen
 import com.example.braguia.ui.PinsListScreen
 import com.example.braguia.ui.SettingsScreen
 import com.example.braguia.ui.SinglePinScreen
@@ -70,7 +71,8 @@ enum class BraguiaScreen {
     AppInfo,
     History,
     Bookmarks,
-    Pins
+    Pins,
+    Media
 }
 
 @Composable
@@ -268,7 +270,8 @@ fun BraGuiaApp(
                 trailsViewModel.getTrail(id)
                 trailsViewModel.getEdges(id)
                 val trail: Trail? = trailsUiState.value.currTrail
-                if (trail != null) {
+                val user:User? = userUiState.value.user
+                if (trail != null && user != null) {
                     trailsViewModel.getTrailRoute(trail)
                     SingleTrailScreen(
                         trail = trail,
@@ -277,7 +280,9 @@ fun BraGuiaApp(
                         navigateToPin = { pinId ->
                             navController.navigate("${BraguiaScreen.Pin.name}/$pinId")
                         },
-                        updateHistory = userViewModel::updateHistory
+                        updateHistory = userViewModel::updateHistory,
+                        userType = user.userType,
+                        navigateToMedia = { navController.navigate(BraguiaScreen.Media.name) }
                     )
                 }
             }
@@ -309,6 +314,12 @@ fun BraGuiaApp(
                     )
                 }
             }
+
+            composable(route = BraguiaScreen.Media.name){
+                val pins:List<Pin> = trailsUiState.value.trailRoute
+                MediaGalleryScreen(pins,innerPadding)
+            }
+
             composable(
                 route = BraguiaScreen.Settings.name
             ) {

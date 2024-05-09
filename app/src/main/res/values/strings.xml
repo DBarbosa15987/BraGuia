@@ -44,4 +44,8 @@
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
 
+    <string name="accessDenied">Access Denied</string>
+    <string name="accessDeniedText">You need to upgrade to premium to use this functionality</string>
+
+
 </resources>
