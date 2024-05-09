@@ -69,7 +69,6 @@ class AppInfoRepository(
             val contacts: List<Contact> = contactDAO.getContacts(id)
             val partners: List<Partner> = partnerDAO.getPartner(id)
             return appInfoDB.toAppInfo(socials, contacts, partners)
-
         } catch (e: Exception) {
             Log.e("GETAPPINFO", e.toString())
         }

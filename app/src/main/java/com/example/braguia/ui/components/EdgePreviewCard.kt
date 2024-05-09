@@ -29,7 +29,12 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun EdgePreviewCard(edge: Edge, modifier: Modifier = Modifier, navigateToPin: (Long) -> Unit) {
+fun EdgePreviewCard(
+    edge: Edge,
+    title: String,
+    modifier: Modifier = Modifier,
+    navigateToPin: (Long) -> Unit
+) {
 
     var expanded by remember { mutableStateOf(false) }
 
@@ -47,10 +52,9 @@ fun EdgePreviewCard(edge: Edge, modifier: Modifier = Modifier, navigateToPin: (L
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
-
                 Column {
-                    Text(text = edge.edgeTransport)
-                    Text(text = edge.edgeDesc)
+                    Text(title, style = MaterialTheme.typography.titleLarge)
+                    Text("Duration: ${edge.edgeDuration} minutes")
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 SeeMoreButton(expanded = expanded, onClick = { expanded = !expanded })

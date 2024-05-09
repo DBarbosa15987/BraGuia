@@ -72,11 +72,15 @@ fun SingleTrailScreen(
     updateHistory: (Long) -> Unit
 
 ) {
-    LazyColumn(Modifier.padding(innerPadding)) {
+    LazyColumn(contentPadding = PaddingValues(10.dp), modifier = Modifier.padding(innerPadding)) {
         item { TrailInformation(trail = trail, route = route, updateHistory = updateHistory) }
         item { MapWithPins(route) }
+        // FIXME isto incrementa a seguir a todos os recomposes
+        var i = 1
         items(trail.edges) { edge ->
-            EdgePreviewCard(edge = edge, navigateToPin = navigateToPin)
+            val title = "Stop $i"
+            EdgePreviewCard(edge = edge, title, navigateToPin = navigateToPin)
+            i++
         }
         item {
             MediaGalleryScreen(pins = route)
@@ -175,7 +179,7 @@ fun MediaGalleryScreen(pins: List<Pin>) {
                     "I" -> {
                         AsyncImage(
                             model = media.mediaFile,
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.fillMaxWidth(),
                             contentDescription = "PinMedia",
                             placeholder = painterResource(id = R.drawable.loading_img),
                             error = painterResource(id = R.drawable.ic_broken_image)
@@ -193,17 +197,16 @@ fun MediaGalleryScreen(pins: List<Pin>) {
 
 @Composable
 fun MapWithPins(pins: List<Pin>) {
-    //TODO calculate the center point of all pins so everyone appears in the map
-    //FIXME isto deu index out of bounds...
     if (pins.isNotEmpty()) {
         val firstPinLatLng = LatLng(pins[0].pinLat, pins[0].pinLng)
         val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(firstPinLatLng, 10f)
+            position = CameraPosition.fromLatLngZoom(firstPinLatLng, 15f)
         }
         GoogleMap(
             modifier = Modifier
+                .clip(MaterialTheme.shapes.small)
                 .fillMaxWidth()
-                .height(500.dp), cameraPositionState = cameraPositionState
+                .height(400.dp), cameraPositionState = cameraPositionState
         ) {
             for (pin in pins) {
                 Marker(state = MarkerState(LatLng(pin.pinLat, pin.pinLng)), title = pin.pinName)
@@ -240,7 +243,6 @@ fun TrailInformation(trail: Trail, route: List<Pin>, updateHistory: (Long) -> Un
         for (reltrail in trail.relTrail) {
             Text(reltrail.attrib + ": " + reltrail.value)
         }
-        // TODO: calculate the total distance of the trail
         Text(stringResource(id = R.string.trailDifficulty, trail.trailDifficulty))
         Text(stringResource(id = R.string.trailDuration, trail.trailDuration))
         Text(stringResource(id = R.string.trailDesc, trail.trailDesc))
