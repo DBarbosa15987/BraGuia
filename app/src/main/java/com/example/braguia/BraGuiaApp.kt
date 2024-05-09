@@ -18,6 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
@@ -95,10 +98,11 @@ fun BraGuiaApp(
 
     val toggleTheme =
         { preferencesViewModel.selectDarkTheme(!preferencesUiState.value.isDarkTheme) }
-
+    var askPermission by remember { mutableStateOf(false)}
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
+        askPermission=true
         if (isGranted) {
             // Permission Accepted: Do something
             Log.d("ExampleScreen", "PERMISSION GRANTED")
@@ -162,9 +166,7 @@ fun BraGuiaApp(
                     navController.navigate(
                         BraguiaScreen.UserPage.name
                     )
-                },
-                test = toggleTheme
-
+                }
             )
         },
         topBar = {
@@ -202,36 +204,20 @@ fun BraGuiaApp(
                 trailsViewModel.getTrails()
                 val appInfo: AppInfo? = trailsUiState.value.appInfo
                 if (appInfo != null) {
-                    when (PackageManager.PERMISSION_GRANTED) {
-                        ContextCompat.checkSelfPermission(
-                            context,
-                            android.Manifest.permission.ACCESS_FINE_LOCATION
-                        ) -> {
-                            // Some works that require permission
-                            Log.d("ExampleScreen", "Code requires permission")
-                        }
+                        when (PackageManager.PERMISSION_GRANTED) {
+                            ContextCompat.checkSelfPermission(
+                                context,
+                                android.Manifest.permission.ACCESS_FINE_LOCATION
+                            ) -> {
+                                // Some works that require permission
+                                Log.d("ExampleScreen", "Code requires permission")
+                            }
 
-                        else -> {
-                            // Asking for permission
-                            launcher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
-                        }
-                    }
-                    when (PackageManager.PERMISSION_GRANTED) {
-                        ContextCompat.checkSelfPermission(
-                            context,
-                            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                        ) -> {
-                            // Some works that require permission
-                            Log.d("ExampleScreen", "Code requires permission")
-                        }
-
-                        else -> {
-                            // Asking for permission
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                launcher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                            else -> {
+                                // Asking for permission
+                                launcher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
                             }
                         }
-                    }
                     HomepageScreen(
                         appInfo = appInfo,
                         innerPadding = innerPadding,

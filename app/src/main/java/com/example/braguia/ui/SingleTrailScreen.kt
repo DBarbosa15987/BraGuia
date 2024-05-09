@@ -223,7 +223,6 @@ fun TrailInformation(trail: Trail, route: List<Pin>, updateHistory: (Long) -> Un
                 .clip(
                     RoundedCornerShape(16.dp)
                 ),
-            //.weight(0.5f),
             contentScale = ContentScale.Crop,
             contentDescription = "Trail Image",
             placeholder = painterResource(id = R.drawable.loading_img),
@@ -245,7 +244,7 @@ fun TrailInformation(trail: Trail, route: List<Pin>, updateHistory: (Long) -> Un
         Text(stringResource(id = R.string.trailDuration, trail.trailDuration))
         DescriptionShowMore(
             stringResource(id = R.string.trailDesc, trail.trailDesc),
-            pinId = trail.id
+            seed = trail.id
         )
     }
 }

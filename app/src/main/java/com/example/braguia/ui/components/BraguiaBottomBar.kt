@@ -24,8 +24,7 @@ fun BraguiaBottomBar(
     currentScreen: BraguiaScreen,
     goHome: () -> Unit,
     goToSettings: () -> Unit,
-    goToUserProfile: () -> Unit,
-    test:() -> Unit
+    goToUserProfile: () -> Unit
 ) {
 
     val modifier = Modifier.scale(1.2f)
@@ -51,9 +50,6 @@ fun BraguiaBottomBar(
                         imageVector = Icons.Filled.Person,
                         contentDescription = "BottomBarUserProfileIcon"
                     )
-                }
-                Button(onClick = { test() }) {
-                    
                 }
                 Spacer(modifier = Modifier.weight(0.5f))
             }

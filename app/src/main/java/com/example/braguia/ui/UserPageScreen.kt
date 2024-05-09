@@ -1,6 +1,5 @@
 package com.example.braguia.ui
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -45,15 +44,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.braguia.R
 import com.example.braguia.model.User
+import com.example.braguia.ui.components.AlertConfirmDialog
 import com.example.braguia.ui.components.AlertDialogTemplate
 
 @Composable
 fun UserPageScreen(innerPadding: PaddingValues, user: User, logOff: () -> Unit) {
 
-    val modifier: Modifier
-
-    if (user.userType.lowercase() == "premium") {
-        modifier = Modifier
+    val modifier: Modifier = if (user.userType.lowercase() == "premium") {
+        Modifier
             .size(150.dp)
             .padding(5.dp)
             .clip(CircleShape)
@@ -62,7 +60,7 @@ fun UserPageScreen(innerPadding: PaddingValues, user: User, logOff: () -> Unit) 
                 CircleShape
             )
     } else {
-        modifier = Modifier
+        Modifier
             .size(150.dp)
             .padding(5.dp)
             .clip(CircleShape)
@@ -79,7 +77,7 @@ fun UserPageScreen(innerPadding: PaddingValues, user: User, logOff: () -> Unit) 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Image(
                     imageVector = Icons.Outlined.Person,
-                    contentDescription = null,
+                    contentDescription = "UserProfileIcon",
                     modifier = modifier
                 )
             }
@@ -90,16 +88,14 @@ fun UserPageScreen(innerPadding: PaddingValues, user: User, logOff: () -> Unit) 
         }
         item {
             if (logOffPopUp) {
-                AlertDialogTemplate(
+                AlertConfirmDialog(
+                    title = stringResource(R.string.logOffDialogTitle),
+                    text = stringResource(R.string.logOffDialogText),
+                    cancelOption = { logOffPopUp = false },
+                    cancelText = stringResource(id = R.string.cancel),
+                    confirmOption = { logOffPopUp = false;logOff() },
+                    confirmText = stringResource(R.string.logout),
                     onDismiss = { logOffPopUp = false },
-                    dialogTitle = stringResource(R.string.logOffDialogTitle),
-                    dialogText = stringResource(R.string.logOffDialogText),
-                    confirmButton = {
-                        TextButton(onClick = { logOffPopUp = false;logOff() }) {
-                            Text(text = "Yes")
-                        }
-
-                    }
                 )
             }
         }
@@ -113,12 +109,6 @@ fun UserPageScreen(innerPadding: PaddingValues, user: User, logOff: () -> Unit) 
         }
     }
 }
-
-@Composable
-fun ConfirmationDialog(){
-
-}
-
 
 @Composable
 fun UserInfoColumn(user: User) {

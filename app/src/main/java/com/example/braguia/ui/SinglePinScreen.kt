@@ -78,7 +78,7 @@ fun MapWithPin(pin: Pin) {
 fun PinDetails(pin: Pin, modifier: Modifier = Modifier) {
     Column {
         RelPinsDisplay(relPins = pin.relPin)
-        DescriptionShowMore(text = pin.pinDesc, pinId = pin.id)
+        DescriptionShowMore(text = pin.pinDesc, seed = pin.id)
     }
 }
 
