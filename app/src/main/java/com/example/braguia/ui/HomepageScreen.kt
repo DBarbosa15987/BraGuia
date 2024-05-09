@@ -48,6 +48,7 @@ fun HomepageScreen(
 ) {
     val spanCount: Int = 2
     LazyVerticalGrid(
+        contentPadding = PaddingValues(10.dp),
         modifier = Modifier.padding(innerPadding),
         columns = GridCells.Fixed(spanCount),
         verticalArrangement = Arrangement.spacedBy(5.dp),

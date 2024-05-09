@@ -85,6 +85,7 @@ fun SingleTrailScreen(
                 navigateToMedia = navigateToMedia
             )
         }
+        item { Spacer(modifier = Modifier.height(15.dp)) }
         item { MapWithPins(route) }
         item { Spacer(modifier = Modifier.height(5.dp)) }
         item {
@@ -95,9 +96,6 @@ fun SingleTrailScreen(
                 }
             }
         }
-        /*item {
-            MediaGalleryScreen(pins = route)
-        }*/
     }
 }
 
@@ -144,12 +142,12 @@ fun TrailInformation(
             placeholder = painterResource(id = R.drawable.loading_img),
             error = painterResource(id = R.drawable.ic_broken_image)
         )
-        // FIXME mudar para o titulo do screen
         Text(
             trail.trailName,
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.headlineLarge
         )
+        Spacer(modifier = Modifier.height(20.dp))
         Row(modifier = Modifier.fillMaxWidth()) {
             Spacer(modifier = Modifier.weight(0.5f))
             StartTrailButton(trail.id, route, context, updateHistory)
