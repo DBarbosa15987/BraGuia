@@ -2,7 +2,10 @@
 
 package com.example.braguia
 
+import android.app.PendingIntent
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -117,6 +120,21 @@ fun BraGuiaApp() {
         currentRoute.startsWith(BraguiaScreen.Pin.name) -> BraguiaScreen.Pin
         else -> BraguiaScreen.valueOf(currentRoute)
     }
+    val geofenceHelper = GeofenceHelper(context)
+    val geofencePendingIntent: PendingIntent by lazy {
+        val intent = Intent(context, GeofenceBroadcastReceiver::class.java)
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
+        // addGeofences() and removeGeofences().
+        PendingIntent.getBroadcast(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+    if (trailsUiState.value.pinList.isNotEmpty()) {
+        geofenceHelper.addGeofences(trailsUiState.value.pinList, geofencePendingIntent, context)
+    }
 
     Scaffold(
         bottomBar = {
@@ -188,6 +206,22 @@ fun BraGuiaApp() {
                         else -> {
                             // Asking for permission
                             launcher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                        }
+                    }
+                    when (PackageManager.PERMISSION_GRANTED) {
+                        ContextCompat.checkSelfPermission(
+                            context,
+                            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                        ) -> {
+                            // Some works that require permission
+                            Log.d("ExampleScreen", "Code requires permission")
+                        }
+
+                        else -> {
+                            // Asking for permission
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                launcher.launch(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                            }
                         }
                     }
                     HomepageScreen(
