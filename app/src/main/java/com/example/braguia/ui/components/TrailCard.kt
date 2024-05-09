@@ -1,5 +1,6 @@
 package com.example.braguia.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,29 +29,30 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.braguia.R
 import com.example.braguia.model.TrailDB
+import java.text.SimpleDateFormat
+import java.util.Date
 
+@SuppressLint("SimpleDateFormat")
 @Composable
 fun TrailCard(
     trail: TrailDB,
     modifier: Modifier = Modifier,
     navigateToTrail: (Long) -> Unit,
     toggleBookmark: (Long) -> Unit,
-    isBookmark: Boolean
+    isBookmark: Boolean,
+    historyDate: Date? = null
 ) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(180.dp)
-            .clip(MaterialTheme.shapes.small)
-            .clickable { navigateToTrail.invoke(trail.id) }
-    ) {
+    Card(modifier = modifier
+        .fillMaxWidth()
+        .height(180.dp)
+        .clip(MaterialTheme.shapes.small)
+        .clickable { navigateToTrail.invoke(trail.id) }) {
         Box(contentAlignment = Alignment.TopEnd, modifier = Modifier.fillMaxSize()) {
             BookmarkButton(isBookmark, toggleBookmark, trail.id)
             Row {
                 AsyncImage(
                     model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(trail.trailImg)
-                        .build(),
+                        .data(trail.trailImg).build(),
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(0.5f),
@@ -68,6 +70,10 @@ fun TrailCard(
                     Text(text = trail.trailName, style = MaterialTheme.typography.titleLarge)
                     Text(text = trail.trailDuration.toString() + " min")
                     Text(text = trail.trailDifficulty)
+                    historyDate?.let {
+                        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
+                        Text("Accessed: " + dateFormat.format(historyDate))
+                    }
 
                 }
             }
@@ -80,15 +86,13 @@ fun BookmarkButton(isBookmarked: Boolean, toggleBookmark: (Long) -> Unit, trailI
     if (isBookmarked) {
         IconButton(onClick = { toggleBookmark(trailId) }) {
             Icon(
-                imageVector = Icons.Outlined.Bookmark,
-                contentDescription = "BookmakedIcon"
+                imageVector = Icons.Outlined.Bookmark, contentDescription = "BookmakedIcon"
             )
         }
     } else {
         IconButton(onClick = { toggleBookmark(trailId) }) {
             Icon(
-                imageVector = Icons.Outlined.BookmarkBorder,
-                contentDescription = "NotBookmakedIcon"
+                imageVector = Icons.Outlined.BookmarkBorder, contentDescription = "NotBookmakedIcon"
             )
         }
     }

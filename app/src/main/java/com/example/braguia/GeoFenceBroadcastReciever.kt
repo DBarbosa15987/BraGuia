@@ -5,12 +5,14 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.braguia.utils.CHANNEL_ID
+import com.example.braguia.utils.CUSTOM_INTENT_GEOFENCE
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
@@ -27,6 +29,8 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
         }
         // Get the transition type.
         val geofenceTransition = geofencingEvent.geofenceTransition
+        Log.i("GEOFENCEBROADCAST", "$geofenceTransition")
+
         // Test that the reported transition was of interest.
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
 
@@ -40,7 +44,8 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             if (context != null) {
                 val pinId = triggeringGeofences.first().requestId
                 context.getSystemService(NotificationManager::class.java)
-                var builder = NotificationCompat.Builder(context, CHANNEL_ID)
+                val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+                    .setSmallIcon(1)
                     .setContentTitle("You've entered $pinId")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 

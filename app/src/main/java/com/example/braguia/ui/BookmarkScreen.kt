@@ -30,7 +30,7 @@ fun BookmarkScreen(
                 trail = bookmark,
                 navigateToTrail = navigateToTrail,
                 toggleBookmark = toggleBookmark,
-                isBookmark = isBookmarked(bookmark.id)
+                isBookmark = isBookmarked(bookmark.id),
             )
         }
     }

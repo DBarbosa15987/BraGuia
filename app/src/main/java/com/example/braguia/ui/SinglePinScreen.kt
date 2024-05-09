@@ -52,7 +52,7 @@ fun SinglePinScreen(
                 trail = it,
                 navigateToTrail = navigateToTrail,
                 toggleBookmark = toggleBookmark,
-                isBookmark = isBookmarked(it.id)
+                isBookmark = isBookmarked(it.id),
             )
         } // roteiros em que se encontra
     }

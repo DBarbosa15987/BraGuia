@@ -117,7 +117,6 @@ fun BraGuiaApp(
 
     val context = LocalContext.current
 
-
     val trailsViewModel: TrailsViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
     val userViewModel: UserViewModel = viewModel(factory = BraGuiaViewModelProvider.Factory)
 
@@ -136,13 +135,11 @@ fun BraGuiaApp(
     val geofenceHelper = GeofenceHelper(context)
     val geofencePendingIntent: PendingIntent by lazy {
         val intent = Intent(context, GeofenceBroadcastReceiver::class.java)
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
-        // addGeofences() and removeGeofences().
         PendingIntent.getBroadcast(
             context,
             0,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
     }
     if (trailsUiState.value.pinList.isNotEmpty()) {
