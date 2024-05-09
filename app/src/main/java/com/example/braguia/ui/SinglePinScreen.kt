@@ -12,9 +12,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.braguia.R
@@ -41,7 +43,7 @@ fun SinglePinScreen(
     isBookmarked: (Long) -> Boolean
 ) {
 
-    LazyColumn(modifier = modifier.padding(innerPadding)) {
+    LazyColumn(contentPadding = PaddingValues(10.dp), modifier = modifier.padding(innerPadding)) {
         item { MapWithPin(pin) } // mapa
         item { PinDetails(pin) } // detalhes
         item { } // media
@@ -60,12 +62,13 @@ fun SinglePinScreen(
 fun MapWithPin(pin: Pin) {
     val pinLatLng = LatLng(pin.pinLat, pin.pinLng)
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(pinLatLng, 5f)
+        position = CameraPosition.fromLatLngZoom(pinLatLng, 10f)
     }
     GoogleMap(
         modifier = Modifier
+            .clip(MaterialTheme.shapes.small)
             .fillMaxWidth()
-            .height(150.dp),
+            .height(200.dp),
         cameraPositionState = cameraPositionState
     ) {
         Marker(
@@ -107,39 +110,5 @@ fun RelPinDisplay(relPin: RelPin) {
         Text(text = stringResource(R.string.relPinAttrib, relPin.attrib, relPin.value))
     }
 }
-
-/*@Composable
-fun VideoPlayerScreen() {
-    val context = LocalContext.current
-
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            setMediaItem(MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"))
-            repeatMode = ExoPlayer.REPEAT_MODE_OFF
-            playWhenReady = false
-            prepare()
-            play()
-        }
-    }
-    DisposableEffect(
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = {
-                StyledPlayerView(context).apply {
-                    player = exoPlayer
-                    useController = true
-                    FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                }
-            }
-        )
-    ) {
-        onDispose {
-            exoPlayer.release()
-        }
-    }
-}*/
 
 

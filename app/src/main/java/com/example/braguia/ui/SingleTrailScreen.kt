@@ -7,8 +7,10 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -52,6 +54,7 @@ import com.example.braguia.model.Pin
 import com.example.braguia.model.Trail
 import com.example.braguia.ui.components.DescriptionShowMore
 import com.example.braguia.ui.components.EdgePreviewCard
+import com.example.braguia.ui.components.MediaPlayer
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -71,8 +74,9 @@ fun SingleTrailScreen(
     LazyColumn(contentPadding = PaddingValues(10.dp), modifier = Modifier.padding(innerPadding)) {
         item { TrailInformation(trail = trail, route = route, updateHistory = updateHistory) }
         item { MapWithPins(route) }
+        item { Spacer(modifier = Modifier.padding(5.dp)) }
         item {
-            Column {
+            Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 for (i in 0..<trail.edges.size) {
                     val title = "Stop ${i + 1}"
                     EdgePreviewCard(edge = trail.edges[i], title, navigateToPin = navigateToPin)
@@ -85,40 +89,13 @@ fun SingleTrailScreen(
     }
 }
 
-@SuppressLint("OpaqueUnitKey")
-@Composable
-fun MediaPlayer(media: Media) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp), color = Color.Black
-    ) {
-        val url = media.mediaFile
-        val context = LocalContext.current
-        val exoPlayer = ExoPlayer.Builder(context).build().apply {
-            setMediaItem(fromUri(url))
-            repeatMode = Player.REPEAT_MODE_OFF
-            playWhenReady = false
-            prepare()
-        }
-
-        DisposableEffect(
-            AndroidView(factory = {
-                PlayerView(context).apply {
-                    useController = true
-                    player = exoPlayer
-                }
-            })
-        ) {
-            onDispose { exoPlayer.release() }
-        }
-    }
-}
-
 @Composable
 fun MediaGalleryScreen(pins: List<Pin>) {
+    var selectedMedia by remember { mutableStateOf<Media?>(null) }
     Column {
-        var selectedMedia by remember { mutableStateOf<Media?>(null) }
+        // section title
+//        Text("Media", style = MaterialTheme.typography.headlineMedium)
+
         val filteredPins = pins.distinctBy { it.id }
         for (pin in filteredPins) {
             if (pin.media.isNotEmpty()) {
@@ -166,25 +143,25 @@ fun MediaGalleryScreen(pins: List<Pin>) {
                 }
             }
         }
-        selectedMedia?.let { media ->
-            Log.i("SINGLETRAILSCREEN", "$media ")
-            Dialog(
-                onDismissRequest = { selectedMedia = null }
-            ) {
-                when (media.mediaType) {
-                    "I" -> {
-                        AsyncImage(
-                            model = media.mediaFile,
-                            modifier = Modifier.fillMaxWidth(),
-                            contentDescription = "PinMedia",
-                            placeholder = painterResource(id = R.drawable.loading_img),
-                            error = painterResource(id = R.drawable.ic_broken_image)
-                        )
-                    }
+    }
+    selectedMedia?.let { media ->
+        Log.i("SINGLETRAILSCREEN", "$media ")
+        Dialog(
+            onDismissRequest = { selectedMedia = null }
+        ) {
+            when (media.mediaType) {
+                "I" -> {
+                    AsyncImage(
+                        model = media.mediaFile,
+                        modifier = Modifier.fillMaxWidth(),
+                        contentDescription = "PinMedia",
+                        placeholder = painterResource(id = R.drawable.loading_img),
+                        error = painterResource(id = R.drawable.ic_broken_image)
+                    )
+                }
 
-                    "V", "R" -> {
-                        MediaPlayer(media = media)
-                    }
+                "V", "R" -> {
+                    MediaPlayer(media = media)
                 }
             }
         }
@@ -221,14 +198,13 @@ fun TrailInformation(trail: Trail, route: List<Pin>, updateHistory: (Long) -> Un
                 .fillMaxWidth(0.5f)
                 .align(Alignment.CenterHorizontally)
                 .clip(
-                    RoundedCornerShape(16.dp)
+                    MaterialTheme.shapes.medium
                 ),
             contentScale = ContentScale.Crop,
             contentDescription = "Trail Image",
             placeholder = painterResource(id = R.drawable.loading_img),
             error = painterResource(id = R.drawable.ic_broken_image)
         )
-        Log.i("IMG2", trail.trailImg)
         // FIXME mudar para o titulo do screen
         Text(
             trail.trailName,
@@ -239,7 +215,6 @@ fun TrailInformation(trail: Trail, route: List<Pin>, updateHistory: (Long) -> Un
         for (reltrail in trail.relTrail) {
             Text(reltrail.attrib + ": " + reltrail.value)
         }
-
         Text(stringResource(id = R.string.trailDifficulty, trail.trailDifficulty))
         Text(stringResource(id = R.string.trailDuration, trail.trailDuration))
         DescriptionShowMore(
@@ -265,7 +240,6 @@ fun StartTrailButton(
         try {
             updateHistory(trailId)
             context.startActivity(mapIntent)
-
         } catch (e: Exception) {
             // TODO: add error dialog
         }
