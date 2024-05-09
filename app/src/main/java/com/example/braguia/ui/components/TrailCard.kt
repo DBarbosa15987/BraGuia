@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -68,13 +69,16 @@ fun TrailCard(
                 ) {
 
                     Text(text = trail.trailName, style = MaterialTheme.typography.titleLarge)
-                    Text(text = trail.trailDuration.toString() + " min")
-                    Text(text = trail.trailDifficulty)
+                    Text(
+                        text = stringResource(
+                            id = R.string.trailDuration, trail.trailDuration
+                        )
+                    )
+                    Text(text = "Dificulty: " + trail.trailDifficulty)
                     historyDate?.let {
-                        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
+                        val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm")
                         Text("Accessed: " + dateFormat.format(historyDate))
                     }
-
                 }
             }
         }

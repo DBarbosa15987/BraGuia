@@ -1,8 +1,10 @@
 package com.example.braguia.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.braguia.R
 import com.example.braguia.model.Pin
@@ -46,14 +49,25 @@ fun SinglePinScreen(
     LazyColumn(contentPadding = PaddingValues(10.dp), modifier = modifier.padding(innerPadding)) {
         item { MapWithPin(pin) } // mapa
         item { PinDetails(pin) } // detalhes
-        item { } // media
-        items(trails) {
-            TrailCard(
-                trail = it,
-                navigateToTrail = navigateToTrail,
-                toggleBookmark = toggleBookmark,
-                isBookmark = isBookmarked(it.id),
+        item { } // FIXME media
+        item { Spacer(modifier = Modifier.height(15.dp)) }
+        item {
+            Text(
+                stringResource(R.string.pinFeatured),
+                style = MaterialTheme.typography.headlineMedium
             )
+        }
+        item {
+            Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                for (trail in trails) {
+                    TrailCard(
+                        trail = trail,
+                        navigateToTrail = navigateToTrail,
+                        toggleBookmark = toggleBookmark,
+                        isBookmark = isBookmarked(trail.id),
+                    )
+                }
+            }
         } // roteiros em que se encontra
     }
 }
@@ -80,6 +94,13 @@ fun MapWithPin(pin: Pin) {
 @Composable
 fun PinDetails(pin: Pin, modifier: Modifier = Modifier) {
     Column {
+        Text(
+            pin.pinName,
+            style = MaterialTheme.typography.headlineLarge,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(20.dp))
         RelPinsDisplay(relPins = pin.relPin)
         DescriptionShowMore(text = pin.pinDesc, seed = pin.id)
     }

@@ -13,7 +13,7 @@
     <string name="EnterPassword">Enter password</string>
     <string name="trailName">Name: %s</string>
     <string name="trailDifficulty">Difficulty: %s</string>
-    <string name="trailDuration">Duration: %d min</string>
+    <string name="trailDuration">Duration: %d minutes</string>
     <string name="trailDesc">Description: %s</string>
     <string name="relPinAttrib">%s: %s</string>
     <string name="Dismiss">Dismiss</string>
@@ -46,6 +46,7 @@
 
     <string name="accessDenied">Access Denied</string>
     <string name="accessDeniedText">You need to upgrade to premium to use this functionality</string>
+    <string name="pinFeatured">Featured On</string>
 
 
 </resources>
