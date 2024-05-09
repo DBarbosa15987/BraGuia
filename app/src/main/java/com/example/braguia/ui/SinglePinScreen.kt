@@ -40,7 +40,9 @@ fun SinglePinScreen(
     modifier: Modifier = Modifier,
     innerPadding: PaddingValues,
     toggleBookmark: (Long) -> Unit,
-    isBookmarked: (Long) -> Boolean
+    isBookmarked: (Long) -> Boolean,
+    userType: String,
+    navigateToMedia: () -> Unit
 ) {
 
     LazyColumn(contentPadding = PaddingValues(10.dp), modifier = modifier.padding(innerPadding)) {

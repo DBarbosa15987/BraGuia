@@ -100,11 +100,11 @@ fun BraGuiaApp(
 
     val toggleTheme =
         { preferencesViewModel.selectDarkTheme(!preferencesUiState.value.isDarkTheme) }
-    var askPermission by remember { mutableStateOf(false)}
+    var askPermission by remember { mutableStateOf(false) }
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
-        askPermission=true
+        askPermission = true
         if (isGranted) {
             // Permission Accepted: Do something
             Log.d("ExampleScreen", "PERMISSION GRANTED")
@@ -203,20 +203,20 @@ fun BraGuiaApp(
                 trailsViewModel.getTrails()
                 val appInfo: AppInfo? = trailsUiState.value.appInfo
                 if (appInfo != null) {
-                        when (PackageManager.PERMISSION_GRANTED) {
-                            ContextCompat.checkSelfPermission(
-                                context,
-                                android.Manifest.permission.ACCESS_FINE_LOCATION
-                            ) -> {
-                                // Some works that require permission
-                                Log.d("ExampleScreen", "Code requires permission")
-                            }
-
-                            else -> {
-                                // Asking for permission
-                                launcher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
-                            }
+                    when (PackageManager.PERMISSION_GRANTED) {
+                        ContextCompat.checkSelfPermission(
+                            context,
+                            android.Manifest.permission.ACCESS_FINE_LOCATION
+                        ) -> {
+                            // Some works that require permission
+                            Log.d("ExampleScreen", "Code requires permission")
                         }
+
+                        else -> {
+                            // Asking for permission
+                            launcher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                        }
+                    }
                     HomepageScreen(
                         appInfo = appInfo,
                         innerPadding = innerPadding,
@@ -267,7 +267,7 @@ fun BraGuiaApp(
                 trailsViewModel.getTrail(id)
                 trailsViewModel.getEdges(id)
                 val trail: Trail? = trailsUiState.value.currTrail
-                val user:User? = userUiState.value.user
+                val user: User? = userUiState.value.user
                 if (trail != null && user != null) {
                     trailsViewModel.getTrailRoute(trail)
                     SingleTrailScreen(
@@ -295,7 +295,8 @@ fun BraGuiaApp(
                 trailsViewModel.getPinTrails(pinId)
                 val trails: List<TrailDB> = trailsUiState.value.trailList
                 userViewModel.getBookmarks()
-                if (pin != null) {
+                val user: User? = userUiState.value.user
+                if (pin != null && user != null) {
                     SinglePinScreen(
                         pin = pin,
                         innerPadding = innerPadding,
@@ -306,15 +307,16 @@ fun BraGuiaApp(
                         toggleBookmark = userViewModel::toggleBookmark,
                         isBookmarked = { trailId ->
                             trailId in userUiState.value.bookmarks
-                        }
-
+                        },
+                        userType = user.userType,//TODO isto resulta????
+                        navigateToMedia = {navController.navigate(BraguiaScreen.Media.name)}//TODO isto resulta????
                     )
                 }
             }
 
-            composable(route = BraguiaScreen.Media.name){
-                val pins:List<Pin> = trailsUiState.value.trailRoute
-                MediaGalleryScreen(pins,innerPadding)
+            composable(route = BraguiaScreen.Media.name) {
+                val pins: List<Pin> = trailsUiState.value.trailRoute
+                MediaGalleryScreen(pins, innerPadding)
             }
 
             composable(

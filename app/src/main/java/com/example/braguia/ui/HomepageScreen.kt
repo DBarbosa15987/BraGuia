@@ -55,7 +55,6 @@ fun HomepageScreen(
     ) {
         item(
             span = {
-                /** Take a full row */
                 GridItemSpan(currentLineSpan = spanCount)
             }
         ){

@@ -40,12 +40,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.braguia.R
 import com.example.braguia.model.User
 import com.example.braguia.ui.components.AlertConfirmDialog
 import com.example.braguia.ui.components.AlertDialogTemplate
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun UserPageScreen(innerPadding: PaddingValues, user: User, logOff: () -> Unit) {
@@ -117,8 +122,8 @@ fun UserInfoColumn(user: User) {
         UserInfoCard("Username", user.username, Icons.Filled.PersonOutline)
         UserInfoCard("User Type", user.userType, Icons.Filled.WorkspacePremium)
         UserInfoCard("Email", user.email, Icons.Filled.Mail)
-        UserInfoCard("Date Joined", user.dateJoined, Icons.Filled.DateRange)
-        UserInfoCard("Last Login", user.lastLogin, Icons.AutoMirrored.Filled.Login)
+        UserInfoCard("Date Joined", formatDate(user.dateJoined), Icons.Filled.DateRange)
+        UserInfoCard("Last Login", formatDate(user.lastLogin), Icons.AutoMirrored.Filled.Login)
     }
 }
 
@@ -135,7 +140,7 @@ fun UserInfoCard(attribute: String, value: String, icon: ImageVector) {
                 Icon(imageVector = icon, contentDescription = attribute)
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
-                    Text(text = attribute)
+                    Text(text = attribute, fontWeight = FontWeight.Bold)
                     Text(text = value)
                 }
             }
@@ -144,6 +149,16 @@ fun UserInfoCard(attribute: String, value: String, icon: ImageVector) {
     }
 }
 
+fun formatDate(input: String): String {
+    try{
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("dd/MM/yyyy, HH:mm", Locale.getDefault())
+        val date = inputFormat.parse(input)
+        return outputFormat.format(date ?: input)
+    }catch (e:Exception){
+        return input
+    }
+}
 
 @Composable
 @Preview(showSystemUi = true)
