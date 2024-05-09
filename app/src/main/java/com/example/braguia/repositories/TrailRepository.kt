@@ -58,7 +58,6 @@ class TrailRepository(
     }
 
     fun getTrailsPreview(): Flow<List<TrailDB>> {
-        //suspend fun getTrailsPreview(): List<TrailDB> {
         return trailDAO.getTrails()
     }
 
@@ -66,12 +65,10 @@ class TrailRepository(
         return relTrailDAO.getRelTrail(trailId)
     }
 
-    //TODO rever
     suspend fun getEdges(trailId: Long): List<Edge> {
         val edgesDB: List<EdgeDB> = edgeDBDAO.getEdges(trailId)
         val edges: MutableList<Edge> = listOf<Edge>().toMutableList()
         for (edgeDB in edgesDB) {
-            //TODO estou a assumir um par aqui!!!
             val edgeStart = pinRepository.getPin(edgeDB.edgeStart)
             val edgeEnd = pinRepository.getPin(edgeDB.edgeEnd)
             if (edgeStart != null && edgeEnd != null)
@@ -86,16 +83,6 @@ class TrailRepository(
         val edges: List<Edge> = this.getEdges(trailId)
 
         return trailDAO.getTrail(trailId).toTrail(relRelTrails, edges)
-    }
-
-    fun getTrailMedia(trail: Trail): List<Media> {
-        val mediaList = mutableListOf<Media>()
-        for (edge in trail.edges) {
-            mediaList.addAll(edge.edgeStart.media)
-        }
-        val lastPin = trail.edges.last().edgeEnd
-        mediaList.addAll(lastPin.media)
-        return mediaList
     }
 
     suspend fun getPin(pinId: Long): Pin? {
@@ -114,10 +101,6 @@ class TrailRepository(
         }
         route.add(trail.edges.last().edgeEnd)
         return route
-    }
-
-    suspend fun getTrailsByIDs(trailIds:List<Long>):List<TrailDB>{
-        return trailDAO.getTrailsByIDs(trailIds)
     }
 
 

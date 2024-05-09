@@ -210,16 +210,14 @@ fun StartTrailButton(
             updateHistory(trailId)
             context.startActivity(mapIntent)
         } catch (e: Exception) {
-            // TODO: add error dialog
+            Log.e("START_TRAIL", "Trail start intent failed")
         }
     }) {
         Text("Start Trail")
     }
 }
 
-// FIXME change the location of this function
 fun createMapsRouteUriString(route: List<Pin>): String {
-    // origin=Google+Pyrmont+NSW&destination=QVB&destination_place_id=ChIJISz8NjyuEmsRFTQ9Iw7Ear8&travelmode=walking
     val lastPin = route.last()
     var destination = "destination=" + lastPin.pinLat.toString() + "," + lastPin.pinLng.toString()
     var waypoints = "waypoints="

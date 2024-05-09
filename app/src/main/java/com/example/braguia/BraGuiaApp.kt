@@ -263,7 +263,7 @@ fun BraGuiaApp(
                     type = NavType.LongType
                 })
             ) { b ->
-                val id: Long = b.arguments?.getLong("trailId") ?: 0 // TODO tratamento de errors?
+                val id: Long = b.arguments?.getLong("trailId") ?: 0
                 trailsViewModel.getTrail(id)
                 trailsViewModel.getEdges(id)
                 val trail: Trail? = trailsUiState.value.currTrail
@@ -289,7 +289,7 @@ fun BraGuiaApp(
                     type = NavType.LongType
                 })
             ) { b ->
-                val pinId: Long = b.arguments?.getLong("pinId") ?: 0 // TODO tratamento de errors?
+                val pinId: Long = b.arguments?.getLong("pinId") ?: 0
                 trailsViewModel.getPin(pinId)
                 val pin: Pin? = trailsUiState.value.currPin
                 trailsViewModel.getPinTrails(pinId)
@@ -308,8 +308,7 @@ fun BraGuiaApp(
                         isBookmarked = { trailId ->
                             trailId in userUiState.value.bookmarks
                         },
-                        userType = user.userType,//TODO isto resulta????
-                        navigateToMedia = {navController.navigate(BraguiaScreen.Media.name)}//TODO isto resulta????
+                        userType = user.userType,
                     )
                 }
             }

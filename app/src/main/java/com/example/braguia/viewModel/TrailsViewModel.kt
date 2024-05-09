@@ -146,6 +146,5 @@ data class HomeUiState(
     val trailRoute: List<Pin> = listOf(),
     val currPin: Pin? = null,
     val currTrail: Trail? = null,
-    val mediaList: List<Media> = listOf(),
     val appInfo: AppInfo? = null
 )

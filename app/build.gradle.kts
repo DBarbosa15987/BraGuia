@@ -45,6 +45,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -97,13 +98,11 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
-    //implementation(libs.androidx.navigation.compose)
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.media3:media3-exoplayer:1.3.1")
     implementation("androidx.media3:media3-exoplayer-dash:1.3.1")
     implementation("androidx.media3:media3-ui:1.3.1")
     implementation("androidx.work:work-runtime-ktx:2.7.0")
-    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
 
 
     // Maps SDK for Android
