@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.braguia.model.HistoryEntry
 import com.example.braguia.model.HistoryEntryDB
-import com.example.braguia.model.Preferences
 import com.example.braguia.model.TrailDB
 import com.example.braguia.model.User
 import com.example.braguia.network.LoginRequest
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 
 class UserViewModel(
     private val userRepository: UserRepository
