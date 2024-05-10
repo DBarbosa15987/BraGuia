@@ -28,7 +28,6 @@
     <string name="warningGoogleMaps">Warning!</string>
     <string name="warningGoogleMapsText">You must have Google Maps installed on your device for Braguia to work correctly</string>
     <string name="dontAskAgainText">Don\'t ask again</string>
-
     <string name="deleteUserDataTitle">Delete User Data</string>
     <string name="deleteUserDataDesc">Delete all user data, including preferences, history and bookmarks</string>
     <string name="deleteUserDataDialogText">By pressing confirm you will delete all of your user\'s data, this includes preferences, history and bookmarks</string>
@@ -37,16 +36,14 @@
     <string name="resetPreferencesDialogText">By pressing confirm you will reset all of your user\'s preferences to the app\'s defaults</string>
     <string name="revokePermissionsTitle">Revoke Permissions</string>
     <string name="revokePermissionsDesc">Navigate to this app\'s settings to manually revoke the permissions given for this app in your device</string>
-
     <string name="darkTheme">Dark Theme</string>
     <string name="darktThemeToggleDesc">Switch between Dark Theme and Light Theme</string>
-
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
-
     <string name="accessDenied">Access Denied</string>
     <string name="accessDeniedText">You need to upgrade to premium to use this functionality</string>
     <string name="pinFeatured">Featured On</string>
+    <string name="pinMediaTitle">Media</string>
 
 
 </resources>
