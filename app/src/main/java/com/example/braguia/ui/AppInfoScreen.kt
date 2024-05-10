@@ -105,6 +105,7 @@ fun AppInfoScreen(appInfo: AppInfo, innerPadding: PaddingValues) {
         item {
             LazyRow(
                 horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(10.dp)
             ) {
                 items(appInfo.partners) { partner ->

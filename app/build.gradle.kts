@@ -23,6 +23,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("String","API_URL","\"" + properties["API_URL"] + "\"")
     }
 
     buildTypes {

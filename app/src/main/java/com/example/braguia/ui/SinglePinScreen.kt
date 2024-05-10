@@ -192,7 +192,7 @@ fun MapWithPin(pin: Pin) {
 }
 
 @Composable
-fun PinDetails(pin: Pin, modifier: Modifier = Modifier) {
+fun PinDetails(pin: Pin) {
     Column {
         Text(
             pin.pinName,
@@ -207,7 +207,7 @@ fun PinDetails(pin: Pin, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun RelPinsDisplay(relPins: List<RelPin>, modifier: Modifier = Modifier) {
+fun RelPinsDisplay(relPins: List<RelPin>) {
     Column {
         for (relPin in relPins) {
             RelPinDisplay(relPin)

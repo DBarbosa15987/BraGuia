@@ -2,6 +2,7 @@ package com.example.braguia.ui
 
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,13 +35,14 @@ import com.example.braguia.ui.components.MediaPlayer
 
 
 @Composable
-fun MediaGalleryScreen(pins: List<Pin>, innerPadding:PaddingValues) {
+fun MediaGalleryScreen(pins: List<Pin>, innerPadding: PaddingValues) {
     var selectedMedia by remember { mutableStateOf<Media?>(null) }
-    LazyColumn(modifier = Modifier.padding(innerPadding)) {
-        // section title
-        item{Text("Media", style = MaterialTheme.typography.headlineMedium)}
-
-        item{
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        contentPadding = PaddingValues(10.dp),
+        modifier = Modifier.padding(innerPadding)
+    ) {
+        item {
             val filteredPins = pins.distinctBy { it.id }
             for (pin in filteredPins) {
                 if (pin.media.isNotEmpty()) {

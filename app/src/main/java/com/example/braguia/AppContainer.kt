@@ -5,6 +5,7 @@ import android.webkit.CookieManager
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.braguia.BuildConfig.*
 import com.example.braguia.model.GuideDatabase
 import com.example.braguia.network.API
 import com.example.braguia.repositories.AppInfoRepository
@@ -24,7 +25,6 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 
@@ -46,7 +46,7 @@ interface AppContainer {
 class BraGuiaAppContainer(
     private val context: Context
 ) : AppContainer {
-    private val baseUrl = "http://192.168.85.186"
+    private val baseUrl = API_URL
     //private val baseUrl = "https://d57ab7b839dd953d5546cec45b5f5a25.serveo.net/"
 
     /**
@@ -54,7 +54,7 @@ class BraGuiaAppContainer(
      */
 
     private fun createRetrofit(): Retrofit {
-        val client = OkHttpClient.Builder().connectTimeout(5,TimeUnit.SECONDS)
+        val client = OkHttpClient.Builder().connectTimeout(5, TimeUnit.SECONDS)
             .cookieJar(object : CookieJar {
                 override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
                     val cookieManager = CookieManager.getInstance()
@@ -99,7 +99,7 @@ class BraGuiaAppContainer(
                             .body(bodyString.toResponseBody(response.body?.contentType()))
                             .build()
                     } catch (e: Exception) {
-                        var msg = ""
+                        val msg: String
                         val interceptorCode: Int
                         when (e) {
                             is SocketTimeoutException -> {
