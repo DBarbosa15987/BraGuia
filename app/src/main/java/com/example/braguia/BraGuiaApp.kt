@@ -356,7 +356,7 @@ fun BraGuiaApp(
                         user = user,
                         logOff = {
                             userViewModel.logout()
-                            navController.navigate(BraguiaScreen.Login.name)
+                            navController.popBackStack(BraguiaScreen.Login.name,inclusive = false)
                         }
                     )
                 }
