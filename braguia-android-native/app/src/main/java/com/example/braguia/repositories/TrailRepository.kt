@@ -3,6 +3,7 @@ package com.example.braguia.repositories
 import android.util.Log
 import com.example.braguia.model.Edge
 import com.example.braguia.model.EdgeDB
+import com.example.braguia.model.Media
 import com.example.braguia.model.Pin
 import com.example.braguia.model.PinDB
 import com.example.braguia.model.RelTrail
@@ -22,8 +23,10 @@ class TrailRepository(
     val relTrailDAO: RelTrailDAO,
     val pinRepository: PinRepository
 ) {
+    suspend fun getAllPins(): List<PinDB>{
+        return pinRepository.getAllPins()
+    }
     suspend fun fetchAPI() {
-
         try {
             val trailList = API.getTrails()
 
@@ -55,7 +58,6 @@ class TrailRepository(
     }
 
     fun getTrailsPreview(): Flow<List<TrailDB>> {
-        //suspend fun getTrailsPreview(): List<TrailDB> {
         return trailDAO.getTrails()
     }
 
@@ -63,12 +65,10 @@ class TrailRepository(
         return relTrailDAO.getRelTrail(trailId)
     }
 
-    //TODO rever
     suspend fun getEdges(trailId: Long): List<Edge> {
         val edgesDB: List<EdgeDB> = edgeDBDAO.getEdges(trailId)
         val edges: MutableList<Edge> = listOf<Edge>().toMutableList()
         for (edgeDB in edgesDB) {
-            //TODO estou a assumir um par aqui!!!
             val edgeStart = pinRepository.getPin(edgeDB.edgeStart)
             val edgeEnd = pinRepository.getPin(edgeDB.edgeEnd)
             if (edgeStart != null && edgeEnd != null)
@@ -83,7 +83,6 @@ class TrailRepository(
         val edges: List<Edge> = this.getEdges(trailId)
 
         return trailDAO.getTrail(trailId).toTrail(relRelTrails, edges)
-
     }
 
     suspend fun getPin(pinId: Long): Pin? {
@@ -95,7 +94,7 @@ class TrailRepository(
         return trailDAO.getTrailsByIDs(trailIds)
     }
 
-    fun getPinRoute(trail: Trail): List<Pin> {
+    fun getTrailRoute(trail: Trail): List<Pin> {
         val route = mutableListOf<Pin>()
         for (edge in trail.edges) {
             route.add(edge.edgeStart)

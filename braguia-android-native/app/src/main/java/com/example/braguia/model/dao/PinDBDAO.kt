@@ -11,7 +11,7 @@ import com.example.braguia.model.PinDB
 @Dao
 interface PinDBDAO {
 
-    @Upsert()
+    @Upsert
     suspend fun insert(pins: List<PinDB>)
 
     @Query("DELETE FROM pin")
@@ -20,4 +20,6 @@ interface PinDBDAO {
     @Query("SELECT * FROM pin WHERE id=:pinId")
     suspend fun getPin(pinId:Long): PinDB?
 
+    @Query("SELECT * FROM pin")
+    suspend fun getAllPins(): List<PinDB>
 }

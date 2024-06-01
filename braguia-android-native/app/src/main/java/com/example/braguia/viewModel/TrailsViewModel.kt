@@ -1,40 +1,33 @@
 package com.example.braguia.viewModel
 
 
+import android.app.PendingIntent
+import android.content.Intent
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.braguia.BraGuiaApplication
+import com.example.braguia.GeofenceBroadcastReceiver
 import com.example.braguia.model.AppInfo
 import com.example.braguia.model.Edge
 import com.example.braguia.model.Media
 import com.example.braguia.model.Pin
+import com.example.braguia.model.PinDB
 import com.example.braguia.model.Trail
 import com.example.braguia.model.TrailDB
 import com.example.braguia.repositories.AppInfoRepository
 import com.example.braguia.repositories.TrailRepository
-import com.example.braguia.repositories.UserRepository
+import com.google.android.gms.location.GeofencingClient
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TrailsViewModel(
-    private val trailRepository: TrailRepository,/*FIXME SO POR ENQUANTO*/
+    private val trailRepository: TrailRepository,
     private val appInfoRepository: AppInfoRepository
 ) : ViewModel() {
 
@@ -46,11 +39,20 @@ class TrailsViewModel(
         viewModelScope.launch {
             appInfoRepository.fetchAppInfo()
             trailRepository.fetchAPI()
+            getAppInfo()
+            getTrails()
+            getAllPins()
         }
-        getTrails()
-        getAppInfo()
     }
 
+    fun getAllPins() {
+        viewModelScope.launch {
+            val pins = trailRepository.getAllPins()
+            _homeUiState.update { currState ->
+                currState.copy(pinList = pins)
+            }
+        }
+    }
 
     fun getTrails() {
         viewModelScope.launch {
@@ -63,16 +65,16 @@ class TrailsViewModel(
                 .collect { trails: List<TrailDB> ->
                     _homeUiState.update { curr -> curr.copy(trailList = trails) }
                 }
+
         }
     }
 
-    fun getPinTrails(pinId: Long){
+    fun getPinTrails(pinId: Long) {
         viewModelScope.launch {
             var result = listOf<TrailDB>()
             try {
                 result = trailRepository.getPinTrails(pinId)
-            }
-            catch (e:Exception){
+            } catch (e: Exception) {
                 Log.e("PIN_TRAILS", e.toString())
             }
             _homeUiState.update { curr ->
@@ -81,8 +83,8 @@ class TrailsViewModel(
         }
     }
 
-    fun getPinRoute(trail:Trail) {
-        val route = trailRepository.getPinRoute(trail)
+    fun getTrailRoute(trail: Trail) {
+        val route = trailRepository.getTrailRoute(trail)
         _homeUiState.update { curr ->
             curr.copy(trailRoute = route)
         }
@@ -97,7 +99,7 @@ class TrailsViewModel(
     fun getAppInfo() {
 
         viewModelScope.launch {
-            var result = AppInfo("", "", listOf(), listOf(), listOf(), "")
+            var result: AppInfo? = null
             try {
                 result = appInfoRepository.getAppInfo()
             } catch (e: Exception) {
@@ -109,8 +111,6 @@ class TrailsViewModel(
         }
     }
 
-    //TODO aqui faço o get assim ou retorno isto diretamente para depois ser usado?
-    //TODO faz sentido se não for o único a usar?
     fun getTrail(trailId: Long) {
         viewModelScope.launch {
             val result = trailRepository.getTrail(trailId)
@@ -137,16 +137,14 @@ class TrailsViewModel(
             }
         }
     }
-
 }
 
 data class HomeUiState(
     val trailList: List<TrailDB> = listOf(),
+    val pinList: List<PinDB> = listOf(),
     val edgeList: List<Edge> = listOf(),
     val trailRoute: List<Pin> = listOf(),
     val currPin: Pin? = null,
     val currTrail: Trail? = null,
-    val mediaList: List<Media> = listOf(),
-    val appInfo: AppInfo = AppInfo("", "", listOf(), listOf(), listOf(), "")
+    val appInfo: AppInfo? = null
 )
-

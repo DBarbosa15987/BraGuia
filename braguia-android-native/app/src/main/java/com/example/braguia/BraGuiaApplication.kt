@@ -1,7 +1,6 @@
 package com.example.braguia
 
 import android.app.Application
-import com.example.braguia.model.GuideDatabase
 
 class BraGuiaApplication : Application(){
 

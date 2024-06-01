@@ -12,26 +12,26 @@ import com.example.braguia.model.TrailDB
 import com.example.braguia.ui.components.TrailCard
 
 @Composable
-fun TrailListScreen(
-    trails: List<TrailDB>,
-    navigateToTrail: (Long) -> Unit,
+fun BookmarkScreen(
+    bookmarks: List<TrailDB>,
     innerPadding: PaddingValues,
+    navigateToTrail: (Long) -> Unit,
     toggleBookmark: (Long) -> Unit,
     isBookmarked: (Long) -> Boolean
 ) {
+
     LazyColumn(
         contentPadding = PaddingValues(10.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp),
         modifier = Modifier.padding(innerPadding)
     ) {
-        items(trails) {
+        items(bookmarks) { bookmark ->
             TrailCard(
-                trail = it,
+                trail = bookmark,
                 navigateToTrail = navigateToTrail,
                 toggleBookmark = toggleBookmark,
-                isBookmark = isBookmarked(it.id),
+                isBookmark = isBookmarked(bookmark.id),
             )
         }
-
     }
 }

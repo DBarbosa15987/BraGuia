@@ -23,6 +23,11 @@ object BraGuiaViewModelProvider {
                 inventoryApplication().container.userRepository
             )
         }
+        initializer {
+            PreferencesViewModel(
+                inventoryApplication().container.preferencesRepository
+            )
+        }
     }
 
 }

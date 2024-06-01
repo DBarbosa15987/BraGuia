@@ -12,6 +12,9 @@ class PinRepository(
     val relPinDAO: RelPinDAO,
     val mediaRepository: MediaRepository
 ) {
+    suspend fun getAllPins(): List<PinDB>{
+        return pinDBDAO.getAllPins()
+    }
     suspend fun insert(pins: List<Pin>) {
 
         val mediaList = listOf<Media>().toMutableList()
@@ -43,7 +46,9 @@ class PinRepository(
         return pin
     }
 
-
+    suspend fun getPinMedia(pinId: Long){
+        mediaRepository.getMedia(pinId)
+    }
 
     fun Pin.toPinDB() = PinDB(
 

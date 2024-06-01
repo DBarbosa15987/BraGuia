@@ -13,9 +13,7 @@ interface TrailDBDAO {
     @Upsert
     suspend fun insert(trails: List<TrailDB>)
 
-    //TODO talvez não seja preciso o suspend quando usar o Flow/LiveData
     @Query("SELECT DISTINCT * FROM trail")
-    //suspend fun getTrails(): List<TrailDB>
     fun getTrails(): Flow<List<TrailDB>>
 
     @Query("SELECT * FROM trail WHERE id=:trailId")

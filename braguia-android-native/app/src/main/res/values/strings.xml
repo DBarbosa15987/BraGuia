@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">BraGuia</string>
+    <string name="notificationChannelName">braguiaNotificationChannel</string>
+    <string name="notificationChannelDesc">Notification channel for braguia app</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="Login">Login</string>
     <string name="HomePage">Home</string>
@@ -11,10 +13,37 @@
     <string name="EnterPassword">Enter password</string>
     <string name="trailName">Name: %s</string>
     <string name="trailDifficulty">Difficulty: %s</string>
-    <string name="trailDuration">Duration: %d min</string>
+    <string name="trailDuration">Duration: %d minutes</string>
     <string name="trailDesc">Description: %s</string>
     <string name="relPinAttrib">%s: %s</string>
     <string name="Dismiss">Dismiss</string>
     <string name="loginErrorMessage">There was an unexpected error on log in, check your network or contact support</string>
     <string name="loginErrorTitle">Log In Error</string>
+    <string name="notifications">Notifications</string>
+    <string name="notificationsToggle">Toggle notifications</string>
+    <string name="aboutApp">About %s</string>
+    <string name="logOffDialogTitle">Are you sure you want to Log Out?</string>
+    <string name="logout">Log Out</string>
+    <string name="logOffDialogText">After logging off you will be taken to the login page and will need to log in again</string>
+    <string name="warningGoogleMaps">Warning!</string>
+    <string name="warningGoogleMapsText">You must have Google Maps installed on your device for Braguia to work correctly</string>
+    <string name="dontAskAgainText">Don\'t ask again</string>
+    <string name="deleteUserDataTitle">Delete User Data</string>
+    <string name="deleteUserDataDesc">Delete all user data, including preferences, history and bookmarks</string>
+    <string name="deleteUserDataDialogText">By pressing confirm you will delete all of your user\'s data, this includes preferences, history and bookmarks</string>
+    <string name="resetPreferencesTitle">Reset Preferences</string>
+    <string name="resetPreferencesDesc">Reset Preferences to the app\'s defaults</string>
+    <string name="resetPreferencesDialogText">By pressing confirm you will reset all of your user\'s preferences to the app\'s defaults</string>
+    <string name="revokePermissionsTitle">Revoke Permissions</string>
+    <string name="revokePermissionsDesc">Navigate to this app\'s settings to manually revoke the permissions given for this app in your device</string>
+    <string name="darkTheme">Dark Theme</string>
+    <string name="darktThemeToggleDesc">Switch between Dark Theme and Light Theme</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="accessDenied">Access Denied</string>
+    <string name="accessDeniedText">You need to upgrade to premium to use this functionality</string>
+    <string name="pinFeatured">Featured On</string>
+    <string name="pinMediaTitle">Media</string>
+
+
 </resources>
