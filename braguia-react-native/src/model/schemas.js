@@ -12,7 +12,6 @@ export default appSchema({
         {name: 'lat', type: 'number'},
         {name: 'lng', type: 'number'},
         {name: 'alt', type: 'number'},
-        // FIX: add relations
       ],
     }),
     tableSchema({
@@ -24,7 +23,6 @@ export default appSchema({
         {name: 'description', type: 'string'},
         {name: 'duration', type: 'number'},
         {name: 'difficulty', type: 'string'},
-        // FIX: add relations
       ],
     }),
     tableSchema({
@@ -33,7 +31,6 @@ export default appSchema({
         {name: 'media_id', type: 'number'},
         {name: 'file', type: 'string'},
         {name: 'type', type: 'string'},
-        // FIX: add relations
       ],
     }),
     tableSchema({
@@ -42,7 +39,6 @@ export default appSchema({
         {name: 'rel_pin_id', type: 'number'},
         {name: 'value', type: 'string'},
         {name: 'attrib', type: 'string'},
-        // FIX: add relations
       ],
     }),
     tableSchema({
@@ -52,7 +48,6 @@ export default appSchema({
         {name: 'transport', type: 'string'},
         {name: 'duration', type: 'number'},
         {name: 'description', type: 'number'},
-        // FIX: add relations
       ],
     }),
     tableSchema({
@@ -61,7 +56,6 @@ export default appSchema({
         {name: 'rel_trail_id', type: 'number'},
         {name: 'value', type: 'string'},
         {name: 'attrib', type: 'string'},
-        // FIX: add relations
       ],
     }),
     tableSchema({
@@ -70,7 +64,6 @@ export default appSchema({
         {name: 'app_name', type: 'string'},
         {name: 'description', type: 'string'},
         {name: 'landing_page_text', type: 'string'},
-        // FIX: add relations
       ],
     }),
     tableSchema({
@@ -79,7 +72,6 @@ export default appSchema({
         {name: 'app_name', type: 'string'},
         {name: 'description', type: 'string'},
         {name: 'landing_page_text', type: 'string'},
-        // FIX: add relations
       ],
     }),
     tableSchema({
