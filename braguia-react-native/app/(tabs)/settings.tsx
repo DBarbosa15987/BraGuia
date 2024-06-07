@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateAppInfo } from '@/state/actions/appInfo';
 import { fetchAppInfo, fetchTrails } from '../../api/api'
 
-export default function TabTwoScreen() {
+export default function SettingsPage() {
 
     const dispatch = useDispatch();
     const appInfo = useSelector((state) => state.appInfo);
@@ -20,7 +20,6 @@ export default function TabTwoScreen() {
 
         fetchAppInfo(dispatch);
         fetchTrails(dispatch);
-        //fetchUser();
     }, []);
 
 
