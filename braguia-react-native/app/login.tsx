@@ -5,7 +5,6 @@ import { fetchUserInfo, login } from "../api/api";
 import { router } from "expo-router";
 
 export default function LoginPage() {
-  const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const loginPress = () => {
