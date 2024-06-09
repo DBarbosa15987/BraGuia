@@ -1,12 +1,11 @@
-export const SET_TRAILS = 'SET_TRAILS';
+export const SET_TRAILS = "SET_TRAILS";
 export const setTrails = (trails) => ({
   type: SET_TRAILS,
-  trails
+  trails,
 });
 
-export const SET_CURR_TRAILS = 'SET_CURR_TRAILS';
-export const setCurrTrails = (trail) => ({
-  type: SET_CURR_TRAILS,
-  trail
+export const SET_CURR_TRAIL = "SET_CURR_TRAIL";
+export const setCurrTrail = (trail) => ({
+  type: SET_CURR_TRAIL,
+  payload: trail,
 });
-

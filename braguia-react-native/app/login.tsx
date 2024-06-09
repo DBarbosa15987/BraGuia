@@ -7,12 +7,14 @@ import { router } from "expo-router";
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
   const loginPress = () => {
     login(username, password).then((loggedIn) => {
       if (loggedIn) {
-        //fetchUserInfo(dispatch);
+        fetchUserInfo(dispatch);
         console.log("Login success");
-        //router.replace("index");
+        // NOTE: navigate to home page
+        router.replace("/home");
       } else {
         alert("Login failed");
       }

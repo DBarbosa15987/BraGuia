@@ -1,13 +1,13 @@
 import { updateAppInfo } from "@/state/actions/appInfo";
 import { setTrails } from "@/state/actions/trails";
 import { setUserInfo } from "@/state/actions/user";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 
 const BASE_URL = "http://192.168.85.186";
+const COOKIE_KEY = "cookie";
 
-async function fetchWithCookies(url, options) {
-  const cookie = await AsyncStorage.getItem("cookie");
+async function fetchWithCookies(url, options = {}) {
+  const cookie = await SecureStore.getItemAsync(COOKIE_KEY);
   if (cookie) {
     options.headers = {
       ...options.headers,
@@ -40,20 +40,6 @@ export async function fetchTrails(dispatch) {
   }
 }
 
-// export async function fetchUser(dispatch) {
-//     try {
-//       const response = await fetchWithCookies(BASE_URL + '/user');
-//       if (response.ok) {
-//         const data = await response.json();
-//         //dispatch(updateAppInfo(data[0]));
-
-//       }
-//     } catch (error) {
-//       console.error("Error parsing User:", error);
-//     }
-
-//   }
-
 export async function fetchUserInfo(dispatch) {
   try {
     const response = await fetchWithCookies(BASE_URL + "/user");
@@ -66,10 +52,6 @@ export async function fetchUserInfo(dispatch) {
   }
 }
 
-async function storeCookie(cookie) {
-  await SecureStore.setItemAsync("cookie", cookie);
-}
-
 function sanitizeCookies(cookies) {
   const csrfTokenMatch = cookies.match(/csrftoken=([^;]+)/);
   const sessionIdMatch = cookies.match(/sessionid=([^;]+)/);
@@ -80,9 +62,8 @@ function sanitizeCookies(cookies) {
 
 export async function login(username, password) {
   try {
-    console.log("username: ", username, "password: ", password);
     const response = await fetch(BASE_URL + "/login", {
-      credentials: "include",
+      credentials: "omit",
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -90,11 +71,9 @@ export async function login(username, password) {
       body: JSON.stringify({ username, password }),
     });
     if (response.ok) {
-      // FIX: Cookies are not being recieved
-      // at least in web need to test with android
-      const cookies = response.headers.getSetCookie();
-
-      // storeCookie(sanitizeCookies(cookies));
+      const cookies = response.headers.get("set-cookie");
+      const sanitizedCookie = sanitizeCookies(cookies);
+      await SecureStore.setItemAsync(COOKIE_KEY, sanitizedCookie);
       return true;
     }
   } catch (error) {

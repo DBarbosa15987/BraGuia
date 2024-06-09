@@ -12,20 +12,9 @@ import { fetchAppInfo, fetchTrails } from '../../api/api'
 
 export default function SettingsPage() {
 
-    const dispatch = useDispatch();
-    const appInfo = useSelector((state) => state.appInfo);
-    const trails = useSelector((state) => state.trails);
-
-    useEffect(() => {
-
-        fetchAppInfo(dispatch);
-        fetchTrails(dispatch);
-    }, []);
-
 
     return (
         <ScrollView>
-            <Text>{JSON.stringify(appInfo)}</Text>
         </ScrollView>
     );
 }
