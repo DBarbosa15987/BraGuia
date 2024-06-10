@@ -1,13 +1,33 @@
 import React from "react";
-import { useLocalSearchParams } from "expo-router";
-import { Button, Text } from "react-native-paper";
+import { Stack, useLocalSearchParams } from "expo-router";
+import { Button, List, Text } from "react-native-paper";
 import { useSelector } from "react-redux";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { Linking, StyleSheet, View } from "react-native";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { Image, Linking, ScrollView, StyleSheet, View } from "react-native";
+import ListAccordionGroup from "react-native-paper/lib/typescript/components/List/ListAccordionGroup";
 
-// function MapWithMultipleMarkers() {
-//   return <MapView provider={PROVIDER_GOOGLE}></MapView>;
-// }
+function MapWithMultipleMarkers(route) {
+  return (
+    <MapView
+      style={styles.map}
+      provider={PROVIDER_GOOGLE}
+      initialRegion={{
+        latitude: Number(route[0].pin_lat),
+        longitude: Number(route[0].pin_lng),
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }}
+    >
+      {route.map((pin) => (
+        <Marker
+          key={pin.id}
+          coordinate={{ latitude: pin.pin_lat, longitude: pin.pin_lng }}
+          title={pin.pin_name}
+        />
+      ))}
+    </MapView>
+  );
+}
 
 function calculateRoute(edges) {
   const route = [edges[0].edge_start];
@@ -23,7 +43,7 @@ function startTrail(route) {
   const lastPin = route[route.length - 1];
   const destination = "destination=" + lastPin.pin_lat + "," + lastPin.pin_lng;
   let waypoints = "waypoints=";
-  for (let i = 0; i < route.length; i++) {
+  for (let i = 0; i < route.length - 1; i++) {
     waypoints += route[i].pin_lat + "," + route[i].pin_lng;
     if (i < route.length - 2) {
       waypoints += "|";
@@ -36,17 +56,34 @@ function startTrail(route) {
 
 export default function SingleTrailScreen() {
   const { id } = useLocalSearchParams();
-  const trail = useSelector((state) => state.trails.trails[id]);
+  const trail = useSelector((state) =>
+    state.appData.trails.find((t) => t.id == id),
+  );
+  console.log(trail);
   if (!trail) {
     return alert(`Trail ${id} not found`);
   }
   const route = calculateRoute(trail.edges);
   return (
-    <View>
+    <ScrollView>
+      <Stack.Screen options={{ headerTitle: `${trail.trail_name}` }} />
+      <Image source={{ uri: trail.trail_img }} />
+      <Text> {trail.trial_desc}</Text>
       <Button onPress={() => startTrail(route)}>Start Trail</Button>
-
-      <MapView style={styles.map} provider={PROVIDER_GOOGLE} />
-    </View>
+      <MapWithMultipleMarkers {...route} />
+      <List.AccordionGroup>
+        {trail.edges.map((edge) => (
+          <List.Accordion
+            key = {edge.id}
+            title={edge.edge_start.pin_name + " -> " + edge.edge_end.pin_name}
+            description={edge.edge_duration}
+          >
+            <List.Item title={edge.edge_start.pin_name} left={props => <List.Icon {...props} icon="marker"/>}onPress={() => route.push("/home/pin/" + edge.edge_start.id)} />
+            <List.Item title={edge.edge_end.pin_name} onPress={() => route.push("/home/pin/" + edge.edge_end.id)} />
+          </List.Accordion>
+        ))}
+      </List.AccordionGroup>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({

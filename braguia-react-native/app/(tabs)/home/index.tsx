@@ -10,7 +10,6 @@ import { useDispatch } from "react-redux";
 export default function HomePage() {
   const dispatch = useDispatch();
 
-  // const appInfo = useSelector((state) => state.appInfo);
   useEffect(() => {
     fetchAppInfo(dispatch);
     fetchTrails(dispatch);
