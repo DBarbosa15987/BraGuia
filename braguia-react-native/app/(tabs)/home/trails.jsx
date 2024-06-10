@@ -19,7 +19,7 @@ function TrailCard(props) {
 }
 
 export default function TrailsScreen() {
-  const trails = useSelector((state) => state.trails.trails);
+  const trails = useSelector((state) => state.appData.trails);
   if (!trails) {
     return alert("No trails found");
   }

@@ -5,7 +5,7 @@ import { SET_USER_INFO } from "./actions/user";
 
 const initialState = {};
 
-const appInfo = (state = initialState, action) => {
+const appData = (state = initialState, action) => {
   switch (action.type) {
     case SET_APP_INFO:
       return {
@@ -14,25 +14,13 @@ const appInfo = (state = initialState, action) => {
       };
     case RESET_APP_DATA:
       return {
-        // appinfo: null,
-        // trails: [],
+        appinfo: null,
+        trails: [],
       };
-    default:
-      return state;
-  }
-};
-
-const trails = (state = initialState, action) => {
-  switch (action.type) {
     case SET_TRAILS:
       return {
         ...state,
         trails: action.trails,
-      };
-    case SET_CURR_TRAIL:
-      return {
-        ...state,
-        currTrail: action.payload,
       };
     default:
       return state;
@@ -51,6 +39,6 @@ const user = (state = initialState, action) => {
   }
 };
 
-const combinedReducers = combineReducers({ appInfo, trails, user });
+const combinedReducers = combineReducers({ appData, user });
 
 export default combinedReducers;
