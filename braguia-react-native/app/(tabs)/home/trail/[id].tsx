@@ -30,13 +30,16 @@ function startTrail(route) {
     }
   }
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&${waypoints}&${destination}`;
-
+  console.log(mapsUrl);
   Linking.openURL(mapsUrl);
 }
 
 export default function SingleTrailScreen() {
   const { id } = useLocalSearchParams();
   const trail = useSelector((state) => state.trails.trails[id]);
+  if (!trail) {
+    return alert(`Trail ${id} not found`);
+  }
   const route = calculateRoute(trail.edges);
   return (
     <View>
