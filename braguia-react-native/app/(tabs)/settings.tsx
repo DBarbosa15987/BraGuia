@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+import React from 'react';
 import { StyleSheet, TouchableOpacity, Switch, Text, ScrollView, View } from 'react-native';
 import { Button, Card, Avatar, Dialog, Portal, Paragraph } from "react-native-paper"
 import { router } from "expo-router";
@@ -75,15 +75,6 @@ export default function SettingsPage() {
 
     </ScrollView>
   );
-=======
-import { StyleSheet, Image, Platform, Text, ScrollView } from 'react-native';
-
-export default function SettingsPage() {
-    return (
-        <ScrollView>
-        </ScrollView>
-    );
->>>>>>> 6c006ce45f8ab6d507b761714c14fbaee287ea9d
 }
 
 

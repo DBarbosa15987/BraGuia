@@ -1,12 +1,28 @@
 import React from "react";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { Button, List, Text } from "react-native-paper";
+import { Stack, router, useLocalSearchParams } from "expo-router";
+import {
+  Button,
+  Divider,
+  Icon,
+  List,
+  Modal,
+  Portal,
+  Text,
+} from "react-native-paper";
 import { useSelector } from "react-redux";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { Image, Linking, ScrollView, StyleSheet, View } from "react-native";
-import ListAccordionGroup from "react-native-paper/lib/typescript/components/List/ListAccordionGroup";
+import {
+  FlatList,
+  Image,
+  Linking,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
+import { ResizeMode, Video } from "expo-av";
 
-function MapWithMultipleMarkers(route) {
+function MapWithMultipleMarkers({ route }) {
   return (
     <MapView
       style={styles.map}
@@ -21,8 +37,12 @@ function MapWithMultipleMarkers(route) {
       {route.map((pin) => (
         <Marker
           key={pin.id}
-          coordinate={{ latitude: pin.pin_lat, longitude: pin.pin_lng }}
+          coordinate={{
+            latitude: Number(pin.pin_lat),
+            longitude: Number(pin.pin_lng),
+          }}
           title={pin.pin_name}
+          description={pin.pin_desc}
         />
       ))}
     </MapView>
@@ -30,7 +50,8 @@ function MapWithMultipleMarkers(route) {
 }
 
 function calculateRoute(edges) {
-  const route = [edges[0].edge_start];
+  const route = [];
+  route.push(edges[0].edge_start);
   for (let i = 1; i < edges.length; i++) {
     route.push(edges[i].edge_start);
   }
@@ -54,32 +75,115 @@ function startTrail(route) {
   Linking.openURL(mapsUrl);
 }
 
+function getMedia(route) {
+  const media = [];
+  for (let i = 0; i < route.length; i++) {
+    if (route[i].media) {
+      media.push(...route[i].media);
+    }
+  }
+  return media;
+}
+
+function MediaItem({ item }) {
+  const [visible, setVisible] = React.useState(false);
+  const hideModal = () => setVisible(false);
+  const showModal = () => setVisible(true);
+  let itemElement;
+  if (item.media_type === "I") {
+    itemElement = (
+      <Image style={styles.mediaItem} source={{ uri: item.media_file }} />
+    );
+  } else if (item.media_type === "V") {
+    itemElement = <Icon size={100} source="file-video" />;
+  } else {
+    itemElement = <Icon source="file-music" size={100} />;
+  }
+  return (
+    <View>
+      <Pressable onPress={showModal}>{itemElement}</Pressable>
+      <Portal>
+        <Modal
+          style={{ paddingHorizontal: 20, paddingVertical: 100 }}
+          visible={visible}
+          onDismiss={hideModal}
+        >
+          {item.media_type === "I" ? (
+            <Image
+              style={{ width: "100%", height: "100%", objectFit: "scale-down" }}
+              source={{ uri: item.media_file }}
+            />
+          ) : (
+            <Video
+              style={{ width: "100%", height: "100%" }}
+              source={{ uri: item.media_file }}
+              useNativeControls={true}
+              resizeMode={ResizeMode.CONTAIN}
+              isLooping={false}
+            />
+          )}
+        </Modal>
+      </Portal>
+    </View>
+  );
+}
+
+function MediaSection({ media }) {
+  // TODO: Add styling
+  return (
+    <View>
+      <Text variant="headlineSmall">Media</Text>
+      <Divider bold={true} />
+      <FlatList
+        style={{ paddingTop: 10 }}
+        horizontal={true}
+        data={media}
+        renderItem={({ item }) => <MediaItem item={item} />}
+      />
+    </View>
+  );
+}
+
 export default function SingleTrailScreen() {
   const { id } = useLocalSearchParams();
   const trail = useSelector((state) =>
     state.appData.trails.find((t) => t.id == id),
   );
-  console.log(trail);
   if (!trail) {
     return alert(`Trail ${id} not found`);
   }
   const route = calculateRoute(trail.edges);
+  const media = getMedia(route);
   return (
     <ScrollView>
       <Stack.Screen options={{ headerTitle: `${trail.trail_name}` }} />
       <Image source={{ uri: trail.trail_img }} />
       <Text> {trail.trial_desc}</Text>
-      <Button onPress={() => startTrail(route)}>Start Trail</Button>
-      <MapWithMultipleMarkers {...route} />
+      <MediaSection media={media} />
+      <View style={styles.mapContainer}>
+        <MapWithMultipleMarkers route={route} />
+      </View>
+      <Button mode="contained" onPress={() => startTrail(route)}>
+        Start Trail
+      </Button>
       <List.AccordionGroup>
         {trail.edges.map((edge) => (
           <List.Accordion
-            key = {edge.id}
+            id={edge.id}
+            key={edge.id}
             title={edge.edge_start.pin_name + " -> " + edge.edge_end.pin_name}
             description={edge.edge_duration}
           >
-            <List.Item title={edge.edge_start.pin_name} left={props => <List.Icon {...props} icon="marker"/>}onPress={() => route.push("/home/pin/" + edge.edge_start.id)} />
-            <List.Item title={edge.edge_end.pin_name} onPress={() => route.push("/home/pin/" + edge.edge_end.id)} />
+            <List.Item
+              title={edge.edge_start.pin_name}
+              left={(props) => <List.Icon {...props} icon="pin" />}
+              onPress={() => router.push("/home/pin/" + edge.edge_start.id)}
+            />
+            <List.Item
+              title={edge.edge_end.pin_name}
+              left={(props) => <List.Icon {...props} icon="pin" />}
+              onPress={() => router.push("/home/pin/" + edge.edge_end.id)}
+            />
           </List.Accordion>
         ))}
       </List.AccordionGroup>
@@ -87,6 +191,14 @@ export default function SingleTrailScreen() {
   );
 }
 const styles = StyleSheet.create({
+  mediaItem: {
+    width: 100,
+    height: 100,
+  },
+  mapContainer: {
+    width: "100%",
+    height: 350,
+  },
   map: {
     width: "100%",
     height: "100%",
