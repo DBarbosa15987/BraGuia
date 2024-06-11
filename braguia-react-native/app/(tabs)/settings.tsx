@@ -1,6 +1,5 @@
-<<<<<<< HEAD
-import { StyleSheet, TouchableOpacity, Switch, Text, ScrollView, View } from 'react-native';
-import { Button, Card, Avatar, Dialog, Portal, Paragraph } from "react-native-paper"
+import { StyleSheet, TouchableOpacity, ScrollView, View } from 'react-native';
+import { Button, Card,Text, Avatar,Switch, Dialog, Portal, Paragraph } from "react-native-paper"
 import { router } from "expo-router";
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -43,7 +42,7 @@ export default function SettingsPage() {
   return (
     <ScrollView>
 
-      <SettingsCard title="Dark Theme" text="Switch Between Light and Dark Theme" toggle={true} toggleValue={darkMode} toggleAction={handleDarkMode}/>
+      <SettingsCard title="Dark Theme" text="Switch Between Light and Dark Theme" toggle={true} toggleValue={darkMode} toggleAction={handleDarkMode} />
       <SettingsCard title="Delete User Data" text="Deletes all user data, including preferences" onPress={showDelData} />
       <SettingsCard title="Reset Preferences" text="Resets all user preferences" onPress={showDelPrefs} />
       <SettingsCard title="About BraGuia" text="" onPress={navigateToAbout} />
@@ -75,39 +74,30 @@ export default function SettingsPage() {
 
     </ScrollView>
   );
-=======
-import { StyleSheet, Image, Platform, Text, ScrollView } from 'react-native';
-
-export default function SettingsPage() {
-    return (
-        <ScrollView>
-        </ScrollView>
-    );
->>>>>>> 6c006ce45f8ab6d507b761714c14fbaee287ea9d
 }
 
 
-const SettingsCard = ({ title, text, onPress=()=>{}, toggle = false ,toggleValue=false, toggleAction=()=>{}}) => {
+const SettingsCard = ({ title, text, onPress = () => { }, toggle = false, toggleValue = false, toggleAction = () => { } }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <Card style={styles.card}>
-        <View style={styles.container}>
+        <View style={styles.cardContainer}>
           <View style={styles.textContainer}>
+            <Text style={styles.title}>{title}</Text>
             {text ? (
               <>
-                <Text style={styles.title}>{title}</Text>
                 <Text style={styles.content}>{text}</Text>
               </>
             ) : (
-              <Text style={styles.title}>{title}</Text>
+              <></>
             )}
           </View>
           {toggle ? (
-              <>
-                <Switch value={toggleValue} onValueChange={toggleAction} />
-              </>
-            ) : (<></>)
-            }
+            <>
+              <Switch value={toggleValue} onValueChange={toggleAction} />
+            </>
+          ) : (<></>)
+          }
         </View>
       </Card>
     </TouchableOpacity>
@@ -119,7 +109,7 @@ const styles = StyleSheet.create({
     margin: 4,
     padding: 10,
   },
-  container: {
+  cardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },

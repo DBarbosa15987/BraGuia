@@ -20,7 +20,6 @@ export default function HomePage() {
         Navigate to TrailsScreen
       </Button>
       <Button onPress={() => router.push("login")}>Navigate to Login</Button>
-      <MapView provider={PROVIDER_GOOGLE} />
     </View>
   );
 }
