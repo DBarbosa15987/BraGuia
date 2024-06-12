@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import { SET_APP_INFO, RESET_APP_DATA } from "./actions/appInfo";
 import { SET_TRAILS, SET_CURR_TRAIL } from "./actions/trails";
-import { SET_USER_INFO } from "./actions/user";
+import { RESET_USER_INFO, SET_USER_INFO } from "./actions/user";
 
 const initialState = {};
 
@@ -33,6 +33,11 @@ const user = (state = initialState, action) => {
       return {
         ...state,
         info: action.userinfo,
+      };
+    case RESET_USER_INFO:
+      return {
+        ...state,
+        info: {},
       };
     default:
       return state;

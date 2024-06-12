@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { ScrollView, Text, View, StyleSheet, Image } from "react-native";
-import { useSelector } from "react-redux";
-import { Button, Card, Avatar,Dialog, Portal, Paragraph } from "react-native-paper"
+import { useDispatch, useSelector } from "react-redux";
+import { Button, Card, Avatar, Dialog, Portal, Paragraph } from "react-native-paper"
+import { logout } from "@/api/api";
+import { router } from "expo-router";
 
 
 
 export default function UserPage() {
   const userInfo = useSelector((state) => state.user.info);
-  const avatarSrc = userInfo.user_type.toLowerCase() === "premium" ? require('@/assets/images/marega.jpg') : require('@/assets/images/npc.png')
   const [visible, setVisible] = useState(false);
+  const dispatch = useDispatch();
 
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
@@ -17,13 +19,16 @@ export default function UserPage() {
     // Perform logout logic here
     console.log('User logged out');
     hideDialog();
+    logout(dispatch);
+    router.replace("/login");
+
   };
 
   return (
     <ScrollView>
       <View style={styles.imageContainer}>
         <Image
-          source={avatarSrc}
+          source={userInfo.user_type.toLowerCase() === "premium" ? require('@/assets/images/marega.jpg') : require('@/assets/images/npc.png')}
           style={styles.profileImage}
         />
       </View>

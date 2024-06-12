@@ -1,13 +1,16 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, SafeAreaView, Pressable } from "react-native";
-import { useDispatch } from "react-redux";
+import { View, StyleSheet } from "react-native";
+import { Text, TextInput, Button, Portal, Dialog, Paragraph } from 'react-native-paper'
+import { useDispatch, useSelector } from "react-redux";
 import { fetchUserInfo, login } from "../api/api";
 import { router } from "expo-router";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showDialog, setShowDialog] = useState(false)
   const dispatch = useDispatch();
+  const appInfo = useSelector((state) => state.appData.appinfo);
   const loginPress = () => {
     login(username, password).then((loggedIn) => {
       if (loggedIn) {
@@ -16,21 +19,28 @@ export default function LoginPage() {
         // NOTE: navigate to home page
         router.replace("/home");
       } else {
-        alert("Login failed");
+        setShowDialog(true);
       }
     });
   };
 
+  const resetLogin = () => {
+    setShowDialog(false);
+    setUsername("");
+    setPassword("");
+  };
+
   return (
-    <SafeAreaView>
-      <Text> Login Page </Text>
-      <View>
+    <View style={styles.container}>
+      <Text variant="displayLarge" style={styles.title}>{appInfo.app_name}</Text>
+      <View style={styles.inputContainer}>
         <TextInput
           placeholder="Username"
           value={username}
           onChangeText={setUsername}
           autoCorrect={false}
           autoCapitalize="none"
+          style={styles.input}
         />
         <TextInput
           placeholder="Password"
@@ -39,13 +49,50 @@ export default function LoginPage() {
           onChangeText={setPassword}
           autoCorrect={false}
           autoCapitalize="none"
+          style={styles.input}
         />
       </View>
-      <View>
-        <Pressable onPress={loginPress}>
-          <Text>LOGIN</Text>
-        </Pressable>
-      </View>
-    </SafeAreaView>
+      <Button mode="contained" onPress={loginPress} style={styles.button}>
+        Login
+      </Button>
+      <Portal>
+        <Dialog visible={showDialog} onDismiss={resetLogin}>
+          <Dialog.Title>Login Failed</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>Login failed due to wrong credentials or network issues</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={resetLogin}>Dismiss</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+    </View>
   );
 }
+
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+  },
+  inputContainer: {
+    width: '65%',
+    marginBottom: 10,
+  },
+  input: {
+    marginBottom: 10,
+    
+  },
+  button: {
+    width: '40%',
+    alignSelf: 'center',
+  },
+  title: {
+    fontFamily: 'cursive', // This depends on available fonts, adjust as needed
+    marginBottom: 50,
+  }
+});

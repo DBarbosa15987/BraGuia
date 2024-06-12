@@ -1,6 +1,6 @@
 import { updateAppInfo } from "@/state/actions/appInfo";
 import { setTrails } from "@/state/actions/trails";
-import { setUserInfo } from "@/state/actions/user";
+import { resetUserInfo, setUserInfo } from "@/state/actions/user";
 import * as SecureStore from "expo-secure-store";
 
 const BASE_URL = "http://192.168.85.186";
@@ -80,4 +80,20 @@ export async function login(username, password) {
     console.error("Error parsing User:", error);
   }
   return false;
+}
+
+export async function logout(dispatch) {
+  
+  try {
+    const response = await fetchWithCookies(BASE_URL + "/logout", {
+      method: 'POST'
+    });
+    await SecureStore.deleteItemAsync(COOKIE_KEY);
+    console.log("Logout got response :" + response.status)
+    dispatch(resetUserInfo());
+
+  }catch (error) {
+    console.error("Error parsing User:", error);
+  }
+
 }
