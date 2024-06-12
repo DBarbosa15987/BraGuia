@@ -14,3 +14,14 @@ export const addTrailToHistory = (historyEntry) => ({
   type: ADD_TRAIL_TO_HISTORY,
   historyEntry,
 });
+
+export const CLEAR_USER_DATA = "CLEAR_USER_DATA"
+export const clearUserData = () => ({
+  type: CLEAR_USER_DATA,
+});
+
+export const TOGGLE_BOOKMARK = "TOGGLE_BOOKMARK";
+export const toggleBookmark = (bookmarkId) => ({
+  type: TOGGLE_BOOKMARK,
+  bookmarkId,
+});

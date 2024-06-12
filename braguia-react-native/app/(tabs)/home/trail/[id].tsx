@@ -9,7 +9,7 @@ import {
   Portal,
   Text,
 } from "react-native-paper";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import {
   FlatList,
@@ -21,6 +21,7 @@ import {
   View,
 } from "react-native";
 import { ResizeMode, Video } from "expo-av";
+import { addTrailToHistory } from "@/state/actions/user";
 
 function MapWithMultipleMarkers({ route }) {
   return (
@@ -60,7 +61,8 @@ function calculateRoute(edges) {
   return route;
 }
 
-function startTrail(route) {
+function startTrail(route,trailId,dispatch) {
+   
   const lastPin = route[route.length - 1];
   const destination = "destination=" + lastPin.pin_lat + "," + lastPin.pin_lng;
   let waypoints = "waypoints=";
@@ -72,6 +74,9 @@ function startTrail(route) {
   }
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&${waypoints}&${destination}`;
   console.log(mapsUrl);
+  const historyEntry = {"trail": trailId, "timestamp": Date.now()}
+  dispatch(addTrailToHistory(historyEntry));
+  console.log(historyEntry)
   Linking.openURL(mapsUrl);
 }
 
@@ -145,13 +150,17 @@ function MediaSection({ media }) {
 }
 
 export default function SingleTrailScreen() {
+
+  const dispatch = useDispatch()
   const { id } = useLocalSearchParams();
   const trail = useSelector((state) =>
     state.appData.trails.find((t) => t.id == id),
   );
+  const hist = useSelector((state) => state.user.history);
   if (!trail) {
     return alert(`Trail ${id} not found`);
   }
+  console.log(hist)
   const route = calculateRoute(trail.edges);
   const media = getMedia(route);
   return (
@@ -163,9 +172,10 @@ export default function SingleTrailScreen() {
       <View style={styles.mapContainer}>
         <MapWithMultipleMarkers route={route} />
       </View>
-      <Button mode="contained" onPress={() => startTrail(route)}>
+      <Button mode="contained" onPress={() => startTrail(route, trail.id,dispatch)}>
         Start Trail
       </Button>
+      
       <List.AccordionGroup>
         {trail.edges.map((edge) => (
           <List.Accordion

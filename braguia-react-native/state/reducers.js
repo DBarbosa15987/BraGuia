@@ -5,6 +5,9 @@ import {
   ADD_TRAIL_TO_HISTORY,
   RESET_USER_INFO,
   SET_USER_INFO,
+  CLEAR_USER_DATA,
+  TOGGLE_BOOKMARK
+  //ADD_BOOKMARK,
 } from "./actions/user";
 
 const initialState = {
@@ -12,6 +15,7 @@ const initialState = {
     info: {},
     history: [],
     preferences: {},
+    bookmarks: []
   },
 };
 
@@ -43,6 +47,8 @@ const user = (state = initialState, action) => {
       return {
         ...state,
         info: action.userinfo,
+        history: [], //TODO: vai mesmo ser assim???
+        bookmarks: []
       };
     case RESET_USER_INFO:
       return {
@@ -54,10 +60,25 @@ const user = (state = initialState, action) => {
         ...state,
         history: [action.historyEntry, ...state.history],
       };
+    case TOGGLE_BOOKMARK:
+      const isBookmarked = state.bookmarks.includes(action.bookmarkId);
+      return {
+        ...state,
+        bookmarks: isBookmarked
+          ? state.bookmarks.filter(bookmark => bookmark !== action.bookmarkId)
+          : [action.bookmarkId, ...state.bookmarks],
+      };
+    case CLEAR_USER_DATA:
+      return {
+        ...state,
+        history: [],
+        bookmarks: [],
+      };
     default:
       return state;
   }
 };
+
 
 const combinedReducers = combineReducers({ appData, user });
 

@@ -2,8 +2,9 @@ import { StyleSheet, TouchableOpacity, ScrollView, View } from 'react-native';
 import { Button, Card,Text, Avatar,Switch, Dialog, Portal, Paragraph } from "react-native-paper"
 import { router } from "expo-router";
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { DarkTheme } from '@react-navigation/native';
+import { clearUserData } from '@/state/actions/user';
 
 export default function SettingsPage() {
 
@@ -11,6 +12,7 @@ export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [delData, setDelData] = useState(false);
   const [delPrefs, setDelPrefs] = useState(false);
+  const dispatch = useDispatch();
 
   const showDelData = () => setDelData(true);
   const hideDelData = () => setDelData(false);
@@ -20,6 +22,7 @@ export default function SettingsPage() {
   const handleDelData = () => {
     // Perform logout logic here
     console.log('User Data Deleted');
+    dispatch(clearUserData());
     setDelData(false);
   };
 
