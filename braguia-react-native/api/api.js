@@ -4,7 +4,7 @@ import { resetUserInfo, setUserInfo } from "@/state/actions/user";
 import * as SecureStore from "expo-secure-store";
 
 const BASE_URL = "http://192.168.85.186";
-const COOKIE_KEY = "cookie";
+export const COOKIE_KEY = "cookie";
 
 async function fetchWithCookies(url, options = {}) {
   const cookie = await SecureStore.getItemAsync(COOKIE_KEY);
@@ -83,17 +83,13 @@ export async function login(username, password) {
 }
 
 export async function logout(dispatch) {
-  
   try {
     const response = await fetchWithCookies(BASE_URL + "/logout", {
-      method: 'POST'
+      method: "POST",
     });
     await SecureStore.deleteItemAsync(COOKIE_KEY);
-    console.log("Logout got response :" + response.status)
     dispatch(resetUserInfo());
-
-  }catch (error) {
+  } catch (error) {
     console.error("Error parsing User:", error);
   }
-
 }

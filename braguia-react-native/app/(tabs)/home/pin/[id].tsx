@@ -49,7 +49,6 @@ function findPin(trails, id) {
 export default function SinglePinScreen() {
   const { id } = useLocalSearchParams();
   const pin = useSelector((state) => findPin(state.appData.trails, id));
-  console.log(pin);
   if (!pin) {
     return alert(`Pin ${id} not found`);
   }

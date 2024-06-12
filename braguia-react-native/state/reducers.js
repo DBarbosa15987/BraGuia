@@ -1,9 +1,19 @@
 import { combineReducers } from "redux";
 import { SET_APP_INFO, RESET_APP_DATA } from "./actions/appInfo";
 import { SET_TRAILS, SET_CURR_TRAIL } from "./actions/trails";
-import { RESET_USER_INFO, SET_USER_INFO } from "./actions/user";
+import {
+  ADD_TRAIL_TO_HISTORY,
+  RESET_USER_INFO,
+  SET_USER_INFO,
+} from "./actions/user";
 
-const initialState = {};
+const initialState = {
+  user: {
+    info: {},
+    history: [],
+    preferences: {},
+  },
+};
 
 const appData = (state = initialState, action) => {
   switch (action.type) {
@@ -37,7 +47,12 @@ const user = (state = initialState, action) => {
     case RESET_USER_INFO:
       return {
         ...state,
-        info: {},
+        info: null,
+      };
+    case ADD_TRAIL_TO_HISTORY:
+      return {
+        ...state,
+        history: [action.historyEntry, ...state.history],
       };
     default:
       return state;

@@ -1,4 +1,4 @@
-import { fetchAppInfo, fetchTrails } from "@/api/api";
+import { fetchAppInfo, fetchTrails, fetchUserInfo } from "@/api/api";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
@@ -8,47 +8,57 @@ import { useDispatch, useSelector } from "react-redux";
 export default function HomePage() {
   const dispatch = useDispatch();
   useEffect(() => {
-    fetchAppInfo(dispatch);
     fetchTrails(dispatch);
-    }, []);
+    fetchUserInfo(dispatch);
+  }, []);
   const appInfo = useSelector((state) => state.appData.appinfo);
+  const user = useSelector((state) => state.user.info);
 
   const DATA = [
     {
-      "title": 'Trails',
-      "icon": 'routes',
-      "onPress": () => router.push("/home/trails"),
+      title: "Trails",
+      icon: "routes",
+      onPress: () => router.push("/home/trails"),
     },
     {
-      "title": 'Pins',
-      "icon": 'routes',
-      "onPress": () => { } /* router.push("/home/pins") */
+      title: "Pins",
+      icon: "routes",
+      onPress: () => {} /* router.push("/home/pins") */,
     },
     {
-      "title": 'History',
-      "icon": 'routes',
-      "onPress": () => { }
+      title: "History",
+      icon: "routes",
+      onPress: () => {},
     },
     {
-      "title": 'Bookmarks',
-      "icon": 'routes',
-      "onPress": () => { }
-    }
-  ]
+      title: "Bookmarks",
+      icon: "routes",
+      onPress: () => {},
+    },
+  ];
 
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
-        <Text variant='displayLarge' style={styles.title}>{appInfo.app_name}</Text>
-        <Text variant='bodyMedium' style={styles.desc}>{appInfo.app_landing_page_text}</Text>
+        <Text variant="displayLarge" style={styles.title}>
+          {appInfo.app_name}
+        </Text>
+        <Text variant="bodyMedium" style={styles.desc}>
+          {appInfo.app_landing_page_text}
+        </Text>
       </View>
       <FlatList
         data={DATA}
-        renderItem={({ item }) => <HomeCard title={item.title} icon={item.icon} onPress={item.onPress} />}
-        keyExtractor={item => item.title}
+        renderItem={({ item }) => (
+          <HomeCard
+            title={item.title}
+            icon={item.icon}
+            onPress={item.onPress}
+          />
+        )}
+        keyExtractor={(item) => item.title}
         numColumns={2}
       />
-      <Button onPress={() => router.replace("login")}>Navigate to Login</Button>
     </View>
   );
 }
@@ -69,7 +79,6 @@ const HomeCard = ({ title, icon, onPress }) => {
 };
 
 const styles = StyleSheet.create({
-
   icon: {
     margin: 10,
   },
@@ -78,32 +87,31 @@ const styles = StyleSheet.create({
     padding: 6,
     width: 150,
     height: 100,
-    justifyContent: 'center'
+    justifyContent: "center",
   },
   textContainer: {
     marginTop: 60,
     paddingBottom: 50,
-    alignItems: 'center',
+    alignItems: "center",
   },
   title: {
-    fontWeight: "bold",
-    fontFamily: "cursive",
-    marginBottom: 20
+    fontFamily: "Cursive",
+    marginBottom: 20,
   },
   desc: {
-    textAlign: 'center',
+    textAlign: "center",
   },
   container: {
     padding: 8,
-    textAlign: 'center',
-    alignItems: 'center',
+    textAlign: "center",
+    alignItems: "center",
   },
   buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonLabel: {
-    textAlign: 'center',
-  }
+    textAlign: "center",
+  },
 });

@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Text, TextInput, Button, Portal, Dialog, Paragraph } from 'react-native-paper'
+import {
+  Text,
+  TextInput,
+  Button,
+  Portal,
+  Dialog,
+  Paragraph,
+} from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserInfo, login } from "../api/api";
 import { router } from "expo-router";
@@ -8,9 +15,10 @@ import { router } from "expo-router";
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showDialog, setShowDialog] = useState(false)
+  const [showDialog, setShowDialog] = useState(false);
   const dispatch = useDispatch();
   const appInfo = useSelector((state) => state.appData.appinfo);
+
   const loginPress = () => {
     login(username, password).then((loggedIn) => {
       if (loggedIn) {
@@ -32,7 +40,9 @@ export default function LoginPage() {
 
   return (
     <View style={styles.container}>
-      <Text variant="displayLarge" style={styles.title}>{appInfo.app_name}</Text>
+      <Text variant="displayLarge" style={styles.title}>
+        {appInfo.app_name}
+      </Text>
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Username"
@@ -59,7 +69,9 @@ export default function LoginPage() {
         <Dialog visible={showDialog} onDismiss={resetLogin}>
           <Dialog.Title>Login Failed</Dialog.Title>
           <Dialog.Content>
-            <Paragraph>Login failed due to wrong credentials or network issues</Paragraph>
+            <Paragraph>
+              Login failed due to wrong credentials or network issues
+            </Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={resetLogin}>Dismiss</Button>
@@ -70,29 +82,27 @@ export default function LoginPage() {
   );
 }
 
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 10,
   },
   inputContainer: {
-    width: '65%',
+    width: "65%",
     marginBottom: 10,
   },
   input: {
     marginBottom: 10,
-    
   },
   button: {
-    width: '40%',
-    alignSelf: 'center',
+    width: "40%",
+    alignSelf: "center",
   },
   title: {
-    fontFamily: 'cursive', // This depends on available fonts, adjust as needed
+    fontFamily: "Cursive", // This depends on available fonts, adjust as needed
     marginBottom: 50,
-  }
+  },
 });
+

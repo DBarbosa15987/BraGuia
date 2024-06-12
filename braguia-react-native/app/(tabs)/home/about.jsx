@@ -60,7 +60,6 @@ const ContactDetails = ({ contact, handlePhonePress, handleUrlPress }) => {
         Email:{' '}
         <Text variant='titleMedium' style={styles.subtitle}>{contact.contact_mail}</Text>
       </Text>
-
     </View>
   );
 };
