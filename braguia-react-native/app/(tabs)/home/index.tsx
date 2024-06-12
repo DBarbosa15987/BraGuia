@@ -23,17 +23,17 @@ export default function HomePage() {
     {
       title: "Pins",
       icon: "routes",
-      onPress: () => {} /* router.push("/home/pins") */,
+      onPress: () => { } /* router.push("/home/pins") */,
     },
     {
       title: "History",
       icon: "routes",
-      onPress: () => {},
+      onPress: () => router.push("/home/history")
     },
     {
       title: "Bookmarks",
       icon: "routes",
-      onPress: () => {},
+      onPress: () => router.push("/home/bookmarks")
     },
   ];
 

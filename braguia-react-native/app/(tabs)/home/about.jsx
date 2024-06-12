@@ -1,6 +1,5 @@
-import { StyleSheet, Image, Platform, View, ScrollView, Linking, TouchableOpacity } from 'react-native';
+import { StyleSheet,View, ScrollView, Linking, TouchableOpacity } from 'react-native';
 import {Text} from 'react-native-paper'
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 export default function AboutPage() {
