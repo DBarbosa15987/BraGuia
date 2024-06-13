@@ -31,9 +31,9 @@ function MapWithSingleMarker({ pin }) {
 
 export default function SinglePinScreen() {
   const { id } = useLocalSearchParams();
-  const pin = useSelector((state) => {
-    console.log(state.appData.pins)
-    return state.appData.pins.find((t) => t.id == id)});
+  const pin = useSelector((state) =>
+    state.appData.pins.find((t) => t.id == id),
+  );
   if (!pin) {
     return alert(`Pin ${id} not found`);
   }

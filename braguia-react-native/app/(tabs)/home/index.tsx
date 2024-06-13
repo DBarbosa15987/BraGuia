@@ -23,17 +23,17 @@ export default function HomePage() {
     },
     {
       title: "Pins",
-      icon: "routes",
+      icon: "pin",
       onPress: () => router.push("/home/pins"),
     },
     {
       title: "History",
-      icon: "routes",
+      icon: "history",
       onPress: () => router.push("/home/history"),
     },
     {
       title: "Bookmarks",
-      icon: "routes",
+      icon: "bookmark",
       onPress: () => router.push("/home/bookmarks"),
     },
   ];
@@ -108,6 +108,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonContent: {
+    height: "100%",
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

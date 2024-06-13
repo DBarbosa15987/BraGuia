@@ -149,7 +149,7 @@ function MediaSection({ media }) {
         style={{ paddingTop: 5 }}
         horizontal={true}
         data={media}
-        keyExtractor={(item) => item.key}
+        keyExtractor={(item, index) => item.id + index}
         renderItem={({ item }) => <MediaItem item={item} />}
       />
     </View>
