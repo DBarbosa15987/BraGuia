@@ -25,6 +25,9 @@ export default function HomeStackLayout() {
         options={{ headerTitle: "Single Trail" }}
       />
       <Stack.Screen name="about" options={{ headerTitle: "About" }} />
+      <Stack.Screen name="pins" options={{ headerTitle: "Pins" }} />
+      <Stack.Screen name="history" options={{ headerTitle: "History" }} />
+      <Stack.Screen name="bookmarks" options={{ headerTitle: "Bookmarks" }} />
     </Stack>
   );
 }

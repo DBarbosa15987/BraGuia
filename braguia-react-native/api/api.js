@@ -1,5 +1,5 @@
 import { updateAppInfo } from "@/state/actions/appInfo";
-import { setTrails } from "@/state/actions/trails";
+import { setTrails, setPins } from "@/state/actions/trails";
 import { resetUserInfo, setUserInfo } from "@/state/actions/user";
 import * as SecureStore from "expo-secure-store";
 
@@ -28,12 +28,24 @@ export async function fetchAppInfo(dispatch) {
     console.error("Error parsing AppInfo:", error);
   }
 }
+function getPins(trails) {
+  let pins = new Map();
+  trails.forEach((trail) => {
+    trail.edges.forEach((edge) => {
+      pins.set(edge.edge_start.id, edge.edge_start);
+      pins.set(edge.edge_end.id, edge.edge_end);
+    });
+  });
+  return Array.from(pins.values()).sort((a, b) => a.id - b.id);
+}
 export async function fetchTrails(dispatch) {
   try {
     const response = await fetchWithCookies(BASE_URL + "/trails");
     if (response.ok) {
       const data = await response.json();
       dispatch(setTrails(data));
+      const pins = getPins(data);
+      dispatch(setPins(pins));
     }
   } catch (error) {
     console.error("Error parsing Trails:", error);

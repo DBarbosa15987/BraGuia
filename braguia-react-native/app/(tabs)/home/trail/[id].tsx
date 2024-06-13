@@ -24,6 +24,12 @@ import { ResizeMode, Video } from "expo-av";
 import { addTrailToHistory } from "@/state/actions/user";
 
 function MapWithMultipleMarkers({ route }) {
+  route = route.reduce((acc, current) => {
+    if (!acc.some((item) => item.id === current.id)) {
+      acc.push(current);
+    }
+    return acc;
+  }, []);
   return (
     <MapView
       style={styles.map}
@@ -61,8 +67,7 @@ function calculateRoute(edges) {
   return route;
 }
 
-function startTrail(route,trailId,dispatch) {
-   
+function startTrail(route, trailId, dispatch) {
   const lastPin = route[route.length - 1];
   const destination = "destination=" + lastPin.pin_lat + "," + lastPin.pin_lng;
   let waypoints = "waypoints=";
@@ -74,9 +79,9 @@ function startTrail(route,trailId,dispatch) {
   }
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&${waypoints}&${destination}`;
   console.log(mapsUrl);
-  const historyEntry = {"trail": trailId, "timestamp": Date.now()}
+  const historyEntry = { trail: trailId, timestamp: Date.now() };
   dispatch(addTrailToHistory(historyEntry));
-  console.log(historyEntry)
+  console.log(historyEntry);
   Linking.openURL(mapsUrl);
 }
 
@@ -135,14 +140,16 @@ function MediaItem({ item }) {
 
 function MediaSection({ media }) {
   // TODO: Add styling
+
   return (
     <View>
       <Text variant="headlineSmall">Media</Text>
       <Divider bold={true} />
       <FlatList
-        style={{ paddingTop: 10 }}
+        style={{ paddingTop: 5 }}
         horizontal={true}
         data={media}
+        keyExtractor={(item) => item.key}
         renderItem={({ item }) => <MediaItem item={item} />}
       />
     </View>
@@ -150,8 +157,7 @@ function MediaSection({ media }) {
 }
 
 export default function SingleTrailScreen() {
-
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { id } = useLocalSearchParams();
   const trail = useSelector((state) =>
     state.appData.trails.find((t) => t.id == id),
@@ -160,29 +166,33 @@ export default function SingleTrailScreen() {
   if (!trail) {
     return alert(`Trail ${id} not found`);
   }
-  console.log(hist)
+  console.log(hist);
   const route = calculateRoute(trail.edges);
   const media = getMedia(route);
   return (
     <ScrollView>
       <Stack.Screen options={{ headerTitle: `${trail.trail_name}` }} />
       <Image source={{ uri: trail.trail_img }} />
-      <Text> {trail.trial_desc}</Text>
+      <Text> {trail.trail_desc}</Text>
       <MediaSection media={media} />
       <View style={styles.mapContainer}>
         <MapWithMultipleMarkers route={route} />
       </View>
-      <Button mode="contained" onPress={() => startTrail(route, trail.id,dispatch)}>
+
+      <Button
+        mode="contained"
+        onPress={() => startTrail(route, trail.id, dispatch)}
+      >
         Start Trail
       </Button>
-      
+
       <List.AccordionGroup>
         {trail.edges.map((edge) => (
           <List.Accordion
             id={edge.id}
             key={edge.id}
             title={edge.edge_start.pin_name + " -> " + edge.edge_end.pin_name}
-            description={edge.edge_duration}
+            // description={"Duration: " + edge.edge_duration}
           >
             <List.Item
               title={edge.edge_start.pin_name}

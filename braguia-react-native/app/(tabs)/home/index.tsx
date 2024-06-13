@@ -1,18 +1,19 @@
-import { fetchAppInfo, fetchTrails, fetchUserInfo } from "@/api/api";
+import { fetchTrails, fetchUserInfo } from "@/api/api";
+import { setPins } from "@/state/actions/trails";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { Button, Text, Avatar, Card, IconButton } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
+function getPins() {}
 export default function HomePage() {
   const dispatch = useDispatch();
   useEffect(() => {
-    fetchTrails(dispatch);
     fetchUserInfo(dispatch);
+    fetchTrails(dispatch);
   }, []);
   const appInfo = useSelector((state) => state.appData.appinfo);
-  const user = useSelector((state) => state.user.info);
 
   const DATA = [
     {
@@ -23,17 +24,17 @@ export default function HomePage() {
     {
       title: "Pins",
       icon: "routes",
-      onPress: () => { } /* router.push("/home/pins") */,
+      onPress: () => router.push("/home/pins"),
     },
     {
       title: "History",
       icon: "routes",
-      onPress: () => router.push("/home/history")
+      onPress: () => router.push("/home/history"),
     },
     {
       title: "Bookmarks",
       icon: "routes",
-      onPress: () => router.push("/home/bookmarks")
+      onPress: () => router.push("/home/bookmarks"),
     },
   ];
 
