@@ -2,13 +2,17 @@ import React, { useEffect } from "react";
 import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
 import { Text, Icon, Modal, Portal, IconButton } from "react-native-paper";
 import { ResizeMode, Video } from "expo-av";
-import { downloadMedia, getCachedMediaUri, removeDownloadedMedia } from "@/utils/mediaCaching";
+import {
+  downloadMedia,
+  getCachedMediaUri,
+  removeDownloadedMedia,
+} from "@/utils/mediaCaching";
 
 function MediaItem({ item }) {
   const [visible, setVisible] = React.useState(false);
   const hideModal = () => setVisible(false);
   const showModal = () => setVisible(true);
-  const [mediaUri, setMediaUri] = React.useState<string|null>(null);
+  const [mediaUri, setMediaUri] = React.useState<string | null>(null);
   const [isLocalMedia, setIsLocalMedia] = React.useState(false);
 
   useEffect(() => {
