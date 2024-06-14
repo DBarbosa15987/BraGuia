@@ -7,6 +7,8 @@ import { addTrailToHistory } from "@/state/actions/user";
 import { MapWithMultipleMarkers } from "@/components/Maps";
 import { getMedia, calculateRoute } from "@/utils/trails";
 import { MediaSection } from "@/components/Media";
+import { ChipList } from "@/components/ChipList";
+import { Description } from "@/components/Description";
 
 function startTrail(route, trailId, dispatch) {
   const lastPin = route[route.length - 1];
@@ -41,10 +43,10 @@ export default function SingleTrailScreen() {
     <ScrollView style={styles.container}>
       <Stack.Screen options={{ headerTitle: `${trail.trail_name}` }} />
       <Image style={styles.trailImg} source={{ uri: trail.trail_img }} />
-      {/* TODO: Add reltrail */}
+      <ChipList list={trail.rel_trail} />
       <Text> Difficulty: {trail.trail_difficulty}</Text>
       <Text> Duration: {trail.trail_duration} minutes</Text>
-      <Text> {trail.trail_desc}</Text>
+      <Description description={trail.trail_desc}/>
       <MediaSection media={media} />
       <View style={styles.mapContainer}>
         <MapWithMultipleMarkers route={route} />
@@ -63,7 +65,6 @@ export default function SingleTrailScreen() {
             id={edge.id}
             key={edge.id}
             title={edge.edge_start.pin_name + " -> " + edge.edge_end.pin_name}
-            // description={"Duration: " + edge.edge_duration}
           >
             <List.Item
               title={edge.edge_start.pin_name}
