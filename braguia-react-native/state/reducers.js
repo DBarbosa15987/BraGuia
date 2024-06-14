@@ -6,8 +6,7 @@ import {
   RESET_USER_INFO,
   SET_USER_INFO,
   CLEAR_USER_DATA,
-  TOGGLE_BOOKMARK,
-  //ADD_BOOKMARK,
+  SET_BOOKMARKS
 } from "./actions/user";
 
 const initialState = {
@@ -71,13 +70,10 @@ const user = (state = initialState, action) => {
         ...state,
         history: [action.historyEntry, ...state.history],
       };
-    case TOGGLE_BOOKMARK: {
-      const isBookmarked = state.bookmarks.includes(action.bookmarkId);
+    case SET_BOOKMARKS: {
       return {
         ...state,
-        bookmarks: isBookmarked
-          ? state.bookmarks.filter((bookmark) => bookmark !== action.bookmarkId)
-          : [action.bookmarkId, ...state.bookmarks],
+        bookmarks: action.bookmarks
       };
     }
     case CLEAR_USER_DATA:

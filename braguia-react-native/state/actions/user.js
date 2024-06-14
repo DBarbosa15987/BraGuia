@@ -20,8 +20,8 @@ export const clearUserData = () => ({
   type: CLEAR_USER_DATA,
 });
 
-export const TOGGLE_BOOKMARK = "TOGGLE_BOOKMARK";
-export const toggleBookmark = (bookmarkId) => ({
-  type: TOGGLE_BOOKMARK,
-  bookmarkId,
+export const SET_BOOKMARKS = "SET_BOOKMARKS";
+export const setBookmarks = (bookmarks) => ({
+  type: SET_BOOKMARKS,
+  bookmarks,
 });

@@ -1,7 +1,7 @@
 import { ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { TrailCard } from "./trails"
-import { toggleBookmark } from "@/state/actions/user";
+import { setBookmarks } from "@/state/actions/user";
 
 
 export default function HistoryPage() {
@@ -15,21 +15,27 @@ export default function HistoryPage() {
   }).filter(trail => trail !== null);
 
   const dispatch = useDispatch()
-  const handleToggleBookmark = (id) => {
-    dispatch(toggleBookmark(id));
+  const handleToggleBookmark = (bookmarkId,isBookmark) => {
+    if (isBookmark) {
+      dispatch(setBookmarks(bookmarks.filter((bookmark) => bookmark !== bookmarkId)))
+    }
+    else {
+      dispatch(setBookmarks([bookmarkId,...bookmarks]))
+    }
   };
   // NOTE: abstrair isto, seguindo o trails???
   return (
     <ScrollView>
       {userHistory.map((trail) => {
+        const isBookmark = bookmarks.includes(trail.id)
         let trailPreview = {
           id: trail.id,
           name: trail.trail_name,
           image: trail.trail_img,
           duration: trail.trail_duration,
           difficulty: trail.trail_difficulty,
-          isBookmark: bookmarks.includes(trail.id),
-          toggle: handleToggleBookmark,
+          isBookmark: isBookmark,
+          toggle: () => handleToggleBookmark(trail.id, isBookmark),
           timestamp:trail.timestamp
         };
         // aqui a key toda maluca permite "repetidos" no histórico
