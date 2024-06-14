@@ -1,2 +1,1 @@
-export const THEME = "theme"
-export const ASKAGAIN = "askAgain"
+export const DO_NOT_ASKAGAIN = "DO_NOT_ASKAGAIN"

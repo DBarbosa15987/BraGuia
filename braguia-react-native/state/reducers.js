@@ -18,7 +18,6 @@ const initialState = {
   user: {
     info: {},
     history: [],
-    preferences: {},
     bookmarks: [],
   },
 };

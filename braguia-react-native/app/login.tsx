@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   Text,
@@ -7,17 +7,41 @@ import {
   Portal,
   Dialog,
   Paragraph,
+  Checkbox,
 } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserInfo, login } from "../api/api";
 import { router } from "expo-router";
+import { getItem, setItem } from "../utils/asyncStorage"
+import { DO_NOT_ASKAGAIN } from "@/constants/preferences";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showDialog, setShowDialog] = useState(false);
+  //const [showGoogleMaps, setShowGoogleMaps] = useState(true);
+  const [ask, setAsk] = useState(true);
+  const [checked, setChecked] = useState(false);
   const dispatch = useDispatch();
   const appInfo = useSelector((state) => state.appData.appinfo);
+
+  const handleConfirm = () => {
+    setAsk(false);
+    if (checked) {
+      setItem(DO_NOT_ASKAGAIN, "yes")
+    }
+  }
+
+
+  useEffect(() => {
+    const getAsk = async () => {
+      const askAgain = await getItem(DO_NOT_ASKAGAIN)
+      setAsk(!askAgain)
+      console.log("askAgain:", askAgain, !askAgain)
+    }
+    getAsk()
+  }, []);
+
 
   const loginPress = () => {
     login(username, password).then((loggedIn) => {
@@ -34,7 +58,6 @@ export default function LoginPage() {
 
   const resetLogin = () => {
     setShowDialog(false);
-    setUsername("");
     setPassword("");
   };
 
@@ -75,6 +98,23 @@ export default function LoginPage() {
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={resetLogin}>Dismiss</Button>
+          </Dialog.Actions>
+        </Dialog>
+        <Dialog visible={ask} onDismiss={() => setAsk(false)}>
+          <Dialog.Title>Warning</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>
+              Some features in this app require Google Maps to work correctly
+            </Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Checkbox
+              status={checked ? 'checked' : 'unchecked'}
+              onPress={() => {
+                setChecked(!checked);
+              }}
+            />
+            <Button onPress={() => { handleConfirm() }}>Confirm</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
