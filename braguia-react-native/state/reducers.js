@@ -43,7 +43,6 @@ const appData = (state = initialState, action) => {
         trails: action.trails,
       };
     case SET_PINS:
-      console.log("SET_PINS", action.pins);
       return {
         ...state,
         pins: action.pins,

@@ -1,33 +1,9 @@
 import React from "react";
 import { ScrollView } from "react-native";
-import { Card, Text, IconButton } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { router } from "expo-router";
 import { toggleBookmark } from "@/state/actions/user";
+import { TrailCard } from "@/components/TrailCard";
 
-export function TrailCard(props) {
-  return (
-    // FIX: add on press to navigate to trail single page
-    <Card onPress={() => router.push("/home/trail/" + props.id)}>
-      <Card.Cover source={{ uri: props.image }} />
-      <Card.Content style={{ flex: 1}}>
-        <Text variant="headlineMedium">{props.name}</Text>
-        <Text>Difficulty: {props.difficulty}</Text>
-        <Text>Duration: {props.duration}</Text>
-        {"timestamp" in props ?
-          <Text>Accessed: {formatDate(props.timestamp)}</Text> : <></>
-        }
-        <IconButton style={{ position: "absolute", right: 0, top: "20%" }}
-          icon={props.isBookmark ? "bookmark" : "bookmark-outline"}
-          size={27}
-          onPress={() => props.toggle(props.id)}
-        />
-      </Card.Content>
-      <Card.Actions>
-      </Card.Actions>
-    </Card>
-  );
-}
 
 export default function TrailsScreen() {
   const trails = useSelector((state) => state.appData.trails);
@@ -60,15 +36,3 @@ export default function TrailsScreen() {
   );
 }
 
-function formatDate(timestamp) {
-  const date = new Date(timestamp);
-
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  const year = date.getFullYear();
-
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-
-  return `${day}-${month}-${year} ${hours}:${minutes}`;
-}

@@ -1,31 +1,43 @@
 import React from "react";
+import { FlatList, ScrollView, StyleSheet, View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useSelector } from "react-redux";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { MapWithSingleMarker } from "@/components/Maps";
+import { Chip, Surface, Text } from "react-native-paper";
 
-function MapWithSingleMarker({ pin }) {
+function PinChip({ relPin }) {
   return (
-    <MapView
-      style={styles.map}
-      provider={PROVIDER_GOOGLE}
-      initialRegion={{
-        latitude: Number(pin.pin_lat),
-        longitude: Number(pin.pin_lng),
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+    <Chip icon="information">
+      {relPin.attrib} : {relPin.value}
+    </Chip>
+  );
+}
+function ChipList({ list }) {
+  console.log(list);
+  return (
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        alignSelf: "center",
+        alignContent: "center",
+        flexDirection: "row",
+        flexWrap: "wrap-reverse",
+        gap: 5,
       }}
     >
-      <Marker
-        key={pin.id}
-        coordinate={{
-          latitude: Number(pin.pin_lat),
-          longitude: Number(pin.pin_lng),
-        }}
-        title={pin.pin_name}
-      />
-    </MapView>
+      {list.map((relPin) => (
+        <PinChip relPin={relPin} key={relPin.id} />
+      ))}
+    </View>
+  );
+}
+
+function Description({ description }) {
+  return (
+    <Surface style={styles.description} elevation={3}>
+      <Text>{description}</Text>
+    </Surface>
   );
 }
 
@@ -38,17 +50,32 @@ export default function SinglePinScreen() {
     return alert(`Pin ${id} not found`);
   }
   return (
-    <ScrollView>
+    <ScrollView style={styles.container}>
       <Stack.Screen options={{ headerTitle: `${pin.pin_name}` }} />
-      <Text>{pin.pin_name}</Text>
-      <MapWithSingleMarker pin={pin} />
+
+      <View style={styles.map}>
+        <MapWithSingleMarker pin={pin} />
+      </View>
+      <ChipList list={pin.rel_pin} />
+      <Description description={pin.pin_desc} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 5,
+  },
+  description: {
+    padding: 8,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   map: {
+    overflow: "hidden",
+    borderRadius: 15,
     width: "100%",
-    height: 300,
+    height: 250,
   },
 });
