@@ -100,7 +100,7 @@ export default function LoginPage() {
             <Button onPress={resetLogin}>Dismiss</Button>
           </Dialog.Actions>
         </Dialog>
-        <Dialog visible={ask} onDismiss={() => setAsk(false)}>
+        {/* <Dialog visible={ask} onDismiss={() => setAsk(false)}>
           <Dialog.Title>Warning</Dialog.Title>
           <Dialog.Content>
             <Paragraph>
@@ -116,7 +116,7 @@ export default function LoginPage() {
             />
             <Button onPress={() => { handleConfirm() }}>Confirm</Button>
           </Dialog.Actions>
-        </Dialog>
+        </Dialog> */}
       </Portal>
     </View>
   );
