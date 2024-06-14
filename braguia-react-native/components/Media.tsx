@@ -8,7 +8,7 @@ function MediaItem({ item }) {
   const [visible, setVisible] = React.useState(false);
   const hideModal = () => setVisible(false);
   const showModal = () => setVisible(true);
-  const [mediaUri, setMediaUri] = React.useState<string, null>(null);
+  const [mediaUri, setMediaUri] = React.useState<string|null>(null);
   const [isLocalMedia, setIsLocalMedia] = React.useState(false);
 
   useEffect(() => {

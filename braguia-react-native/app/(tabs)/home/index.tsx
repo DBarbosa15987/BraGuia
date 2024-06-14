@@ -7,12 +7,12 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function HomePage() {
   const dispatch = useDispatch();
+  const appInfo = useSelector((state) => state.appData.appinfo);
+
   useEffect(() => {
     fetchUserInfo(dispatch);
     fetchTrails(dispatch);
   }, []);
-  const appInfo = useSelector((state) => state.appData.appinfo);
-
   const DATA = [
     {
       title: "Trails",
