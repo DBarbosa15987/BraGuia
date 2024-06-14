@@ -1,12 +1,10 @@
 import { fetchTrails, fetchUserInfo } from "@/api/api";
-import { setPins } from "@/state/actions/trails";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { Button, Text, Avatar, Card, IconButton } from "react-native-paper";
+import { Button, Text} from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
-function getPins() {}
 export default function HomePage() {
   const dispatch = useDispatch();
   useEffect(() => {

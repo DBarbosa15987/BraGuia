@@ -1,6 +1,6 @@
 import React from "react";
-import { fetchAppInfo, fetchUserInfo } from "@/api/api";
-import { Redirect, router } from "expo-router";
+import { fetchAppInfo } from "@/api/api";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
@@ -30,7 +30,7 @@ export default function InitialPage() {
     } else {
       fetchCookiesAndAppInfo();
     }
-  }, [cookie, loaded]);
+  }, [loaded]);
   return (
     <View style={styles.container}>
       <ActivityIndicator size="large" animating={true} />
