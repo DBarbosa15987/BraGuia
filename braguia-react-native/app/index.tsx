@@ -11,7 +11,7 @@ import * as SecureStore from "expo-secure-store";
 import { defineGeofencingTask } from "@/location/geofencing";
 
 // NOTE: define the geofencing task in global scope
-defineGeofencingTask()
+defineGeofencingTask
 
 export default function InitialPage() {
   const dispatch = useDispatch();

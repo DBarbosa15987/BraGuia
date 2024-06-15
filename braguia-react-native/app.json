@@ -20,6 +20,11 @@
       "bundleIdentifier": "com.tsousa111.braguia"
     },
     "android": {
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -46,7 +51,7 @@
             "usesCleartextTraffic": true
           }
         }
-      ],
+      ]
     ],
     "experiments": {
       "typedRoutes": true

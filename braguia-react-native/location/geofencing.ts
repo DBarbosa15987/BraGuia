@@ -11,50 +11,54 @@ export const requestLocationPermissions = async () => {
       await Location.requestBackgroundPermissionsAsync();
     if (backgroundStatus === "granted") {
       console.log("Location permissions granted");
+      return true;
     }
   }
+  return false;
 };
 
-export const defineGeofencingTask = () => {
-  TaskManager.defineTask(
-    GEOFENCING_TASK,
-    ({ data: { eventType, region }, error }) => {
-      if (error) {
-        console.error(error.message);
-        return;
-      }
-      if (eventType === Location.GeofencingEventType.Enter) {
-        Notification;
-      }
-    },
-  );
-};
+export const defineGeofencingTask = TaskManager.defineTask(
+  GEOFENCING_TASK,
+  ({ data: { eventType, region }, error }) => {
+    if (error) {
+      console.error(error.message);
+      return;
+    }
+    if (eventType === Location.GeofencingEventType.Enter) {
+      console.log("You've entered region:", region.identifier);
+    }
+  },
+);
 
-function extractGeofenceRegions(pins, radius): Location.LocationRegion[] {
-  return pins.map((pin) => ({
-    identifier: pin.id,
-    latitude: pin.pin_lat,
-    longitude: pin.pin_lng,
-    radius: radius,
-    notifyOnEnter: true,
-    notifyOnExit: false,
-  }));
+function extractGeofenceRegions(
+  pins,
+  radius: number,
+): Location.LocationRegion[] {
+  const regions = [];
+  for (const pin of pins) {
+    regions.push({
+      identifier: GEOFENCING_TASK + "-" + pin.id,
+      latitude: Number(pin.pin_lat),
+      longitude: Number(pin.pin_lng),
+      radius: radius,
+      notifyOnEnter: true,
+      notifyOnExit: false,
+    });
+  }
+  return regions;
 }
-export async function startGeofencingAsync(pins, radius = 150) {
+
+export async function startGeofencing(pins, radius = 150) {
+  console.log("Starting geofencing");
   const permissions = await Location.getBackgroundPermissionsAsync();
   if (permissions.granted) {
-    console.log("Starting geofencing");
     const regions = extractGeofenceRegions(pins, radius);
-
     await Location.startGeofencingAsync(GEOFENCING_TASK, regions);
   } else {
     console.log("Location permissions not granted");
   }
 }
 
-// 3. (Optional) Unregister tasks by specifying the task name
-// This will cancel any future background fetch calls that match the given name
-// Note: This does NOT need to be in the global scope and CAN be used in your React components!
-export async function stopGeofencingAsync() {
+export async function stopGeofencing() {
   await Location.stopGeofencingAsync(GEOFENCING_TASK);
 }

@@ -4,10 +4,24 @@ import { router } from "expo-router";
 import { View, StyleSheet, FlatList } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
+import { startGeofencing ,requestLocationPermissions } from "@/location/geofencing";
 
 export default function HomePage() {
   const dispatch = useDispatch();
   const appInfo = useSelector((state) => state.appData.appinfo);
+  const pins = useSelector((state) => state.appData.pins);
+
+  useEffect(() => {
+    const requestAndStartGeofencing = async () => {
+      const isGranted = await requestLocationPermissions();
+      if (isGranted) {
+        startGeofencing(pins);
+      }
+    };
+    if (pins !== null) {
+      requestAndStartGeofencing();
+    }
+  }, [pins]);
 
   useEffect(() => {
     fetchUserInfo(dispatch);

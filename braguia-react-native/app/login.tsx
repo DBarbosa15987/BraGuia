@@ -25,7 +25,6 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const appInfo = useSelector((state) => state.appData.appinfo);
 
-  console.log("appInfo:", appInfo);
   const handleConfirm = () => {
     setAsk(false);
     if (checked) {
