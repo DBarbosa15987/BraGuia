@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView } from "react-native";
+import { FlatList, ScrollView, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { setBookmarks } from "@/state/actions/user";
 import { TrailCard } from "@/components/TrailCard";
@@ -10,12 +10,12 @@ export default function TrailsScreen() {
   const bookmarks = useSelector((state) => state.user.bookmarks);
   console.log("bookmarks:" + bookmarks)
   const dispatch = useDispatch()
-  const handleToggleBookmark = (bookmarkId,isBookmark) => {
+  const handleToggleBookmark = (bookmarkId, isBookmark) => {
     if (isBookmark) {
       dispatch(setBookmarks(bookmarks.filter((bookmark) => bookmark !== bookmarkId)))
     }
     else {
-      dispatch(setBookmarks([bookmarkId,...bookmarks]))
+      dispatch(setBookmarks([bookmarkId, ...bookmarks]))
     }
   };
 
@@ -24,8 +24,11 @@ export default function TrailsScreen() {
   }
   // FIXME: FlatList aqui??
   return (
-    <ScrollView>
-      {trails.map((trail) => {
+    <FlatList style={styles.container}
+      contentContainerStyle={{ gap: 5 }}
+      data={trails}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item: trail }) => {
         const isBookmark = bookmarks.includes(trail.id)
         let trailPreview = {
           id: trail.id,
@@ -37,8 +40,13 @@ export default function TrailsScreen() {
           toggle: () => handleToggleBookmark(trail.id, isBookmark)
         };
         return <TrailCard key={trail.id} {...trailPreview} />
-      })}
-    </ScrollView>
+      }}
+    />
   );
 }
 
+const styles = StyleSheet.create({
+  container: {
+    padding: 5,
+  },
+});

@@ -1,7 +1,7 @@
 import { ScrollView } from "react-native";
 import { Text } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { TrailCard } from "./trails"
+import { TrailCard } from "@/components/TrailCard"
 import { setBookmarks } from "@/state/actions/user";
 
 

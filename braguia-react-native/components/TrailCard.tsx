@@ -1,10 +1,11 @@
 import React from "react";
 import { router } from "expo-router";
 import { Card, Text, IconButton } from "react-native-paper";
+import { formatDate } from "@/utils/trails";
 
 export function TrailCard(props) {
   return (
-    <Card onPress={() => router.push("/home/trail/" + props.id)}>
+    <Card elevation={3} onPress={() => router.push("/home/trail/" + props.id)}>
       <Card.Cover source={{ uri: props.image }} />
       <Card.Content style={{ flex: 1}}>
         <Text variant="headlineMedium">{props.name}</Text>

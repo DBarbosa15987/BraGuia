@@ -12,7 +12,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserInfo, login } from "../api/api";
 import { router } from "expo-router";
-import { getItem, setItem } from "../utils/asyncStorage"
+import { getItem, setItem } from "../utils/asyncStorage";
 import { DO_NOT_ASKAGAIN } from "@/constants/preferences";
 
 export default function LoginPage() {
@@ -20,7 +20,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showDialog, setShowDialog] = useState(false);
   //const [showGoogleMaps, setShowGoogleMaps] = useState(true);
-  const [ask, setAsk] = useState(true);
+  const [ask, setAsk] = useState<boolean|null>(null);
   const [checked, setChecked] = useState(false);
   const dispatch = useDispatch();
   const appInfo = useSelector((state) => state.appData.appinfo);
@@ -28,27 +28,24 @@ export default function LoginPage() {
   const handleConfirm = () => {
     setAsk(false);
     if (checked) {
-      setItem(DO_NOT_ASKAGAIN, "yes")
+      setItem(DO_NOT_ASKAGAIN, "yes");
     }
-  }
-
+  };
 
   useEffect(() => {
     const getAsk = async () => {
-      const askAgain = await getItem(DO_NOT_ASKAGAIN)
-      setAsk(!askAgain)
-      console.log("askAgain:", askAgain, !askAgain)
-    }
-    getAsk()
+      const askAgain = await getItem(DO_NOT_ASKAGAIN);
+      setAsk(!askAgain);
+      console.log("askAgain:", askAgain, !askAgain);
+    };
+    getAsk();
   }, []);
-
 
   const loginPress = () => {
     login(username, password).then((loggedIn) => {
       if (loggedIn) {
         fetchUserInfo(dispatch);
         console.log("Login success");
-        // NOTE: navigate to home page
         router.replace("/home");
       } else {
         setShowDialog(true);
@@ -60,6 +57,9 @@ export default function LoginPage() {
     setShowDialog(false);
     setPassword("");
   };
+  if (ask == null) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
@@ -100,7 +100,7 @@ export default function LoginPage() {
             <Button onPress={resetLogin}>Dismiss</Button>
           </Dialog.Actions>
         </Dialog>
-        {/* <Dialog visible={ask} onDismiss={() => setAsk(false)}>
+        <Dialog visible={ask} onDismiss={() => setAsk(false)}>
           <Dialog.Title>Warning</Dialog.Title>
           <Dialog.Content>
             <Paragraph>
@@ -109,14 +109,20 @@ export default function LoginPage() {
           </Dialog.Content>
           <Dialog.Actions>
             <Checkbox
-              status={checked ? 'checked' : 'unchecked'}
+              status={checked ? "checked" : "unchecked"}
               onPress={() => {
                 setChecked(!checked);
               }}
             />
-            <Button onPress={() => { handleConfirm() }}>Confirm</Button>
+            <Button
+              onPress={() => {
+                handleConfirm();
+              }}
+            >
+              Confirm
+            </Button>
           </Dialog.Actions>
-        </Dialog> */}
+        </Dialog>
       </Portal>
     </View>
   );
@@ -145,4 +151,3 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
 });
-

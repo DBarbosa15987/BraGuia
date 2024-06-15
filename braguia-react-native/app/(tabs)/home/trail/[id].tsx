@@ -34,6 +34,9 @@ export default function SingleTrailScreen() {
   const trail = useSelector((state) =>
     state.appData.trails.find((t) => t.id == id),
   );
+  const isPremium =
+    useSelector((state) => state.user.info.user_type) === "Premium";
+
   if (!trail) {
     return alert(`Trail ${id} not found`);
   }
@@ -46,14 +49,17 @@ export default function SingleTrailScreen() {
       <ChipList list={trail.rel_trail} />
       <Text> Difficulty: {trail.trail_difficulty}</Text>
       <Text> Duration: {trail.trail_duration} minutes</Text>
-      <Description description={trail.trail_desc}/>
-      <MediaSection media={media} />
+      <Description description={trail.trail_desc} />
+
+      {isPremium && media.length > 0 ? <MediaSection media={media} /> : null}
+
       <View style={styles.mapContainer}>
         <MapWithMultipleMarkers route={route} />
       </View>
 
       <Button
         mode="contained"
+        disabled={!isPremium}
         onPress={() => startTrail(route, trail.id, dispatch)}
       >
         Start Trail
@@ -91,6 +97,8 @@ const styles = StyleSheet.create({
     height: 200,
   },
   mapContainer: {
+    overflow: "hidden",
+    borderRadius: 15,
     width: "100%",
     height: 350,
   },

@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 function PinCard({ pin }) {
   return (
     <Card
+    elevation={3}
       style={styles.card}
       onPress={() => router.push("/home/pin/" + pin.id)}
     >

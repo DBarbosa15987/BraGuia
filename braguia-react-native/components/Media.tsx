@@ -73,7 +73,7 @@ function MediaItem({ item }) {
       </Pressable>
       <Portal>
         <Modal
-          style={{ paddingHorizontal: 20, paddingVertical: 100 }}
+          style={styles.mediaDisplayModal}
           visible={visible}
           onDismiss={hideModal}
         >
@@ -133,5 +133,9 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     width: "100%",
     height: "100%",
+  },
+  mediaDisplayModal: {
+    paddingHorizontal: 20,
+    paddingVertical: 100,
   },
 });
