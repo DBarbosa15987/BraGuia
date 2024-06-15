@@ -8,6 +8,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { COOKIE_KEY } from "@/api/api";
 import { StyleSheet } from "react-native";
 import * as SecureStore from "expo-secure-store";
+import { defineGeofencingTask } from "@/location/geofencing";
+
+// NOTE: define the geofencing task in global scope
+defineGeofencingTask()
 
 export default function InitialPage() {
   const dispatch = useDispatch();

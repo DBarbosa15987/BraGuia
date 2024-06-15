@@ -1,7 +1,7 @@
 import * as TaskManager from "expo-task-manager";
 import * as Location from "expo-location";
 
-const GEOFENCING_TASK = "GEOFENCING_TASK";
+export const GEOFENCING_TASK = "GEOFENCING_TASK";
 
 export const requestLocationPermissions = async () => {
   const { status: foregroundStatus } =
@@ -14,18 +14,21 @@ export const requestLocationPermissions = async () => {
     }
   }
 };
-export const defineGeofencingTask = TaskManager.defineTask(
-  GEOFENCING_TASK,
-  ({ data: { eventType, region }, error }) => {
-    if (error) {
-      console.error(error.message);
-      return;
-    }
-    if (eventType === Location.GeofencingEventType.Enter) {
-      Notification;
-    }
-  },
-);
+
+export const defineGeofencingTask = () => {
+  TaskManager.defineTask(
+    GEOFENCING_TASK,
+    ({ data: { eventType, region }, error }) => {
+      if (error) {
+        console.error(error.message);
+        return;
+      }
+      if (eventType === Location.GeofencingEventType.Enter) {
+        Notification;
+      }
+    },
+  );
+};
 
 function extractGeofenceRegions(pins, radius): Location.LocationRegion[] {
   return pins.map((pin) => ({
@@ -38,9 +41,15 @@ function extractGeofenceRegions(pins, radius): Location.LocationRegion[] {
   }));
 }
 export async function startGeofencingAsync(pins, radius = 150) {
-  const regions = extractGeofenceRegions(pins, radius);
+  const permissions = await Location.getBackgroundPermissionsAsync();
+  if (permissions.granted) {
+    console.log("Starting geofencing");
+    const regions = extractGeofenceRegions(pins, radius);
 
-  await Location.startGeofencingAsync(GEOFENCING_TASK, regions);
+    await Location.startGeofencingAsync(GEOFENCING_TASK, regions);
+  } else {
+    console.log("Location permissions not granted");
+  }
 }
 
 // 3. (Optional) Unregister tasks by specifying the task name

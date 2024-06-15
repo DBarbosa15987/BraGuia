@@ -1,8 +1,8 @@
+import React, { useEffect } from "react";
 import { fetchTrails, fetchUserInfo } from "@/api/api";
 import { router } from "expo-router";
-import React, { useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { Button, Text} from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function HomePage() {
