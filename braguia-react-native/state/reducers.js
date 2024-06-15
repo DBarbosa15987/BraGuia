@@ -22,7 +22,7 @@ const initialState = {
   },
 };
 
-const appData = (state = initialState, action) => {
+const appDataReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_APP_INFO:
       return {
@@ -50,7 +50,7 @@ const appData = (state = initialState, action) => {
   }
 };
 
-const user = (state = initialState, action) => {
+const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_USER_INFO:
       return {
@@ -86,6 +86,5 @@ const user = (state = initialState, action) => {
   }
 };
 
-const combinedReducers = combineReducers({ appData, user });
+export const rootReducer = combineReducers({ appData: appDataReducer, user: userReducer });
 
-export default combinedReducers;

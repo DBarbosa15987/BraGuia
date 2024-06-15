@@ -4,11 +4,12 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
 import { THEME } from "../constants/preferences"
-import { store } from "../state/store";
+import { store, persistor } from "../state/store";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Provider, useSelector } from "react-redux";
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { PaperProvider, MD3LightTheme, MD3DarkTheme, adaptNavigationTheme } from "react-native-paper";
+import { PersistGate } from "redux-persist/integration/react";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -51,16 +52,18 @@ export default function RootLayout() {
   }
   return (
     <Provider store={store}>
-      <PaperProvider theme={MD3LightTheme}>
-        <ThemeProvider value={LightTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="login" options={{ headerTitle: "Login" }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-        </ThemeProvider>
-      </PaperProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <PaperProvider theme={MD3LightTheme}>
+          <ThemeProvider value={LightTheme}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="login" options={{ headerTitle: "Login" }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          </ThemeProvider>
+        </PaperProvider>
+      </PersistGate >
     </Provider>
   );
 }
