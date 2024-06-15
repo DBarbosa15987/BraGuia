@@ -1,4 +1,4 @@
-import { updateAppInfo } from "@/state/actions/appInfo";
+import { setAppInfo } from "@/state/actions/appInfo";
 import { setTrails, setPins } from "@/state/actions/trails";
 import { resetUserInfo, setUserInfo } from "@/state/actions/user";
 import * as SecureStore from "expo-secure-store";
@@ -22,7 +22,7 @@ export async function fetchAppInfo(dispatch) {
     const response = await fetchWithCookies(BASE_URL + "/app");
     if (response.ok) {
       const data = await response.json();
-      dispatch(updateAppInfo(data[0]));
+      dispatch(setAppInfo(data[0]));
     }
   } catch (error) {
     console.error("Error parsing AppInfo:", error);

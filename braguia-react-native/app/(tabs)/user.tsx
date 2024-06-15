@@ -43,7 +43,7 @@ export default function UserPage() {
       <ProfileCard
         title="Name"
         icon="account"
-        text={`${userInfo.first_name} ${userInfo.last_name}`}
+        text={userInfo.first_name + " " + userInfo.last_name}
       />
       <ProfileCard title="Username" icon="account" text={userInfo.username} />
       <ProfileCard title="User Type" icon="account" text={userInfo.user_type} />
@@ -97,7 +97,7 @@ function convertDate(dateString: string) {
     const day = String(date.getUTCDate()).padStart(2, "0");
     const month = String(date.getUTCMonth() + 1).padStart(2, "0");
     const year = date.getUTCFullYear();
-    return `${day}-${month}-${year}`;
+    return day + "-" + month + "-" + year;
   } catch (e) {
     return dateString;
   }

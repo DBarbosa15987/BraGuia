@@ -20,7 +20,8 @@ function startTrail(route, trailId, dispatch) {
       waypoints += "|";
     }
   }
-  const mapsUrl = `https://www.google.com/maps/dir/?api=1&${waypoints}&${destination}`;
+  const mapsUrl =
+    "https://www.google.com/maps/dir/?api=1&" + waypoints + "&" + destination;
   console.log(mapsUrl);
   const historyEntry = { trail: trailId, timestamp: Date.now() };
   dispatch(addTrailToHistory(historyEntry));
@@ -38,13 +39,13 @@ export default function SingleTrailScreen() {
     useSelector((state) => state.user.info.user_type) === "Premium";
 
   if (!trail) {
-    return alert(`Trail ${id} not found`);
+    return alert("Trail" + id + "not found");
   }
   const route = calculateRoute(trail.edges);
   const media = getMedia(route);
   return (
     <ScrollView style={styles.container}>
-      <Stack.Screen options={{ headerTitle: `${trail.trail_name}` }} />
+      <Stack.Screen options={{ headerTitle: trail.trail_name }} />
       <Image style={styles.trailImg} source={{ uri: trail.trail_img }} />
       <ChipList list={trail.rel_trail} />
       <Text> Difficulty: {trail.trail_difficulty}</Text>

@@ -7,7 +7,7 @@ export default function AboutPage() {
   const appInfo = useSelector((state) => state.appData.appinfo);
 
   const handlePhonePress = (phone_number) => {
-    Linking.openURL(`tel:${phone_number}`);
+    Linking.openURL("tel:" + phone_number);
   };
 
   const handleUrlPress = (url) => {

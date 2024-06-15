@@ -15,11 +15,11 @@ export default function SinglePinScreen() {
   const isPremium =
     useSelector((state) => state.user.info.user_type) === "Premium";
   if (!pin) {
-    return alert(`Pin ${id} not found`);
+    return alert("Pin" + id + "not found");
   }
   return (
     <ScrollView style={styles.container}>
-      <Stack.Screen options={{ headerTitle: `${pin.pin_name}` }} />
+      <Stack.Screen options={{ headerTitle: pin.pin_name }} />
       <View style={styles.mapContainer}>
         <MapWithSingleMarker pin={pin} />
       </View>

@@ -1,3 +1,4 @@
+import React from "react";
 import { ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { TrailCard } from "@/components/TrailCard"
@@ -39,7 +40,7 @@ export default function HistoryPage() {
           timestamp:trail.timestamp
         };
         // aqui a key toda maluca permite "repetidos" no histórico
-        return <TrailCard key={`${trail.id}-${trail.timestamp}`} {...trailPreview} />
+        return <TrailCard key={trail.id + "-" + trail.timestamp} {...trailPreview} />
       })}
     </ScrollView>
   );

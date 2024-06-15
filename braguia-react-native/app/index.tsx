@@ -13,24 +13,28 @@ export default function InitialPage() {
   const dispatch = useDispatch();
   const [cookie, setCookie] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
-  useEffect(() => {
-    const fetchCookiesAndAppInfo = async () => {
-      await fetchAppInfo(dispatch);
-      const cookies = await SecureStore.getItemAsync(COOKIE_KEY);
-      setCookie(cookies);
-      setLoaded(true);
-    };
+  const appInfo = useSelector((state) => state.appData.appinfo);
 
-    if (loaded) {
-      if (!cookie) {
-        router.replace("/login");
-      } else {
-        router.replace("/home");
-      }
+  const fetchCookies = async () => {
+    const cookies = await SecureStore.getItemAsync(COOKIE_KEY);
+    setCookie(cookies);
+    setLoaded(true);
+  };
+  useEffect(() => {
+    if (!appInfo) {
+      fetchAppInfo(dispatch);
     } else {
-      fetchCookiesAndAppInfo();
+      if (loaded) {
+        if (!cookie) {
+          router.replace("/login");
+        } else {
+          router.replace("/home");
+        }
+      } else {
+        fetchCookies();
+      }
     }
-  }, [loaded]);
+  }, [appInfo,loaded]);
   return (
     <View style={styles.container}>
       <ActivityIndicator size="large" animating={true} />

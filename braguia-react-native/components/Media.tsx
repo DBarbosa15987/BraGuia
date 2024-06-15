@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
-import { Text, Icon, Modal, Portal, IconButton } from "react-native-paper";
+import { Text, Icon, Modal, Portal, IconButton, Surface } from "react-native-paper";
 import { ResizeMode, Video } from "expo-av";
 import {
   downloadMedia,
@@ -100,7 +100,7 @@ function MediaItem({ item }) {
 export function MediaSection({ media }) {
   // TODO: Add styling
   return (
-    <View>
+    <Surface style={styles.container} elevation={3}>
       <Text variant="headlineSmall">Media</Text>
       <FlatList
         style={{ paddingTop: 5 }}
@@ -109,11 +109,15 @@ export function MediaSection({ media }) {
         keyExtractor={(item, index) => item.id + index}
         renderItem={({ item }) => <MediaItem item={item} />}
       />
-    </View>
+    </Surface>
   );
 }
 
 const styles = StyleSheet.create({
+  container : {
+    padding: 10,
+    borderRadius: 15,
+  },
   downloadIcon: {
     alignSelf: "flex-end",
     position: "absolute",

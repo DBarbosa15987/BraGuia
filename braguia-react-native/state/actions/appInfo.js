@@ -1,5 +1,5 @@
 export const SET_APP_INFO = "SET_APP_INFO";
-export const updateAppInfo = (appinfo) => ({
+export const setAppInfo = (appinfo) => ({
   type: SET_APP_INFO,
   payload: appinfo,
 });
