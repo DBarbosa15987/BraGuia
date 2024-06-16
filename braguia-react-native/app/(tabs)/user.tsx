@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { ScrollView, Text, View, StyleSheet, Image } from "react-native";
+import { ScrollView, View, StyleSheet, Image } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  Text,
   Button,
   Card,
   Avatar,

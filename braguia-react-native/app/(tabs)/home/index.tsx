@@ -4,7 +4,10 @@ import { router } from "expo-router";
 import { View, StyleSheet, FlatList } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { startGeofencing ,requestLocationPermissions } from "@/location/geofencing";
+import {
+  startGeofencing,
+  requestLocationPermissions,
+} from "@/location/geofencing";
 
 export default function HomePage() {
   const dispatch = useDispatch();
@@ -18,7 +21,9 @@ export default function HomePage() {
         startGeofencing(pins);
       }
     };
-    if (pins !== null) {
+    if (!pins) {
+      null;
+    } else {
       requestAndStartGeofencing();
     }
   }, [pins]);

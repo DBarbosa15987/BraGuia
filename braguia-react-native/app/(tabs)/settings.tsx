@@ -1,5 +1,11 @@
-import React from "react";
-import { StyleSheet, TouchableOpacity, ScrollView, View } from "react-native";
+import React, { useEffect } from "react";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  View,
+  Appearance,
+} from "react-native";
 import {
   Button,
   Card,
@@ -13,6 +19,8 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUserData } from "@/state/actions/user";
+import { getItem, removeItem, setItem } from "@/utils/asyncStorage";
+import { DO_NOT_ASKAGAIN, THEME } from "@/constants/preferences";
 
 export default function SettingsPage() {
   const userInfo = useSelector((state) => state.user.info);
@@ -26,6 +34,10 @@ export default function SettingsPage() {
   const showDelPrefs = () => setDelPrefs(true);
   const hideDelPrefs = () => setDelPrefs(false);
 
+  useEffect(() => {
+    const theme = Appearance.getColorScheme();
+    setDarkMode(theme === "dark");
+  }, []);
   const handleDelData = () => {
     // Perform logout logic here
     console.log("User Data Deleted");
@@ -33,14 +45,18 @@ export default function SettingsPage() {
     setDelData(false);
   };
 
-  const handleResetPrefs = () => {
+  const handleResetPrefs = async () => {
     // Perform logout logic here
     console.log("User Prefs reset");
+    await removeItem(DO_NOT_ASKAGAIN);
     setDelPrefs(false);
   };
 
-  const handleDarkMode = () => {
+  const handleDarkMode = async () => {
     setDarkMode(!darkMode);
+    const theme = darkMode ? "light" : "dark";
+    Appearance.setColorScheme(theme);
+    // await setItem(THEME, theme);
     console.log("dark mode switched");
   };
 
@@ -117,21 +133,11 @@ const SettingsCard = ({
         <View style={styles.cardContainer}>
           <View style={styles.textContainer}>
             <Text style={styles.title}>{title}</Text>
-            {text ? (
-              <>
-                <Text style={styles.content}>{text}</Text>
-              </>
-            ) : (
-              <></>
-            )}
+            {text ? <Text style={styles.content}>{text}</Text> : null}
           </View>
           {toggle ? (
-            <>
-              <Switch value={toggleValue} onValueChange={toggleAction} />
-            </>
-          ) : (
-            <></>
-          )}
+            <Switch value={toggleValue} onValueChange={toggleAction} />
+          ) : null}
         </View>
       </Card>
     </TouchableOpacity>

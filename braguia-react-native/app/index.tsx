@@ -9,6 +9,9 @@ import { COOKIE_KEY } from "@/api/api";
 import { StyleSheet } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { defineGeofencingTask } from "@/location/geofencing";
+import { Appearance } from "react-native";
+import { getItem, setItem } from "../utils/asyncStorage";
+import { THEME } from "../constants/preferences"
 
 // NOTE: define the geofencing task in global scope
 defineGeofencingTask
@@ -24,6 +27,19 @@ export default function InitialPage() {
     setCookie(cookies);
     setLoaded(true);
   };
+  useEffect(() => {
+    async function loadTheme() {
+      let storedTheme = await getItem(THEME);
+      if (!storedTheme) {
+        storedTheme = 'light';
+        await setItem(THEME, storedTheme);
+      }
+      return storedTheme;
+    }
+    loadTheme().then(storedTheme => {
+      Appearance.setColorScheme(storedTheme);
+    });
+  }, []);
   useEffect(() => {
     if (!appInfo) {
       fetchAppInfo(dispatch);

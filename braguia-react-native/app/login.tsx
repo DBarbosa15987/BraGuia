@@ -14,13 +14,14 @@ import { fetchUserInfo, login } from "../api/api";
 import { router } from "expo-router";
 import { getItem, setItem } from "../utils/asyncStorage";
 import { DO_NOT_ASKAGAIN } from "@/constants/preferences";
+import DialogIcon from "react-native-paper/lib/typescript/components/Dialog/DialogIcon";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showDialog, setShowDialog] = useState(false);
   //const [showGoogleMaps, setShowGoogleMaps] = useState(true);
-  const [ask, setAsk] = useState<boolean|null>(null);
+  const [ask, setAsk] = useState<boolean | null>(null);
   const [checked, setChecked] = useState(false);
   const dispatch = useDispatch();
   const appInfo = useSelector((state) => state.appData.appinfo);
@@ -101,13 +102,15 @@ export default function LoginPage() {
           </Dialog.Actions>
         </Dialog>
         <Dialog visible={ask} onDismiss={() => setAsk(false)}>
-          <Dialog.Title>Warning</Dialog.Title>
+          <Dialog.Icon icon="alert" />
+          <Dialog.Title style={{ textAlign: "center" }}>Warning</Dialog.Title>
           <Dialog.Content>
             <Paragraph>
               Some features in this app require Google Maps to work correctly
             </Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
+            <Text>{"Don't ask again"}</Text>
             <Checkbox
               status={checked ? "checked" : "unchecked"}
               onPress={() => {
