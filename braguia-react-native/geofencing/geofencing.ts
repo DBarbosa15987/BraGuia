@@ -25,7 +25,9 @@ export const defineGeofencingTask = TaskManager.defineTask(
       return;
     }
     if (eventType === Location.GeofencingEventType.Enter) {
+
       console.log("You've entered region:", region.identifier);
+      // sendNotification();
     }
   },
 );
@@ -60,5 +62,6 @@ export async function startGeofencing(pins, radius = 150) {
 }
 
 export async function stopGeofencing() {
+  console.log("Stopping geofencing");
   await Location.stopGeofencingAsync(GEOFENCING_TASK);
 }

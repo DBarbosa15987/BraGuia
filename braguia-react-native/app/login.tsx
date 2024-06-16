@@ -14,7 +14,6 @@ import { fetchUserInfo, login } from "../api/api";
 import { router } from "expo-router";
 import { getItem, setItem } from "../utils/asyncStorage";
 import { DO_NOT_ASKAGAIN } from "@/constants/preferences";
-import DialogIcon from "react-native-paper/lib/typescript/components/Dialog/DialogIcon";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");

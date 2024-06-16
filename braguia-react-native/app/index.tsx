@@ -8,13 +8,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { COOKIE_KEY } from "@/api/api";
 import { StyleSheet } from "react-native";
 import * as SecureStore from "expo-secure-store";
-import { defineGeofencingTask } from "@/location/geofencing";
-import { Appearance } from "react-native";
-import { getItem, setItem } from "../utils/asyncStorage";
-import { THEME } from "../constants/preferences"
+import { defineGeofencingTask } from "@/geofencing/geofencing";
 
 // NOTE: define the geofencing task in global scope
-defineGeofencingTask
+defineGeofencingTask;
 
 export default function InitialPage() {
   const dispatch = useDispatch();
@@ -27,19 +24,6 @@ export default function InitialPage() {
     setCookie(cookies);
     setLoaded(true);
   };
-  useEffect(() => {
-    async function loadTheme() {
-      let storedTheme = await getItem(THEME);
-      if (!storedTheme) {
-        storedTheme = 'light';
-        await setItem(THEME, storedTheme);
-      }
-      return storedTheme;
-    }
-    loadTheme().then(storedTheme => {
-      Appearance.setColorScheme(storedTheme);
-    });
-  }, []);
   useEffect(() => {
     if (!appInfo) {
       fetchAppInfo(dispatch);
@@ -54,7 +38,7 @@ export default function InitialPage() {
         fetchCookies();
       }
     }
-  }, [appInfo,loaded]);
+  }, [appInfo, loaded]);
   return (
     <View style={styles.container}>
       <ActivityIndicator size="large" animating={true} />

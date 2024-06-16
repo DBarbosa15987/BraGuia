@@ -20,24 +20,33 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUserData } from "@/state/actions/user";
 import { getItem, removeItem, setItem } from "@/utils/asyncStorage";
-import { DO_NOT_ASKAGAIN, THEME } from "@/constants/preferences";
+import { DO_NOT_ASKAGAIN, GEOFENCING, THEME } from "@/constants/preferences";
+import { startGeofencing, stopGeofencing } from "@/geofencing/geofencing";
 
 export default function SettingsPage() {
-  const userInfo = useSelector((state) => state.user.info);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(
+    Appearance.getColorScheme() === "dark",
+  );
   const [delData, setDelData] = useState(false);
+  const [geofencingSwitch, setGeofencingSwitch] = useState(true);
   const [delPrefs, setDelPrefs] = useState(false);
   const dispatch = useDispatch();
+
+  const pins = useSelector((state) => state.appData.pins);
+
+  useEffect(() => {
+    const getPrefs = async () => {
+      const geofencing = await getItem(GEOFENCING);
+      setGeofencingSwitch(!geofencing || geofencing === "true");
+    };
+    getPrefs();
+  }, []);
 
   const showDelData = () => setDelData(true);
   const hideDelData = () => setDelData(false);
   const showDelPrefs = () => setDelPrefs(true);
   const hideDelPrefs = () => setDelPrefs(false);
 
-  useEffect(() => {
-    const theme = Appearance.getColorScheme();
-    setDarkMode(theme === "dark");
-  }, []);
   const handleDelData = () => {
     // Perform logout logic here
     console.log("User Data Deleted");
@@ -56,8 +65,19 @@ export default function SettingsPage() {
     setDarkMode(!darkMode);
     const theme = darkMode ? "light" : "dark";
     Appearance.setColorScheme(theme);
-    // await setItem(THEME, theme);
+    await setItem(THEME, theme);
     console.log("dark mode switched");
+  };
+  const handleGeofencingSwitch = async () => {
+    setGeofencingSwitch(!geofencingSwitch);
+    console.log("geofencing switched");
+    if (geofencingSwitch) {
+      await setItem(GEOFENCING, "false");
+      stopGeofencing();
+    } else {
+      await setItem(GEOFENCING, "true");
+      startGeofencing(pins);
+    }
   };
 
   const navigateToAbout = () => {
@@ -83,6 +103,13 @@ export default function SettingsPage() {
         title="Reset Preferences"
         text="Resets all user preferences"
         onPress={showDelPrefs}
+      />
+      <SettingsCard
+        title="Geofencing"
+        text="Enable or disable geofencing"
+        toggle={true}
+        toggleValue={geofencingSwitch}
+        toggleAction={handleGeofencingSwitch}
       />
       <SettingsCard title="About BraGuia" text="" onPress={navigateToAbout} />
 

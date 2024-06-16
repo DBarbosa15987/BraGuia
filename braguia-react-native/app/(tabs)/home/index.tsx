@@ -7,7 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   startGeofencing,
   requestLocationPermissions,
-} from "@/location/geofencing";
+} from "@/geofencing/geofencing";
+// import { setupNotifications } from "@/geofencing/notifications";
+import { GEOFENCING } from "@/constants/preferences";
+import { getItem } from "@/utils/asyncStorage";
 
 export default function HomePage() {
   const dispatch = useDispatch();
@@ -16,14 +19,17 @@ export default function HomePage() {
 
   useEffect(() => {
     const requestAndStartGeofencing = async () => {
-      const isGranted = await requestLocationPermissions();
-      if (isGranted) {
+      // await setupNotifications();
+      const geofencingEnabled = await getItem(GEOFENCING);
+      const isLocationGranted = await requestLocationPermissions();
+      if (
+        isLocationGranted &&
+        (geofencingEnabled === "true" || !geofencingEnabled)
+      ) {
         startGeofencing(pins);
       }
     };
-    if (!pins) {
-      null;
-    } else {
+    if (pins) {
       requestAndStartGeofencing();
     }
   }, [pins]);
